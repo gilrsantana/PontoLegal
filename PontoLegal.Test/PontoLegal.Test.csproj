@@ -26,6 +26,7 @@
     <ProjectReference Include="..\PontoLegal.Domain\PontoLegal.Domain.csproj" />
     <ProjectReference Include="..\PontoLegal.Repository\PontoLegal.Repository.csproj" />
     <ProjectReference Include="..\PontoLegal.Service\PontoLegal.Service.csproj" />
+    <ProjectReference Include="..\PontoLegal.Shared\PontoLegal.Shared.csproj" />
   </ItemGroup>
 
 </Project>

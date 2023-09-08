@@ -4,7 +4,6 @@ namespace PontoLegal.Service.Interfaces
 {
     public interface IDepartamentoService
     {
-        Task<bool> AddDepartamentoAsync(Departamento departamento);
-        bool IsValid();
+        Task<bool> AddDepartamentoAsync(Departamento departamento); 
     }
 }

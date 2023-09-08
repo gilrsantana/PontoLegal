@@ -1,9 +1,3 @@
-using Moq;
-using PontoLegal.Domain.Entities;
-using PontoLegal.Repository.Interfaces;
-using PontoLegal.Service;
-using PontoLegal.Service.Interfaces;
-
 namespace PontoLegal.Test.PontoLegal.Service;
 
 public class DepartamentoServiceTest
@@ -34,9 +28,8 @@ public class DepartamentoServiceTest
         // Assert
         
         Assert.False(result);
-        Assert.False(departamento.IsValid());
-        Assert.False(_departamentoService.IsValid());
-        Assert.Equal("Nome do Departamento deve ter entre 3 e 30 caracteres", departamento.Errors[0]);
+        Assert.False(departamento.IsValid);
+        Assert.Equal(Error.Departamento.NOME_INVALIDO, departamento.Notifications.ElementAt(0).Message);
 
         _departamentoRepositoryMock
             .Verify(x => x.AddDepartamentoAsync(It.IsAny<Departamento>()), Times.Never);
