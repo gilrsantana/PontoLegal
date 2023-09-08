@@ -1,0 +1,52 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PontoLegal.Test", "PontoLegal.Test\PontoLegal.Test.csproj", "{94916147-0D5C-4DA8-8EF8-AEF234B02C09}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PontoLegal.Service", "PontoLegal.Service\PontoLegal.Service.csproj", "{BF7709DC-F1FA-43EC-BBD7-883E2C519026}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PontoLegal.Repository", "PontoLegal.Repository\PontoLegal.Repository.csproj", "{C12224B4-6451-4859-8955-D9994AED11DF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PontoLegal.Data", "PontoLegal.Data\PontoLegal.Data.csproj", "{2DFF33C6-877A-4610-B051-9EC4BB1B435F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PontoLegal.Domain", "PontoLegal.Domain\PontoLegal.Domain.csproj", "{F3971797-49A9-4426-97F2-E41ED320663D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PontoLegal.API", "PontoLegal.API\PontoLegal.API.csproj", "{F066B9F0-014F-4564-9E08-4092B263023A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{94916147-0D5C-4DA8-8EF8-AEF234B02C09}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{94916147-0D5C-4DA8-8EF8-AEF234B02C09}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{94916147-0D5C-4DA8-8EF8-AEF234B02C09}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{94916147-0D5C-4DA8-8EF8-AEF234B02C09}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BF7709DC-F1FA-43EC-BBD7-883E2C519026}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BF7709DC-F1FA-43EC-BBD7-883E2C519026}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BF7709DC-F1FA-43EC-BBD7-883E2C519026}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BF7709DC-F1FA-43EC-BBD7-883E2C519026}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C12224B4-6451-4859-8955-D9994AED11DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C12224B4-6451-4859-8955-D9994AED11DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C12224B4-6451-4859-8955-D9994AED11DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C12224B4-6451-4859-8955-D9994AED11DF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2DFF33C6-877A-4610-B051-9EC4BB1B435F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2DFF33C6-877A-4610-B051-9EC4BB1B435F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2DFF33C6-877A-4610-B051-9EC4BB1B435F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2DFF33C6-877A-4610-B051-9EC4BB1B435F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F3971797-49A9-4426-97F2-E41ED320663D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F3971797-49A9-4426-97F2-E41ED320663D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F3971797-49A9-4426-97F2-E41ED320663D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F3971797-49A9-4426-97F2-E41ED320663D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F066B9F0-014F-4564-9E08-4092B263023A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F066B9F0-014F-4564-9E08-4092B263023A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F066B9F0-014F-4564-9E08-4092B263023A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F066B9F0-014F-4564-9E08-4092B263023A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
