@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\PontoLegal.Repository\PontoLegal.Repository.csproj" />
+  </ItemGroup>
+
 </Project>
