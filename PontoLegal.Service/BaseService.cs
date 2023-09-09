@@ -1,7 +1,7 @@
-﻿namespace PontoLegal.Service;
+﻿using Flunt.Notifications;
 
-public class BaseService
+namespace PontoLegal.Service;
+
+public class BaseService : Notifiable<Notification>
 {
-    protected readonly IList<string> _errors = new List<string>();
-    public bool IsValid { get => _errors.Count == 0; }
 }

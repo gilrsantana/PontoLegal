@@ -11,7 +11,6 @@ public class Departamento : BaseEntity
         Nome = nome;
         AddNotifications(new Contract<Departamento>()
             .Requires()
-            .IsNotNullOrEmpty(Nome, "Departamento.Nome", Error.Departamento.NOME_INVALIDO)
             .IsGreaterOrEqualsThan(Nome, 3, "Departamento.Nome", Error.Departamento.NOME_INVALIDO)
             .IsLowerOrEqualsThan(Nome, 30, "Departamento.Nome", Error.Departamento.NOME_INVALIDO)
         );

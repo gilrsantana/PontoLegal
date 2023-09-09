@@ -1,7 +1,6 @@
 ﻿using PontoLegal.Domain.Entities;
 using PontoLegal.Repository.Interfaces;
 using PontoLegal.Service.Interfaces;
-using PontoLegal.Shared.Messages;
 
 namespace PontoLegal.Service
 {
@@ -16,10 +15,14 @@ namespace PontoLegal.Service
 
         public async Task<bool> AddDepartamentoAsync(Departamento departamento)
         {
-            if (!departamento.IsValid)
+            if (departamento.IsValid) 
+                return await _departamentoRepository.AddDepartamentoAsync(departamento);
+            
+            foreach (var notification in departamento.Notifications)
             {
-                _errors.Add(Error.Departamento.NOME_INVALIDO);
+                AddNotification(notification);
             }
+
             return false;
         }
 
