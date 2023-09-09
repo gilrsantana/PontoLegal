@@ -8,5 +8,6 @@ namespace PontoLegal.Service.Interfaces
         Task<Departamento?> GetDepartamentoByNomeAsync(string departamentoNome);
         Task<Departamento?> GetDepartamentoByIdAsync(Guid departamentoId);
         Task<bool> UpdateDepartamentoAsync(Departamento departamento);
+        Task<bool> RemoveDepartamentoAsync(Departamento departamento);
     }
 }

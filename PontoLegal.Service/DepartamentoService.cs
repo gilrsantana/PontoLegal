@@ -28,11 +28,20 @@ namespace PontoLegal.Service
 
             var departamentoExistente = await GetDepartamentoByNomeAsync(departamento.Nome);
 
-            if (departamentoExistente == null) 
-                return await _departamentoRepository.AddDepartamentoAsync(departamento);
-           
-            AddNotification("DepartamentoService.Nome", Error.Departamento.NOME_JA_EXISTE);
+            if (departamentoExistente != null)
+            {
+                AddNotification("DepartamentoService.Nome", Error.Departamento.NOME_JA_EXISTE);
+                return false;
+
+            }
+            
+            var result = await _departamentoRepository.AddDepartamentoAsync(departamento);
+            if (result)
+                return true;
+
+            AddNotification("DepartamentoService", Error.Departamento.ERRO_AO_ADICIONAR);
             return false;
+           
         }
 
         public Task<Departamento?> GetDepartamentoByNomeAsync(string departamentoNome)
@@ -73,7 +82,28 @@ namespace PontoLegal.Service
 
             }
 
-            return await _departamentoRepository.UpdateDepartamentoAsync(departamento);
+            var result = await _departamentoRepository.UpdateDepartamentoAsync(departamento);
+            if (result)
+                return true;
+
+            AddNotification("DepartamentoService", Error.Departamento.ERRO_AO_ATUALIZAR);
+            return false;
+        }
+
+        public async Task<bool> RemoveDepartamentoAsync(Departamento departamento)
+        {
+            var departamentoIdExistente = await GetDepartamentoByIdAsync(departamento.Id);
+            if (departamentoIdExistente == null)
+            {
+                AddNotification("DepartamentoService.Id", Error.Departamento.DEPARTAMENTO_NAO_ENCONTRADO);
+                return false;
+            }
+            var result = await _departamentoRepository.RemoveDepartamentoAsync(departamento);
+            if (result)
+                return true;
+
+            AddNotification("DepartamentoService", Error.Departamento.ERRO_AO_REMOVER);
+            return false;
         }
     }
 }
