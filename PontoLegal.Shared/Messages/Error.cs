@@ -10,6 +10,8 @@ public static class Error
 {
     public static class Departamento
     {
-        public const string NOME_INVALIDO = "Nome não pode ser nulo e precisa ter entre 3 e 30 caracteres.";
+        public const string DEPARTAMENTO_NAO_ENCONTRADO = "Departamento não encontrado";
+        public const string NOME_JA_EXISTE = "Nome de departamento já existe";
+        public const string NOME_INVALIDO = "Nome de departamento não pode ser nulo e precisa ter entre 3 e 30 caracteres.";
     }
 }
