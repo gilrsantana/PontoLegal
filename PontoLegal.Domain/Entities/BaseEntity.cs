@@ -1,14 +1,6 @@
-using Flunt.Notifications;
-
 namespace PontoLegal.Domain.Entities;
-public class BaseEntity : Notifiable<Notification>
+public abstract class BaseEntity
 {
-    public Guid Id { get; private set; }
-    public DateTime DataCriacao { get; private set; }
-
-    public BaseEntity()
-    {
-        Id = Guid.NewGuid();
-        DataCriacao = DateTime.Now;
-    }
+    public Guid Id { get; private set; } = Guid.NewGuid();
+    public DateTime CreatedAt { get; private set; } = DateTime.Now;
 }
