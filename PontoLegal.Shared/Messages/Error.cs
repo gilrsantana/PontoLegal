@@ -2,18 +2,19 @@
 
 public static class Error
 {
-    public static class Departamento
+    public static class Department
     {
-        public const string ERRO_AO_ADICIONAR = "Erro ao adicionar o departamento";
-        public const string ERRO_AO_REMOVER = "Erro ao remover o departamento";
-        public const string ERRO_AO_ATUALIZAR = "Erro ao atualizar o departamento";
-        public const string DEPARTAMENTO_NAO_ENCONTRADO = "Departamento não encontrado";
-        public const string NOME_JA_EXISTE = "Nome de departamento já existe";
-        public const string NOME_INVALIDO = "Nome de departamento não pode ser nulo e precisa ter entre 3 e 30 caracteres.";
+        public const string DEPARTMENT_NOT_FOUNDED = "Department not founded";
+        public const string ERROR_ADDING           = "Error adding Department";
+        public const string ERROR_REMOVING         = "Error removing Department";
+        public const string ERROR_UPDATING         = "Error updating Department";
+        public const string INVALID_ID             = "Invalid Id";
+        public const string INVALID_NAME           = "Department name can't be null and must be between 3 and 30 chars";
+        public const string NAME_ALREADY_EXISTS    = "Name already exists";
     }
 
-    public static class Cargo
+    public static class JobPosition
     {
-        public static string NOME_INVALIDO = "Nome de cargo não pode ser nulo e precisa ter entre 3 e 30 caracteres.";
+        public static string INVALID_NAME = "Job Position name can't be null and must be between 3 and 30 chars";
     }
 }

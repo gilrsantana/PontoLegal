@@ -2,13 +2,13 @@
 
 public class CargoServiceTest
 {
-    private readonly Mock<ICargoRepository> _cargoRepositoryMock;
-    private readonly CargoService _cargoService;
+    private readonly Mock<IJobPositionRepository> _cargoRepositoryMock;
+    private readonly JobPositionService _cargoService;
 
     public CargoServiceTest()
     {
-        _cargoRepositoryMock = new Mock<ICargoRepository>();
-        _cargoService = new CargoService(_cargoRepositoryMock.Object);
+        _cargoRepositoryMock = new Mock<IJobPositionRepository>();
+        _cargoService = new JobPositionService(_cargoRepositoryMock.Object);
     }
 
     [Theory]
@@ -18,7 +18,7 @@ public class CargoServiceTest
     public async Task AddCargoAsync_ShouldReturnFalseWithError_WhenInvalidCargoName(string nome, string departamento)
     {
         // Arrange
-        var cargo = new Cargo(nome, new Departamento(departamento));
+        var cargo = new JobPosition(nome, new Department(departamento));
         _cargoRepositoryMock.Setup(x => x.AddCargoAsync(cargo))
             .ReturnsAsync(false);
 

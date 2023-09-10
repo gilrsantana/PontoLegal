@@ -2,13 +2,13 @@ namespace PontoLegal.Test.PontoLegal.Service;
 
 public class DepartamentoServiceTest
 {
-    private readonly Mock<IDepartamentoRepository> _departamentoRepositoryMock;
-    private readonly DepartamentoService _departamentoService;
+    private readonly Mock<IDepartmentRepository> _departamentoRepositoryMock;
+    private readonly DepartmentService _departamentoService;
 
     public DepartamentoServiceTest()
     {
-        _departamentoRepositoryMock = new Mock<IDepartamentoRepository>();
-        _departamentoService = new DepartamentoService(_departamentoRepositoryMock.Object);
+        _departamentoRepositoryMock = new Mock<IDepartmentRepository>();
+        _departamentoService = new DepartmentService(_departamentoRepositoryMock.Object);
     }
 
     [Theory]
@@ -18,7 +18,7 @@ public class DepartamentoServiceTest
     public async Task AddDepartamentoAsync_ShouldReturnFalseWithErrors_WithInvalidName(string nome)
     {
         // Arrange
-        var departamento = new Departamento(nome);
+        var departamento = new Department(nome);
         _departamentoRepositoryMock.Setup(repo => repo.AddDepartamentoAsync(departamento))
             .ReturnsAsync(true);
 
@@ -34,14 +34,14 @@ public class DepartamentoServiceTest
         Assert.Equal(Error.Departamento.NOME_INVALIDO, _departamentoService.Notifications.ElementAt(0).Message);
 
         _departamentoRepositoryMock
-            .Verify(x => x.AddDepartamentoAsync(It.IsAny<Departamento>()), Times.Never);
+            .Verify(x => x.AddDepartamentoAsync(It.IsAny<Department>()), Times.Never);
     }
 
     [Fact]
     public async Task AddDepartamentoAsync_ShouldReturnFalseWithErrors_WithRepeatedName()
     {
                // Arrange
-        var departamento = new Departamento("Engenharia de Produtos");
+        var departamento = new Department("Engenharia de Produtos");
         _departamentoRepositoryMock.Setup(repo => repo.AddDepartamentoAsync(departamento))
             .ReturnsAsync(true);
         _departamentoRepositoryMock.Setup(repo => repo.GetDepartamentoByNomeAsync(departamento.Nome))
@@ -58,7 +58,7 @@ public class DepartamentoServiceTest
         Assert.Equal(Error.Departamento.NOME_JA_EXISTE, _departamentoService.Notifications.ElementAt(0).Message);
 
         _departamentoRepositoryMock
-            .Verify(x => x.AddDepartamentoAsync(It.IsAny<Departamento>()), Times.Never);
+            .Verify(x => x.AddDepartamentoAsync(It.IsAny<Department>()), Times.Never);
 
         _departamentoRepositoryMock
             .Verify(x => x.GetDepartamentoByNomeAsync(It.IsAny<string>()), Times.Once);
@@ -69,11 +69,11 @@ public class DepartamentoServiceTest
     public async Task AddDepartamentoAsync_ShouldReturnFalseWithErrors_WithErrorInRepository()
     {
         // Arrange
-        var departamento = new Departamento("Engenharia de Produtos");
+        var departamento = new Department("Engenharia de Produtos");
         _departamentoRepositoryMock.Setup(repo => repo.AddDepartamentoAsync(departamento))
             .ReturnsAsync(false);
         _departamentoRepositoryMock.Setup(repo => repo.GetDepartamentoByNomeAsync(departamento.Nome))
-            .ReturnsAsync((Departamento?)null);
+            .ReturnsAsync((Department?)null);
 
         // Act
         var result = await _departamentoService.AddDepartamentoAsync(departamento);
@@ -86,7 +86,7 @@ public class DepartamentoServiceTest
         Assert.Equal(Error.Departamento.ERRO_AO_ADICIONAR, _departamentoService.Notifications.ElementAt(0).Message);
 
         _departamentoRepositoryMock
-            .Verify(x => x.AddDepartamentoAsync(It.IsAny<Departamento>()), Times.Once);
+            .Verify(x => x.AddDepartamentoAsync(It.IsAny<Department>()), Times.Once);
 
         _departamentoRepositoryMock
             .Verify(x => x.GetDepartamentoByNomeAsync(It.IsAny<string>()), Times.Once);
@@ -96,11 +96,11 @@ public class DepartamentoServiceTest
     public async Task AddDepartamentoAsync_ShouldReturnTrue_WithValidName()
     {
         // Arrange
-        var departamento = new Departamento("Engenharia de Produtos");
+        var departamento = new Department("Engenharia de Produtos");
         _departamentoRepositoryMock.Setup(repo => repo.AddDepartamentoAsync(departamento))
             .ReturnsAsync(true);
         _departamentoRepositoryMock.Setup(repo => repo.GetDepartamentoByNomeAsync(departamento.Nome))
-            .ReturnsAsync((Departamento?)null);
+            .ReturnsAsync((Department?)null);
 
         // Act
         var result = await _departamentoService.AddDepartamentoAsync(departamento);
@@ -112,7 +112,7 @@ public class DepartamentoServiceTest
         Assert.Empty(_departamentoService.Notifications);
 
         _departamentoRepositoryMock
-            .Verify(x => x.AddDepartamentoAsync(It.IsAny<Departamento>()), Times.Once);
+            .Verify(x => x.AddDepartamentoAsync(It.IsAny<Department>()), Times.Once);
 
         _departamentoRepositoryMock
             .Verify(x => x.GetDepartamentoByNomeAsync(It.IsAny<string>()), Times.Once);
@@ -125,7 +125,7 @@ public class DepartamentoServiceTest
     public async Task UpdateDepartamentoAsync_ShouldReturnFalse_WithInvalidName(string nome)
     {
         // Arrange
-        var departamento = new Departamento(nome);
+        var departamento = new Department(nome);
         _departamentoRepositoryMock.Setup(repo => repo.UpdateDepartamentoAsync(departamento))
             .ReturnsAsync(true);
 
@@ -140,15 +140,15 @@ public class DepartamentoServiceTest
         Assert.Equal(Error.Departamento.NOME_INVALIDO, _departamentoService.Notifications.ElementAt(0).Message);
 
         _departamentoRepositoryMock
-            .Verify(x => x.UpdateDepartamentoAsync(It.IsAny<Departamento>()), Times.Never);
+            .Verify(x => x.UpdateDepartamentoAsync(It.IsAny<Department>()), Times.Never);
     }
 
     [Fact]
     public async Task UpdateDepartamentoAsync_ShouldReturnFalseWithErrors_WithRepeatedName()
     {
         // Arrange
-        var departamento1 = new Departamento("Engenharia de Produtos");
-        var departamento2 = new Departamento("Engenharia de Produtos");
+        var departamento1 = new Department("Engenharia de Produtos");
+        var departamento2 = new Department("Engenharia de Produtos");
         _departamentoRepositoryMock.Setup(repo => repo.UpdateDepartamentoAsync(departamento1))
             .ReturnsAsync(true);
         _departamentoRepositoryMock.Setup(repo => repo.GetDepartamentoByNomeAsync(departamento2.Nome))
@@ -167,7 +167,7 @@ public class DepartamentoServiceTest
         Assert.Equal(Error.Departamento.NOME_JA_EXISTE, _departamentoService.Notifications.ElementAt(0).Message);
 
         _departamentoRepositoryMock
-            .Verify(x => x.UpdateDepartamentoAsync(It.IsAny<Departamento>()), Times.Never);
+            .Verify(x => x.UpdateDepartamentoAsync(It.IsAny<Department>()), Times.Never);
 
         _departamentoRepositoryMock
             .Verify(x => x.GetDepartamentoByNomeAsync(It.IsAny<string>()), Times.Once);
@@ -180,13 +180,13 @@ public class DepartamentoServiceTest
     public async Task UpdateDepartamentoAsync_ShouldReturnFalseWithErrors_WithIdNotExists()
     {
         // Arrange
-        var departamento = new Departamento("Engenharia de Produtos");
+        var departamento = new Department("Engenharia de Produtos");
         _departamentoRepositoryMock.Setup(repo => repo.UpdateDepartamentoAsync(departamento))
             .ReturnsAsync(true);
         _departamentoRepositoryMock.Setup(repo => repo.GetDepartamentoByNomeAsync(departamento.Nome))
-            .ReturnsAsync((Departamento?)null);
+            .ReturnsAsync((Department?)null);
         _departamentoRepositoryMock.Setup(repo => repo.GetDepartamentoByIdAsync(departamento.Id))
-            .ReturnsAsync((Departamento?)null);
+            .ReturnsAsync((Department?)null);
 
         // Act
         var result = await _departamentoService.UpdateDepartamentoAsync(departamento);
@@ -199,7 +199,7 @@ public class DepartamentoServiceTest
         Assert.Equal(Error.Departamento.DEPARTAMENTO_NAO_ENCONTRADO, _departamentoService.Notifications.ElementAt(0).Message);
 
         _departamentoRepositoryMock
-            .Verify(x => x.UpdateDepartamentoAsync(It.IsAny<Departamento>()), Times.Never);
+            .Verify(x => x.UpdateDepartamentoAsync(It.IsAny<Department>()), Times.Never);
 
         _departamentoRepositoryMock
             .Verify(x => x.GetDepartamentoByNomeAsync(It.IsAny<string>()), Times.Once);
@@ -213,11 +213,11 @@ public class DepartamentoServiceTest
     public async Task UpdateDepartamentoAsync_ShouldReturnFalseWithErrors_WithErrorInRepository()
     {
         // Arrange
-        var departamento = new Departamento("Engenharia de Produtos");
+        var departamento = new Department("Engenharia de Produtos");
         _departamentoRepositoryMock.Setup(repo => repo.UpdateDepartamentoAsync(departamento))
             .ReturnsAsync(false);
         _departamentoRepositoryMock.Setup(repo => repo.GetDepartamentoByNomeAsync(departamento.Nome))
-            .ReturnsAsync((Departamento?)null);
+            .ReturnsAsync((Department?)null);
         _departamentoRepositoryMock.Setup(repo => repo.GetDepartamentoByIdAsync(departamento.Id))
             .ReturnsAsync(departamento);
 
@@ -232,7 +232,7 @@ public class DepartamentoServiceTest
         Assert.Equal(Error.Departamento.ERRO_AO_ATUALIZAR, _departamentoService.Notifications.ElementAt(0).Message);
 
         _departamentoRepositoryMock
-            .Verify(x => x.UpdateDepartamentoAsync(It.IsAny<Departamento>()), Times.Once);
+            .Verify(x => x.UpdateDepartamentoAsync(It.IsAny<Department>()), Times.Once);
 
         _departamentoRepositoryMock
             .Verify(x => x.GetDepartamentoByNomeAsync(It.IsAny<string>()), Times.Once);
@@ -246,11 +246,11 @@ public class DepartamentoServiceTest
     public async Task UpdateDepartamentoAsync_ShouldReturnTrue_WithValidName()
     {
         // Arrange
-        var departamento = new Departamento("Engenharia de Produtos");
+        var departamento = new Department("Engenharia de Produtos");
         _departamentoRepositoryMock.Setup(repo => repo.UpdateDepartamentoAsync(departamento))
             .ReturnsAsync(true);
         _departamentoRepositoryMock.Setup(repo => repo.GetDepartamentoByNomeAsync(departamento.Nome))
-            .ReturnsAsync((Departamento?)null);
+            .ReturnsAsync((Department?)null);
         _departamentoRepositoryMock.Setup(repo => repo.GetDepartamentoByIdAsync(departamento.Id))
             .ReturnsAsync(departamento);
 
@@ -264,7 +264,7 @@ public class DepartamentoServiceTest
         Assert.Empty(_departamentoService.Notifications);
 
         _departamentoRepositoryMock
-            .Verify(x => x.UpdateDepartamentoAsync(It.IsAny<Departamento>()), Times.Once);
+            .Verify(x => x.UpdateDepartamentoAsync(It.IsAny<Department>()), Times.Once);
 
         _departamentoRepositoryMock
             .Verify(x => x.GetDepartamentoByNomeAsync(It.IsAny<string>()), Times.Once);
@@ -277,11 +277,11 @@ public class DepartamentoServiceTest
     public async Task RemoveDepartamentoAsync_ShouldReturnFalseWithErrors_WithIdNotExists()
     {
         // Arrange
-        var departamento = new Departamento("Engenharia de Produtos");
+        var departamento = new Department("Engenharia de Produtos");
         _departamentoRepositoryMock.Setup(repo => repo.RemoveDepartamentoAsync(departamento))
             .ReturnsAsync(true);
         _departamentoRepositoryMock.Setup(repo => repo.GetDepartamentoByIdAsync(departamento.Id))
-            .ReturnsAsync((Departamento?)null);
+            .ReturnsAsync((Department?)null);
 
         // Act
         var result = await _departamentoService.RemoveDepartamentoAsync(departamento);
@@ -294,7 +294,7 @@ public class DepartamentoServiceTest
         Assert.Equal(Error.Departamento.DEPARTAMENTO_NAO_ENCONTRADO, _departamentoService.Notifications.ElementAt(0).Message);
 
         _departamentoRepositoryMock
-            .Verify(x => x.RemoveDepartamentoAsync(It.IsAny<Departamento>()), Times.Never);
+            .Verify(x => x.RemoveDepartamentoAsync(It.IsAny<Department>()), Times.Never);
 
         _departamentoRepositoryMock
             .Verify(x => x.GetDepartamentoByIdAsync(It.IsAny<Guid>()), Times.Once);
@@ -304,7 +304,7 @@ public class DepartamentoServiceTest
     public async Task RemoveDepartamentoAsync_ShouldReturnReturnFalseWithErrors_WithErrorInRepository()
     {
         // Arrange
-        var departamento = new Departamento("Engenharia de Produtos");
+        var departamento = new Department("Engenharia de Produtos");
         _departamentoRepositoryMock.Setup(repo => repo.RemoveDepartamentoAsync(departamento))
             .ReturnsAsync(false);
         _departamentoRepositoryMock.Setup(repo => repo.GetDepartamentoByIdAsync(departamento.Id))
@@ -321,7 +321,7 @@ public class DepartamentoServiceTest
         Assert.Equal(Error.Departamento.ERRO_AO_REMOVER, _departamentoService.Notifications.ElementAt(0).Message);
 
         _departamentoRepositoryMock
-            .Verify(x => x.RemoveDepartamentoAsync(It.IsAny<Departamento>()), Times.Once);
+            .Verify(x => x.RemoveDepartamentoAsync(It.IsAny<Department>()), Times.Once);
 
         _departamentoRepositoryMock
             .Verify(x => x.GetDepartamentoByIdAsync(It.IsAny<Guid>()), Times.Once);
@@ -331,7 +331,7 @@ public class DepartamentoServiceTest
     public async Task RemoveDepartamentoAsync_ShouldReturnTrue()
     {
         // Arrange
-        var departamento = new Departamento("Engenharia de Produtos");
+        var departamento = new Department("Engenharia de Produtos");
         _departamentoRepositoryMock.Setup(repo => repo.RemoveDepartamentoAsync(departamento))
             .ReturnsAsync(true);
         _departamentoRepositoryMock.Setup(repo => repo.GetDepartamentoByIdAsync(departamento.Id))
@@ -345,7 +345,7 @@ public class DepartamentoServiceTest
         Assert.True(_departamentoService.IsValid);
 
         _departamentoRepositoryMock
-            .Verify(x => x.RemoveDepartamentoAsync(It.IsAny<Departamento>()), Times.Once);
+            .Verify(x => x.RemoveDepartamentoAsync(It.IsAny<Department>()), Times.Once);
 
         _departamentoRepositoryMock
             .Verify(x => x.GetDepartamentoByIdAsync(It.IsAny<Guid>()), Times.Once);
