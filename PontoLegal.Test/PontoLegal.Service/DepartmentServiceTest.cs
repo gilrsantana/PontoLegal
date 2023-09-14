@@ -1,3 +1,5 @@
+using PontoLegal.Service.DTOs;
+
 namespace PontoLegal.Test.PontoLegal.Service;
 
 public class DepartmentServiceTest
@@ -319,6 +321,121 @@ public class DepartmentServiceTest
         Assert.True(_departmentService.IsValid);
         Assert.Empty(_departmentService.Notifications);
     }
-    
+
+    [Fact]
+    public async Task GetDepartmentByNameAsync_ShouldReturnNull_WithEmptyName()
+    {
+        // Arrange
+        var name = string.Empty;
+        _departmentRepositoryMock
+            .Setup(repo => repo.GetDepartmentByNameAsync(name))
+            .ReturnsAsync((Department?)null);
+
+        // Act
+        var result = await _departmentService.GetDepartmentByNameAsync(name);
+
+        // Assert
+        Assert.Null(result);
+        Assert.True(_departmentService.IsValid);
+        Assert.Empty(_departmentService.Notifications);
+    }
+
+    [Fact]
+    public async Task GetDepartmentByNameAsync_ShouldReturnNull_WithNameNotFound()
+    {
+        // Arrange
+        var name = "Department Name";
+        _departmentRepositoryMock
+            .Setup(repo => repo.GetDepartmentByNameAsync(name))
+            .ReturnsAsync((Department?)null);
+
+        // Act
+        var result = await _departmentService.GetDepartmentByNameAsync(name);
+
+        // Assert
+        Assert.Null(result);
+        Assert.True(_departmentService.IsValid);
+        Assert.Empty(_departmentService.Notifications);
+    }
+
+    [Fact]
+    public async Task GetDepartmentByNameAsync_ShouldReturnDTO()
+    {
+        // Arrange
+        var name = "Products Development";
+        var model = new Department(name);
+        _departmentRepositoryMock
+            .Setup(repo => repo.GetDepartmentByNameAsync(It.IsAny<string>()))
+            .ReturnsAsync(model);
+
+        // Act
+        var result = await _departmentService.GetDepartmentByNameAsync(name);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(model.Id, result.Id);
+        Assert.Equal(model.Name, result.Name);
+        Assert.IsType<DepartmentDTO?>(result);
+        Assert.True(_departmentService.IsValid);
+        Assert.Empty(_departmentService.Notifications);
+    }
+
+    [Fact]
+    public async Task GetDepartmentByIdAsync_ShouldReturnNull_WithEmptyGuid()
+    {
+        // Arrange
+        var guid = Guid.Empty;
+        _departmentRepositoryMock
+            .Setup(repo => repo.GetDepartmentByIdAsync(guid))
+            .ReturnsAsync((Department?)null);
+
+        // Act
+        var result = await _departmentService.GetDepartmentByIdAsync(guid);
+
+        // Assert
+        Assert.Null(result);
+        Assert.True(_departmentService.IsValid);
+        Assert.Empty(_departmentService.Notifications);
+    }
+
+    [Fact]
+    public async Task GetDepartmentByIdAsync_ShouldReturnNull_WithGuidNotFound()
+    {
+        // Arrange
+        var guid = Guid.NewGuid();
+        _departmentRepositoryMock
+            .Setup(repo => repo.GetDepartmentByIdAsync(guid))
+            .ReturnsAsync((Department?)null);
+
+        // Act
+        var result = await _departmentService.GetDepartmentByIdAsync(guid);
+
+        // Assert
+        Assert.Null(result);
+        Assert.True(_departmentService.IsValid);
+        Assert.Empty(_departmentService.Notifications);
+    }
+
+    [Fact]
+    public async Task GetDepartmentByIdAsync_ShouldReturnDTO()
+    {
+        // Arrange
+        var name = "Products Development";
+        var model = new Department(name);
+        _departmentRepositoryMock
+            .Setup(repo => repo.GetDepartmentByIdAsync(It.IsAny<Guid>()))
+            .ReturnsAsync(model);
+
+        // Act
+        var result = await _departmentService.GetDepartmentByIdAsync(Guid.NewGuid());
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(model.Id, result.Id);
+        Assert.Equal(model.Name, result.Name);
+        Assert.IsType<DepartmentDTO?>(result);
+        Assert.True(_departmentService.IsValid);
+        Assert.Empty(_departmentService.Notifications);
+    }
 }
 
