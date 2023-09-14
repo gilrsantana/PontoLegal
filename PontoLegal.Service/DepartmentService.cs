@@ -90,10 +90,11 @@ public class DepartmentService : BaseService, IDepartmentService
             AddNotification("DepartamentoService.Nome", Error.Department.NAME_ALREADY_EXISTS);
             return false;
         }
+        
+        var department = new Department(model.Name);
+        department.Id = id;
 
-        var departamento = new Department(model.Name);
-
-        var result = await _departmentRepository.UpdateDepartmentAsync(id, departamento);
+        var result = await _departmentRepository.UpdateDepartmentAsync(id, department);
             
         if (result) return true;
 

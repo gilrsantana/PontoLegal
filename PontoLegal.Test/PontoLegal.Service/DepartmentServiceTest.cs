@@ -1,5 +1,3 @@
-using PontoLegal.Service.Entities;
-
 namespace PontoLegal.Test.PontoLegal.Service;
 
 public class DepartmentServiceTest
@@ -20,9 +18,9 @@ public class DepartmentServiceTest
     public async Task AddDepartmentAsync_ShouldReturnFalseWithErrors_WithInvalidName(string name)
     {
         // Arrange
-        var department = new Department(name);
         var model = new DepartmentModel(name);
-        _departmentRepositoryMock.Setup(repo => repo.AddDepartmentAsync(department))
+        _departmentRepositoryMock
+            .Setup(repo => repo.AddDepartmentAsync(It.IsAny<Department>()))
             .ReturnsAsync(true);
 
         // Act
@@ -32,7 +30,7 @@ public class DepartmentServiceTest
         Assert.False(result);
         Assert.False(model.IsValid);
         Assert.False(_departmentService.IsValid);
-        Assert.Equal(1, _departmentService.Notifications.Count);
+        Assert.Single(_departmentService.Notifications);
         Assert.Equal(Error.Department.INVALID_NAME, _departmentService.Notifications.ElementAt(0).Message);
     }
 
@@ -42,9 +40,11 @@ public class DepartmentServiceTest
         // Arrange
         var department = new Department("Products Development");
         var model = new DepartmentModel("Products Development");
-        _departmentRepositoryMock.Setup(repo => repo.AddDepartmentAsync(department))
+        _departmentRepositoryMock
+            .Setup(repo => repo.AddDepartmentAsync(It.IsAny<Department>()))
             .ReturnsAsync(true);
-        _departmentRepositoryMock.Setup(repo => repo.GetDepartmentByNameAsync(model.Name))
+        _departmentRepositoryMock
+            .Setup(repo => repo.GetDepartmentByNameAsync(model.Name))
             .ReturnsAsync(department);
 
         // Act
@@ -62,12 +62,10 @@ public class DepartmentServiceTest
     public async Task AddDepartmentAsync_ShouldReturnFalseWithErrors_WithErrorInRepository()
     {
         // Arrange
-        var department = new Department("Products Development");
         var model = new DepartmentModel("Products Development");
-        _departmentRepositoryMock.Setup(repo => repo.AddDepartmentAsync(department))
+        _departmentRepositoryMock
+            .Setup(repo => repo.AddDepartmentAsync(It.IsAny<Department>()))
             .ReturnsAsync(false);
-        _departmentRepositoryMock.Setup(repo => repo.GetDepartmentByNameAsync(model.Name))
-            .ReturnsAsync((Department?)null);
 
         // Act
         var result = await _departmentService.AddDepartmentAsync(model);
@@ -81,15 +79,13 @@ public class DepartmentServiceTest
     }
 
     [Fact]
-    public async Task AddDepartmentAsync_ShouldReturnTrue_WithValidName()
+    public async Task AddDepartmentAsync_ShouldReturnTrue()
     {
         // Arrange
-        var department = new Department("Products Development");
         var model = new DepartmentModel("Products Development");
-        _departmentRepositoryMock.Setup(repo => repo.AddDepartmentAsync(department))
+        _departmentRepositoryMock
+            .Setup(repo => repo.AddDepartmentAsync(It.IsAny<Department>()))
             .ReturnsAsync(true);
-        _departmentRepositoryMock.Setup(repo => repo.GetDepartmentByNameAsync(model.Name))
-            .ReturnsAsync((Department?)null);
 
         // Act
         var result = await _departmentService.AddDepartmentAsync(model);
@@ -111,7 +107,8 @@ public class DepartmentServiceTest
         var department = new Department(name);
         var model = new DepartmentModel(name);
         var id = Guid.NewGuid();
-        _departmentRepositoryMock.Setup(repo => repo.UpdateDepartmentAsync(id, department))
+        _departmentRepositoryMock
+            .Setup(repo => repo.UpdateDepartmentAsync(id, department))
             .ReturnsAsync(true);
 
         // Act
@@ -129,16 +126,19 @@ public class DepartmentServiceTest
     public async Task UpdateDepartmentAsync_ShouldReturnFalseWithErrors_WithRepeatedName()
     {
         // Arrange
-        var department1 = new Department("Products Development");
-        var department2 = new Department("Products Development");
         var model = new DepartmentModel("Products Development");
+        var department1 = new Department(model.Name);
+        var department2 = new Department(model.Name);
         var id = Guid.NewGuid();
-        _departmentRepositoryMock.Setup(repo => repo.UpdateDepartmentAsync(id, department1))
-            .ReturnsAsync(true);
-        _departmentRepositoryMock.Setup(repo => repo.GetDepartmentByNameAsync(model.Name))
+        _departmentRepositoryMock
+            .Setup(repo => repo.GetDepartmentByNameAsync(model.Name))
             .ReturnsAsync(department2);
-        _departmentRepositoryMock.Setup(repo => repo.GetDepartmentByIdAsync(department1.Id))
+        _departmentRepositoryMock
+            .Setup(repo => repo.GetDepartmentByIdAsync(id))
             .ReturnsAsync(department1);
+        _departmentRepositoryMock
+            .Setup(repo => repo.UpdateDepartmentAsync(id, department1))
+            .ReturnsAsync(true);
 
         // Act
         var result = await _departmentService.UpdateDepartmentAsync(id, model);
@@ -183,12 +183,15 @@ public class DepartmentServiceTest
         var department = new Department("Products Development");
         var model = new DepartmentModel("Products Development");
         var id = Guid.NewGuid();
-        _departmentRepositoryMock.Setup(repo => repo.UpdateDepartmentAsync(id, department))
-            .ReturnsAsync(false);
-        _departmentRepositoryMock.Setup(repo => repo.GetDepartmentByNameAsync(model.Name))
+        _departmentRepositoryMock
+            .Setup(repo => repo.GetDepartmentByNameAsync(model.Name))
             .ReturnsAsync((Department?)null);
-        _departmentRepositoryMock.Setup(repo => repo.GetDepartmentByIdAsync(department.Id))
+        _departmentRepositoryMock
+            .Setup(repo => repo.GetDepartmentByIdAsync(id))
             .ReturnsAsync(department);
+        _departmentRepositoryMock
+            .Setup(repo => repo.UpdateDepartmentAsync(id, department))
+            .ReturnsAsync(false);
 
         // Act
         var result = await _departmentService.UpdateDepartmentAsync(id, model);
@@ -201,114 +204,121 @@ public class DepartmentServiceTest
         Assert.Equal(Error.Department.ERROR_UPDATING, _departmentService.Notifications.ElementAt(0).Message);
     }
 
-    //[Fact]
-    //public async Task UpdateDepartmentAsync_ShouldReturnTrue_WithValidName()
-    //{
-    //    // Arrange
-    //    var Department = new Department("Engenharia de Produtos");
-    //    _departmentRepositoryMock.Setup(repo => repo.UpdateDepartmentAsync(Department))
-    //        .ReturnsAsync(true);
-    //    _departmentRepositoryMock.Setup(repo => repo.GetDepartmentByNomeAsync(Department.Nome))
-    //        .ReturnsAsync((Department?)null);
-    //    _departmentRepositoryMock.Setup(repo => repo.GetDepartmentByIdAsync(Department.Id))
-    //        .ReturnsAsync(Department);
+    [Fact]
+    public async Task UpdateDepartmentAsync_ShouldReturnTrue()
+    {
+        // Arrange
+        var model = new DepartmentModel("Products Development");
+        var department = new Department(model.Name);
+        var id = Guid.NewGuid();
+        department.Id = id;
+        _departmentRepositoryMock
+            .Setup(repo => repo.GetDepartmentByNameAsync(model.Name))
+            .ReturnsAsync((Department?)null);
+        _departmentRepositoryMock
+            .Setup(repo => repo.GetDepartmentByIdAsync(id))
+            .ReturnsAsync(department);
+        _departmentRepositoryMock
+            .Setup(repo => repo.UpdateDepartmentAsync(It.IsAny<Guid>(), It.IsAny<Department>()))
+            .ReturnsAsync(true);
 
-    //    // Act
-    //    var result = await _departmentService.UpdateDepartmentAsync(Department);
+        // Act
+        var result = await _departmentService.UpdateDepartmentAsync(id, model);
 
-    //    // Assert
-    //    Assert.True(result);
-    //    Assert.True(Department.IsValid);
-    //    Assert.True(_departmentService.IsValid);
-    //    Assert.Empty(_departmentService.Notifications);
+        // Assert
+        Assert.True(result);
+        Assert.True(model.IsValid);
+        Assert.True(_departmentService.IsValid);
+        Assert.Empty(_departmentService.Notifications);
+    }
 
-    //    _departmentRepositoryMock
-    //        .Verify(x => x.UpdateDepartmentAsync(It.IsAny<Department>()), Times.Once);
+    [Fact]
+    public async Task RemoveDepartmentAsync_ShouldReturnFalseWithErrors_WithIdNotExists()
+    {
+        // Arrange
+        _departmentRepositoryMock
+            .Setup(repo => repo.GetDepartmentByIdAsync(It.IsAny<Guid>()))
+            .ReturnsAsync((Department?)null);
+        _departmentRepositoryMock
+            .Setup(repo => repo.RemoveDepartmentByIdAsync(It.IsAny<Guid>()))
+            .ReturnsAsync(true);
 
-    //    _departmentRepositoryMock
-    //        .Verify(x => x.GetDepartmentByNomeAsync(It.IsAny<string>()), Times.Once);
+        // Act
+        var result = await _departmentService.RemoveDepartmentByIdAsync(Guid.NewGuid());
 
-    //    _departmentRepositoryMock
-    //        .Verify(x => x.GetDepartmentByIdAsync(It.IsAny<Guid>()), Times.Once);
-    //}
+        // Assert
+        Assert.False(result);
+        Assert.False(_departmentService.IsValid);
+        Assert.Single(_departmentService.Notifications);
+        Assert.Equal(Error.Department.DEPARTMENT_NOT_FOUNDED, _departmentService.Notifications.ElementAt(0).Message);
+    }
 
-    //[Fact]
-    //public async Task RemoveDepartmentAsync_ShouldReturnFalseWithErrors_WithIdNotExists()
-    //{
-    //    // Arrange
-    //    var Department = new Department("Engenharia de Produtos");
-    //    _departmentRepositoryMock.Setup(repo => repo.RemoveDepartmentAsync(Department))
-    //        .ReturnsAsync(true);
-    //    _departmentRepositoryMock.Setup(repo => repo.GetDepartmentByIdAsync(Department.Id))
-    //        .ReturnsAsync((Department?)null);
+    [Fact]
+    public async Task RemoveDepartmentAsync_ShouldReturnReturnFalseWithErrors_WithEmptyGuid()
+    {
+        // Arrange
+        var department = new Department("Products Development");
+        var id = Guid.Empty;
+        _departmentRepositoryMock
+            .Setup(repo => repo.GetDepartmentByIdAsync(id))
+            .ReturnsAsync((Department?)null);
+        _departmentRepositoryMock
+            .Setup(repo => repo.RemoveDepartmentByIdAsync(id))
+            .ReturnsAsync(false);
 
-    //    // Act
-    //    var result = await _departmentService.RemoveDepartmentAsync(Department);
+        // Act
+        var result = await _departmentService.RemoveDepartmentByIdAsync(id);
 
-    //    // Assert
-    //    Assert.False(result);
-    //    Assert.True(Department.IsValid);
-    //    Assert.False(_departmentService.IsValid);
-    //    Assert.Single(_departmentService.Notifications);
-    //    Assert.Equal(Error.Department.Department_NAO_ENCONTRADO, _departmentService.Notifications.ElementAt(0).Message);
+        // Assert
+        Assert.False(result);
+        Assert.False(_departmentService.IsValid);
+        Assert.Single(_departmentService.Notifications);
+        Assert.Equal(Error.Department.INVALID_ID, _departmentService.Notifications.ElementAt(0).Message);
+    }
+    
+    [Fact]
+    public async Task RemoveDepartmentAsync_ShouldReturnReturnFalseWithErrors_WithErrorInRepository()
+    {
+        // Arrange
+        var department = new Department("Products Development");
+        var id = department.Id;
+        _departmentRepositoryMock
+            .Setup(repo => repo.GetDepartmentByIdAsync(id))
+            .ReturnsAsync(department);
+        _departmentRepositoryMock
+            .Setup(repo => repo.RemoveDepartmentByIdAsync(id))
+            .ReturnsAsync(false);
 
-    //    _departmentRepositoryMock
-    //        .Verify(x => x.RemoveDepartmentAsync(It.IsAny<Department>()), Times.Never);
+        // Act
+        var result = await _departmentService.RemoveDepartmentByIdAsync(id);
 
-    //    _departmentRepositoryMock
-    //        .Verify(x => x.GetDepartmentByIdAsync(It.IsAny<Guid>()), Times.Once);
-    //}
+        // Assert
+        Assert.False(result);
+        Assert.False(_departmentService.IsValid);
+        Assert.Single(_departmentService.Notifications);
+        Assert.Equal(Error.Department.ERROR_REMOVING, _departmentService.Notifications.ElementAt(0).Message);
+    }
 
-    //[Fact]
-    //public async Task RemoveDepartmentAsync_ShouldReturnReturnFalseWithErrors_WithErrorInRepository()
-    //{
-    //    // Arrange
-    //    var Department = new Department("Engenharia de Produtos");
-    //    _departmentRepositoryMock.Setup(repo => repo.RemoveDepartmentAsync(Department))
-    //        .ReturnsAsync(false);
-    //    _departmentRepositoryMock.Setup(repo => repo.GetDepartmentByIdAsync(Department.Id))
-    //        .ReturnsAsync(Department);
+    [Fact]
+    public async Task RemoveDepartmentAsync_ShouldReturnTrue()
+    {
+        // Arrange
+        var department = new Department("Products Development");
+        var id = department.Id;
+        _departmentRepositoryMock
+            .Setup(repo => repo.GetDepartmentByIdAsync(id))
+            .ReturnsAsync(department);
+        _departmentRepositoryMock
+            .Setup(repo => repo.RemoveDepartmentByIdAsync(id))
+            .ReturnsAsync(true);
 
-    //    // Act
-    //    var result = await _departmentService.RemoveDepartmentAsync(Department);
+        // Act
+        var result = await _departmentService.RemoveDepartmentByIdAsync(id);
 
-    //    // Assert
-    //    Assert.False(result);
-    //    Assert.True(Department.IsValid);
-    //    Assert.False(_departmentService.IsValid);
-    //    Assert.Single(_departmentService.Notifications);
-    //    Assert.Equal(Error.Department.ERRO_AO_REMOVER, _departmentService.Notifications.ElementAt(0).Message);
-
-    //    _departmentRepositoryMock
-    //        .Verify(x => x.RemoveDepartmentAsync(It.IsAny<Department>()), Times.Once);
-
-    //    _departmentRepositoryMock
-    //        .Verify(x => x.GetDepartmentByIdAsync(It.IsAny<Guid>()), Times.Once);
-    //}
-
-    //[Fact]
-    //public async Task RemoveDepartmentAsync_ShouldReturnTrue()
-    //{
-    //    // Arrange
-    //    var Department = new Department("Engenharia de Produtos");
-    //    _departmentRepositoryMock.Setup(repo => repo.RemoveDepartmentAsync(Department))
-    //        .ReturnsAsync(true);
-    //    _departmentRepositoryMock.Setup(repo => repo.GetDepartmentByIdAsync(Department.Id))
-    //        .ReturnsAsync(Department);
-
-    //    // Act
-    //    var result = await _departmentService.RemoveDepartmentAsync(Department);
-
-    //    Assert.True(result);
-    //    Assert.True(Department.IsValid);
-    //    Assert.True(_departmentService.IsValid);
-
-    //    _departmentRepositoryMock
-    //        .Verify(x => x.RemoveDepartmentAsync(It.IsAny<Department>()), Times.Once);
-
-    //    _departmentRepositoryMock
-    //        .Verify(x => x.GetDepartmentByIdAsync(It.IsAny<Guid>()), Times.Once);
-    //}
+        Assert.True(result);
+        Assert.True(_departmentService.IsValid);
+        Assert.Empty(_departmentService.Notifications);
+    }
     
 }
 
