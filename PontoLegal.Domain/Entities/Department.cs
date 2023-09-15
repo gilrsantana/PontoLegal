@@ -7,4 +7,9 @@ public class Department : BaseEntity
     {
         Name = name;
     }
+    public Department(Guid id, string name)
+    {
+        Id = id;
+        Name = name;
+    }
 }
