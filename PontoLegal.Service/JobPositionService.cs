@@ -16,6 +16,11 @@ public class JobPositionService : BaseService, IJobPositionService
 
     public async Task<bool> AddJobPositionAsync(JobPositionModel model)
     {
+        if (!model.IsValid)
+        {
+            AddNotifications(model.Notifications);
+            return false;
+        }
         return true;
     }
 }

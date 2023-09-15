@@ -1,4 +1,5 @@
 using PontoLegal.Service.DTOs;
+using Xunit.Sdk;
 
 namespace PontoLegal.Test.PontoLegal.Service;
 
@@ -436,6 +437,100 @@ public class DepartmentServiceTest
         Assert.IsType<DepartmentDTO?>(result);
         Assert.True(_departmentService.IsValid);
         Assert.Empty(_departmentService.Notifications);
+    }
+
+    [Theory]
+    [InlineData(-1, 25)]
+    [InlineData(0, 0)]
+    [InlineData(1, 0)]
+    [InlineData(-1, 0)]
+    [InlineData(-1, -1)]
+    [InlineData(0, -1)]
+    public async Task GetAllDepartmentsAsync_ShouldReturnEmptyList_WithInvalidSkipTake(int skip, int take)
+    {
+        // Arrange
+        _departmentRepositoryMock
+            .Setup(repo => repo.GetAllDepartmentsAsync(skip, take))
+            .ReturnsAsync((ICollection<Department>?)null);
+
+        // Act
+        var result = await _departmentService.GetAllDepartmentsAsync(skip, take);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Empty(result);
+        Assert.False(_departmentService.IsValid);
+        Assert.Single(_departmentService.Notifications);
+        Assert.Equal(Error.Department.INVALID_PAGINATION, _departmentService.Notifications.First().Message);
+    }
+
+    [Fact]
+    public async Task GetAllDepartmentsAsync_ShouldReturnEmptyList_WithNoDepartments()
+    {
+        // Arrange
+        _departmentRepositoryMock
+            .Setup(repo => repo.GetAllDepartmentsAsync(It.IsAny<int>(), It.IsAny<int>()))
+            .ReturnsAsync((ICollection<Department>?)null);
+
+        // Act
+        var result = await _departmentService.GetAllDepartmentsAsync(0, 25);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Empty(result);
+        Assert.True(_departmentService.IsValid);
+        Assert.Empty(_departmentService.Notifications);
+    }
+
+    [Theory]
+    [InlineData(0, 25)]
+    [InlineData(0, 1)]
+    [InlineData(0, 50)]
+    [InlineData(25, 1)]
+    [InlineData(25, 25)]
+    [InlineData(1, 30)]
+    public async Task GetAllDepartmentsAsync_ShouldReturnEmptyList_WithRepositoryError(int skip, int take)
+    {
+        // Arrange
+        _departmentRepositoryMock
+            .Setup(repo => repo.GetAllDepartmentsAsync(It.IsAny<int>(), It.IsAny<int>()))
+            .ReturnsAsync((ICollection<Department>?)null);
+
+        // Act
+        var result = await _departmentService.GetAllDepartmentsAsync(skip, take);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Empty(result);
+        Assert.False(_departmentService.IsValid);
+        Assert.Single(_departmentService.Notifications);
+        Assert.Equal(Error.Department.ERROR_GETTING_ALL, _departmentService.Notifications.First().Message);
+    }
+
+    [Fact]
+    public async Task GetAllDepartmentsAsync_ShouldReturnNotEmptyLis()
+    {
+                // Arrange
+        var model = new List<Department>
+        {
+            new Department("Department 1"),
+            new Department("Department 2"),
+            new Department("Department 3"),
+            new Department("Department 4"),
+            new Department("Department 5")
+        };
+        _departmentRepositoryMock
+            .Setup(repo => repo.GetAllDepartmentsAsync(It.IsAny<int>(), It.IsAny<int>()))
+            .ReturnsAsync(model);
+
+        // Act
+        var result = await _departmentService.GetAllDepartmentsAsync(0, 25);
+
+        // Assert
+        Assert.True(_departmentService.IsValid);
+        Assert.NotNull(result);
+        Assert.NotEmpty(result);
+        Assert.Equal(model.Count, result.Count);
     }
 }
 

@@ -10,4 +10,5 @@ public interface IDepartmentService
     Task<DepartmentDTO?> GetDepartmentByIdAsync(Guid departmentId);
     Task<bool> UpdateDepartmentAsync(Guid id, DepartmentModel model);
     Task<bool> RemoveDepartmentByIdAsync(Guid id);
+    Task<ICollection<DepartmentDTO>> GetAllDepartmentsAsync(int skip = 0, int take = 25);
 }

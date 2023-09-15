@@ -17,11 +17,13 @@ public class JobPositionServiceTest
     [InlineData("", "Development")]
     [InlineData("D", "Development")]
     [InlineData("Development with more than 30 chars in the name", "Development")]
-    public async Task AddJobPositionAsync_ShouldReturnFalseWithError_WhenInvalidJobPositionName(string name, string department)
+    public async Task AddJobPositionAsync_ShouldReturnFalseWithError_WhenInvalidJobPositionName(string name, string departmentName)
     {
         // Arrange
-        var jobPosition = new JobPosition(name, new Department(department));
-        var model = new JobPositionModel(name, new DepartmentModel(department));
+        var departmentModel = new DepartmentModel(departmentName);
+        var model = new JobPositionModel(name, departmentModel);
+        var department = new Department(departmentName);
+        var jobPosition = new JobPosition(name, department.Id, department);
         _jobPositionRepositoryMock.Setup(x => x.AddJobPositionAsync(jobPosition))
             .ReturnsAsync(false);
 
@@ -29,7 +31,9 @@ public class JobPositionServiceTest
         var result = await _jobPositionService.AddJobPositionAsync(model);
 
         // Assert
-        Assert.False(model.IsValid);
         Assert.False(result);
+        Assert.False(model.IsValid);
+        Assert.Single(model.Notifications);
+        Assert.Equal(Error.JobPosition.INVALID_NAME, model.Notifications.First().Message);
     }
 }

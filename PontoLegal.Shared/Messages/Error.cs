@@ -4,6 +4,8 @@ public static class Error
 {
     public static class Department
     {
+        public const string ERROR_GETTING_ALL      = "Error getting all departments";
+        public const string INVALID_PAGINATION     = "Invalid skip and/or take value";
         public const string DEPARTMENT_NOT_FOUNDED = "Department not founded";
         public const string ERROR_ADDING           = "Error adding Department";
         public const string ERROR_REMOVING         = "Error removing Department";
