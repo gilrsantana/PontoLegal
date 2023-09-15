@@ -9,4 +9,5 @@ public interface IDepartmentRepository
     Task<Department?> GetDepartmentByNameAsync(string departmentName);
     Task<Department?> GetDepartmentByIdAsync(Guid departmentId);
     Task<bool> RemoveDepartmentByIdAsync(Guid id);
+    Task<ICollection<Department>?> GetAllDepartmentsAsync(int skip=0, int take=25);
 }

@@ -123,4 +123,27 @@ public class DepartmentService : BaseService, IDepartmentService
         AddNotification("DepartmentService", Error.Department.ERROR_REMOVING);
         return false;
     }
+
+    public async Task<ICollection<DepartmentDTO>> GetAllDepartmentsAsync(int skip=0, int take=25)
+    {
+        if (skip < 0 || take < 1)
+        {
+            AddNotification("DepartmentService", Error.Department.INVALID_PAGINATION);
+            return new List<DepartmentDTO>();
+        }
+
+        var result = await _departmentRepository.GetAllDepartmentsAsync(skip, take);
+        if (result != null)
+        {
+            var departments = new List<DepartmentDTO>();
+            foreach (var department in result)
+            {
+                departments.Add(new DepartmentDTO { Id = department.Id, Name = department.Name });
+            }
+            return departments;
+        }
+        
+        AddNotification("DepartmentService", Error.Department.ERROR_GETTING_ALL);
+        return new List<DepartmentDTO>();
+    }
 }
