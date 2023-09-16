@@ -11,6 +11,7 @@ public class JobPositionServiceTest
         _jobPositionService = new JobPositionService(_jobPositionRepositoryMock.Object);
     }
 
+    #region AddJobPositionAsync
     [Fact]
     public async Task AddJobPositionAsync_ShouldReturnsFalseWithError_WithInvalidModel()
     {
@@ -151,4 +152,8 @@ public class JobPositionServiceTest
         Assert.True(result);
         Assert.Empty(_jobPositionService.Notifications);
     }
+
+
+    #endregion
+
 }
