@@ -221,7 +221,7 @@ public class JobPositionServiceTest
     }
 
     [Fact]
-    public async Task GetJobPositionByNameIncludeDepartmentAsync_ShouldReturnsJobPosition_WithDepartment()
+    public async Task GetJobPositionByNameIncludeDepartmentAsync_ShouldReturnsJobPositionDTO_WithDepartment()
     {
         // Arrange
         var name = "Developer";
@@ -236,6 +236,7 @@ public class JobPositionServiceTest
 
         // Assert
         Assert.NotNull(result);
+        Assert.IsType<JobPositionDTO?>(result);
         Assert.Equal(jobPosition.Name, result.Name);
         Assert.Equal(jobPosition.Id, result.Id);
         Assert.Equal(jobPosition.Department.Name, result.Department.Name);
@@ -260,6 +261,126 @@ public class JobPositionServiceTest
         Assert.Null(result);
         Assert.True(_jobPositionService.IsValid);
         Assert.Empty(_jobPositionService.Notifications);
+    }
+    #endregion
+
+    #region GetJobPositionByIdAsync
+
+    [Fact]
+    public async Task GetJobPositionByIdAsync_ShouldReturnsNullWithError_WithInvalidId()
+    {
+        // Arrange
+        var id = Guid.Empty;
+
+        // Act
+        var result = await _jobPositionService.GetJobPositionByIdAsync(id);
+
+        // Assert
+        Assert.Null(result);
+        Assert.False(_jobPositionService.IsValid);
+        Assert.Single(_jobPositionService.Notifications);
+        Assert.Equal(Error.JobPosition.ID_IS_REQUIRED, _jobPositionService.Notifications.First().Message);
+    }
+
+    [Fact]
+    public async Task GetJobPositionByIdAsync_ShouldReturnsNull_WithIdNotFounded()
+    {
+        // Arrange
+        var id = Guid.NewGuid();
+        _jobPositionRepositoryMock
+            .Setup(x => x.GetJobPositionByIdAsync(id))
+            .ReturnsAsync((JobPosition?)null);
+
+        // Act
+        var result = await _jobPositionService.GetJobPositionByIdAsync(id);
+
+        // Assert
+        Assert.Null(result);
+        Assert.True(_jobPositionService.IsValid);
+        Assert.Empty(_jobPositionService.Notifications);
+    }
+
+    [Fact]
+    public async Task GetJobPositionByIdAsync_ShouldReturnsJobPosition()
+    {
+        // Arrange
+        var id = Guid.NewGuid();
+        var department = new Department("Development");
+        var jobPosition = new JobPosition("Developer", department.Id, department);
+        _jobPositionRepositoryMock
+            .Setup(x => x.GetJobPositionByIdAsync(id))
+            .ReturnsAsync(jobPosition);
+
+        // Act
+        var result = await _jobPositionService.GetJobPositionByIdAsync(id);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(jobPosition.Name, result.Name);
+        Assert.Equal(jobPosition.Id, result.Id);
+        Assert.True(string.IsNullOrEmpty(result.Department.Name));
+        Assert.Equal(Guid.Empty, result.Department.Id);
+        Assert.True(_jobPositionService.IsValid);
+        Assert.Empty(_jobPositionService.Notifications);
+    }
+
+    [Fact]
+    public async Task GetJobPositionByIdIncludeDepartmentAsync_ShouldReturnsJobPositionDTO_WithDepartment()
+    {
+        // Arrange
+        var id = Guid.NewGuid();
+        var department = new Department("Development");
+        var jobPosition = new JobPosition("Developer", department.Id, department);
+        _jobPositionRepositoryMock
+            .Setup(x => x.GetJobPositionByIdIncludeDepartmentAsync(id))
+            .ReturnsAsync(jobPosition);
+
+        // Act
+        var result = await _jobPositionService.GetJobPositionByIdIncludeDepartmentAsync(id);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.IsType<JobPositionDTO?>(result);
+        Assert.Equal(jobPosition.Name, result.Name);
+        Assert.Equal(jobPosition.Id, result.Id);
+        Assert.Equal(jobPosition.Department.Name, result.Department.Name);
+        Assert.Equal(jobPosition.Department.Id, result.Department.Id);
+        Assert.True(_jobPositionService.IsValid);
+        Assert.Empty(_jobPositionService.Notifications);
+    }
+
+    [Fact]
+    public async Task GetJobPositionByIdIncludeDepartmentAsync_ShouldReturnsNull_WithIdNotFounded()
+    {
+        // Arrange
+        var id = Guid.NewGuid();
+        _jobPositionRepositoryMock
+            .Setup(x => x.GetJobPositionByIdIncludeDepartmentAsync(id))
+            .ReturnsAsync((JobPosition?)null);
+
+        // Act
+        var result = await _jobPositionService.GetJobPositionByIdIncludeDepartmentAsync(id);
+
+        // Assert
+        Assert.Null(result);
+        Assert.True(_jobPositionService.IsValid);
+        Assert.Empty(_jobPositionService.Notifications);
+    }
+
+    [Fact]
+    public async Task GetJobPositionByIdIncludeDepartmentAsync_ShouldReturnsNullWithError_WithInvalidId()
+    {
+        // Arrange
+        var id = Guid.Empty;
+
+        // Act
+        var result = await _jobPositionService.GetJobPositionByIdIncludeDepartmentAsync(id);
+
+        // Assert
+        Assert.Null(result);
+        Assert.False(_jobPositionService.IsValid);
+        Assert.Single(_jobPositionService.Notifications);
+        Assert.Equal(Error.JobPosition.ID_IS_REQUIRED, _jobPositionService.Notifications.First().Message);
     }
     #endregion
 }

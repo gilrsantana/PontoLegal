@@ -8,4 +8,6 @@ public interface IJobPositionService
     Task<bool> AddJobPositionAsync(JobPositionModel model);
     Task<JobPositionDTO?> GetJobPositionByNameAsync(string name);
     Task<JobPositionDTO?> GetJobPositionByNameIncludeDepartmentAsync(string name);
+    Task<JobPositionDTO?> GetJobPositionByIdAsync(Guid id);
+    Task<JobPositionDTO?> GetJobPositionByIdIncludeDepartmentAsync(Guid id);
 }
