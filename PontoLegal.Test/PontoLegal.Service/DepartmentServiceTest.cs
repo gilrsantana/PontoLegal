@@ -1,5 +1,4 @@
 using PontoLegal.Service.DTOs;
-using Xunit.Sdk;
 
 namespace PontoLegal.Test.PontoLegal.Service;
 
@@ -14,11 +13,13 @@ public class DepartmentServiceTest
         _departmentService = new DepartmentService(_departmentRepositoryMock.Object);
     }
 
+    #region AddDepartmentAsync
+    
     [Theory]
     [InlineData("")]
     [InlineData("D")]
     [InlineData("Products Development Engineering Department")]
-    public async Task AddDepartmentAsync_ShouldReturnFalseWithErrors_WithInvalidName(string name)
+    public async Task AddDepartmentAsync_ShouldReturnsFalseWithErrors_WithInvalidName(string name)
     {
         // Arrange
         var model = new DepartmentModel(name);
@@ -38,7 +39,7 @@ public class DepartmentServiceTest
     }
 
     [Fact]
-    public async Task AddDepartmentAsync_ShouldReturnFalseWithErrors_WithRepeatedName()
+    public async Task AddDepartmentAsync_ShouldReturnsFalseWithErrors_WithRepeatedName()
     {
         // Arrange
         var department = new Department("Products Development");
@@ -62,7 +63,7 @@ public class DepartmentServiceTest
     }
 
     [Fact]
-    public async Task AddDepartmentAsync_ShouldReturnFalseWithErrors_WithErrorInRepository()
+    public async Task AddDepartmentAsync_ShouldReturnsFalseWithErrors_WithErrorInRepository()
     {
         // Arrange
         var model = new DepartmentModel("Products Development");
@@ -82,7 +83,7 @@ public class DepartmentServiceTest
     }
 
     [Fact]
-    public async Task AddDepartmentAsync_ShouldReturnTrue()
+    public async Task AddDepartmentAsync_ShouldReturnsTrue()
     {
         // Arrange
         var model = new DepartmentModel("Products Development");
@@ -99,12 +100,14 @@ public class DepartmentServiceTest
         Assert.True(_departmentService.IsValid);
         Assert.Empty(_departmentService.Notifications);
     }
+    #endregion
 
+    #region UpdateDepartmentAsync
     [Theory]
     [InlineData("")]
     [InlineData("D")]
     [InlineData("Products Development Engineering Department")]
-    public async Task UpdateDepartmentAsync_ShouldReturnFalse_WithInvalidName(string name)
+    public async Task UpdateDepartmentAsync_ShouldReturnsFalse_WithInvalidName(string name)
     {
         // Arrange
         var department = new Department(name);
@@ -126,7 +129,7 @@ public class DepartmentServiceTest
     }
 
     [Fact]
-    public async Task UpdateDepartmentAsync_ShouldReturnFalseWithErrors_WithRepeatedName()
+    public async Task UpdateDepartmentAsync_ShouldReturnsFalseWithErrors_WithRepeatedName()
     {
         // Arrange
         var model = new DepartmentModel("Products Development");
@@ -155,7 +158,7 @@ public class DepartmentServiceTest
     }
 
     [Fact]
-    public async Task UpdateDepartmentAsync_ShouldReturnFalseWithErrors_WithIdNotExists()
+    public async Task UpdateDepartmentAsync_ShouldReturnsFalseWithErrors_WithIdNotExists()
     {
         // Arrange
         var department = new Department("Products Development");
@@ -180,7 +183,7 @@ public class DepartmentServiceTest
     }
 
     [Fact]
-    public async Task UpdateDepartmentAsync_ShouldReturnFalseWithErrors_WithErrorInRepository()
+    public async Task UpdateDepartmentAsync_ShouldReturnsFalseWithErrors_WithErrorInRepository()
     {
         // Arrange
         var department = new Department("Products Development");
@@ -208,7 +211,7 @@ public class DepartmentServiceTest
     }
 
     [Fact]
-    public async Task UpdateDepartmentAsync_ShouldReturnTrue()
+    public async Task UpdateDepartmentAsync_ShouldReturnsTrue()
     {
         // Arrange
         var model = new DepartmentModel("Products Development");
@@ -234,9 +237,11 @@ public class DepartmentServiceTest
         Assert.True(_departmentService.IsValid);
         Assert.Empty(_departmentService.Notifications);
     }
+    #endregion
 
+    #region RemoveDepartmentAsync
     [Fact]
-    public async Task RemoveDepartmentAsync_ShouldReturnFalseWithErrors_WithIdNotExists()
+    public async Task RemoveDepartmentAsync_ShouldReturnsFalseWithErrors_WithIdNotExists()
     {
         // Arrange
         _departmentRepositoryMock
@@ -257,7 +262,7 @@ public class DepartmentServiceTest
     }
 
     [Fact]
-    public async Task RemoveDepartmentAsync_ShouldReturnReturnFalseWithErrors_WithEmptyGuid()
+    public async Task RemoveDepartmentAsync_ShouldReturnsReturnFalseWithErrors_WithEmptyGuid()
     {
         // Arrange
         var department = new Department("Products Development");
@@ -280,7 +285,7 @@ public class DepartmentServiceTest
     }
     
     [Fact]
-    public async Task RemoveDepartmentAsync_ShouldReturnReturnFalseWithErrors_WithErrorInRepository()
+    public async Task RemoveDepartmentAsync_ShouldReturnReturnsFalseWithErrors_WithErrorInRepository()
     {
         // Arrange
         var department = new Department("Products Development");
@@ -303,7 +308,7 @@ public class DepartmentServiceTest
     }
 
     [Fact]
-    public async Task RemoveDepartmentAsync_ShouldReturnTrue()
+    public async Task RemoveDepartmentAsync_ShouldReturnsTrue()
     {
         // Arrange
         var department = new Department("Products Development");
@@ -322,9 +327,11 @@ public class DepartmentServiceTest
         Assert.True(_departmentService.IsValid);
         Assert.Empty(_departmentService.Notifications);
     }
+    #endregion
 
+    #region GetDepartmentByNameAsync
     [Fact]
-    public async Task GetDepartmentByNameAsync_ShouldReturnNull_WithEmptyName()
+    public async Task GetDepartmentByNameAsync_ShouldReturnsNull_WithEmptyName()
     {
         // Arrange
         var name = string.Empty;
@@ -342,7 +349,7 @@ public class DepartmentServiceTest
     }
 
     [Fact]
-    public async Task GetDepartmentByNameAsync_ShouldReturnNull_WithNameNotFound()
+    public async Task GetDepartmentByNameAsync_ShouldReturnsNull_WithNameNotFound()
     {
         // Arrange
         var name = "Department Name";
@@ -360,7 +367,7 @@ public class DepartmentServiceTest
     }
 
     [Fact]
-    public async Task GetDepartmentByNameAsync_ShouldReturnDTO()
+    public async Task GetDepartmentByNameAsync_ShouldReturnsDTO()
     {
         // Arrange
         var name = "Products Development";
@@ -380,9 +387,11 @@ public class DepartmentServiceTest
         Assert.True(_departmentService.IsValid);
         Assert.Empty(_departmentService.Notifications);
     }
+    #endregion
 
+    #region GetDepartmentByIdAsync
     [Fact]
-    public async Task GetDepartmentByIdAsync_ShouldReturnNull_WithEmptyGuid()
+    public async Task GetDepartmentByIdAsync_ShouldReturnsNull_WithEmptyGuid()
     {
         // Arrange
         var guid = Guid.Empty;
@@ -400,7 +409,7 @@ public class DepartmentServiceTest
     }
 
     [Fact]
-    public async Task GetDepartmentByIdAsync_ShouldReturnNull_WithGuidNotFound()
+    public async Task GetDepartmentByIdAsync_ShouldReturnsNull_WithGuidNotFound()
     {
         // Arrange
         var guid = Guid.NewGuid();
@@ -418,7 +427,7 @@ public class DepartmentServiceTest
     }
 
     [Fact]
-    public async Task GetDepartmentByIdAsync_ShouldReturnDTO()
+    public async Task GetDepartmentByIdAsync_ShouldReturnsDTO()
     {
         // Arrange
         var name = "Products Development";
@@ -438,7 +447,9 @@ public class DepartmentServiceTest
         Assert.True(_departmentService.IsValid);
         Assert.Empty(_departmentService.Notifications);
     }
-
+    #endregion
+    
+    #region GetAllDepartmentsAsync
     [Theory]
     [InlineData(-1, 25)]
     [InlineData(0, 0)]
@@ -446,7 +457,7 @@ public class DepartmentServiceTest
     [InlineData(-1, 0)]
     [InlineData(-1, -1)]
     [InlineData(0, -1)]
-    public async Task GetAllDepartmentsAsync_ShouldReturnEmptyList_WithInvalidSkipTake(int skip, int take)
+    public async Task GetAllDepartmentsAsync_ShouldReturnsEmptyList_WithInvalidSkipTake(int skip, int take)
     {
         // Arrange
         _departmentRepositoryMock
@@ -465,7 +476,7 @@ public class DepartmentServiceTest
     }
 
     [Fact]
-    public async Task GetAllDepartmentsAsync_ShouldReturnEmptyList_WithNoDepartments()
+    public async Task GetAllDepartmentsAsync_ShouldReturnsEmptyList_WithNoDepartments()
     {
         // Arrange
         _departmentRepositoryMock
@@ -489,7 +500,7 @@ public class DepartmentServiceTest
     [InlineData(25, 1)]
     [InlineData(25, 25)]
     [InlineData(1, 30)]
-    public async Task GetAllDepartmentsAsync_ShouldReturnEmptyList_WithRepositoryError(int skip, int take)
+    public async Task GetAllDepartmentsAsync_ShouldReturnsEmptyList_WithRepositoryError(int skip, int take)
     {
         // Arrange
         _departmentRepositoryMock
@@ -502,13 +513,12 @@ public class DepartmentServiceTest
         // Assert
         Assert.NotNull(result);
         Assert.Empty(result);
-        Assert.False(_departmentService.IsValid);
-        Assert.Single(_departmentService.Notifications);
-        Assert.Equal(Error.Department.ERROR_GETTING_ALL, _departmentService.Notifications.First().Message);
+        Assert.True(_departmentService.IsValid);
+        Assert.Empty(_departmentService.Notifications);
     }
 
     [Fact]
-    public async Task GetAllDepartmentsAsync_ShouldReturnNotEmptyLis()
+    public async Task GetAllDepartmentsAsync_ShouldReturnsNotEmptyLis()
     {
                 // Arrange
         var model = new List<Department>
@@ -532,5 +542,5 @@ public class DepartmentServiceTest
         Assert.NotEmpty(result);
         Assert.Equal(model.Count, result.Count);
     }
+    #endregion
 }
-

@@ -17,5 +17,6 @@ public class JobPositionModel : BaseModel
             .IsGreaterOrEqualsThan(Name, 3, "JobPosition.Name", Error.JobPosition.INVALID_NAME)
             .IsLowerOrEqualsThan(Name, 30, "JobPosition.Name", Error.JobPosition.INVALID_NAME)
         );
+        AddNotifications(department);
     }
 }
