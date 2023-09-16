@@ -143,7 +143,6 @@ public class DepartmentService : BaseService, IDepartmentService
             return departments;
         }
         
-        AddNotification("DepartmentService", Error.Department.ERROR_GETTING_ALL);
         return new List<DepartmentDTO>();
     }
 }

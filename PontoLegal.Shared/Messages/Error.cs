@@ -1,5 +1,8 @@
-﻿namespace PontoLegal.Shared.Messages;
+﻿using System.Diagnostics.CodeAnalysis;
 
+namespace PontoLegal.Shared.Messages;
+
+[SuppressMessage("ReSharper", "InconsistentNaming")]
 public static class Error
 {
     public static class Department
@@ -17,6 +20,8 @@ public static class Error
 
     public static class JobPosition
     {
-        public static string INVALID_NAME = "Job Position name can't be null and must be between 3 and 30 chars";
+        public const string INVALID_NAME        = "Job Position name can't be null and must be between 3 and 30 chars";
+        public const string NAME_ALREADY_EXISTS = "Already exists a Job Position at this Department";
+        public const string ERROR_ADDING        = "Error adding Department";
     }
 }
