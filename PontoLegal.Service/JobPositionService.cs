@@ -1,5 +1,6 @@
 ﻿using PontoLegal.Domain.Entities;
 using PontoLegal.Repository.Interfaces;
+using PontoLegal.Service.DTOs;
 using PontoLegal.Service.Entities;
 using PontoLegal.Service.Interfaces;
 using PontoLegal.Shared.Messages;
@@ -42,5 +43,47 @@ public class JobPositionService : BaseService, IJobPositionService
 
         AddNotification("JobPosition", Error.JobPosition.ERROR_ADDING);
         return false;
+    }
+
+    public async Task<JobPositionDTO?> GetJobPositionByNameAsync(string name)
+    {
+        if (!ValidateNameForSearch(name)) return null;
+
+        var jobPosition = await _jobPositionRepository.GetJobPositionByNameAsync(name);
+        if (jobPosition == null) return null;
+        
+        return new JobPositionDTO
+        {
+            Id = jobPosition.Id,
+            Name = jobPosition.Name
+        };
+
+    }
+
+    public async Task<JobPositionDTO?> GetJobPositionByNameIncludeDepartmentAsync(string name)
+    {
+        if (!ValidateNameForSearch(name)) return null;
+
+        var jobPosition = await _jobPositionRepository.GetJobPositionByNameIncludeDepartmentAsync(name);
+        if (jobPosition == null) return null;
+
+        return new JobPositionDTO
+        {
+            Id = jobPosition.Id,
+            Name = jobPosition.Name,
+            Department = new DepartmentDTO
+            {
+                Id = jobPosition.Department.Id,
+                Name = jobPosition.Department.Name
+            }
+        };
+    }
+
+    private bool ValidateNameForSearch(string name)
+    {
+        if (!string.IsNullOrWhiteSpace(name)) return true;
+        AddNotification("JobPosition.Name", Error.JobPosition.NAME_IS_REQUIRED);
+        return false;
+
     }
 }

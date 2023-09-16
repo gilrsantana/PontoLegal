@@ -1,4 +1,6 @@
-﻿namespace PontoLegal.Test.PontoLegal.Service;
+﻿using PontoLegal.Service.DTOs;
+
+namespace PontoLegal.Test.PontoLegal.Service;
 
 public class JobPositionServiceTest
 {
@@ -24,6 +26,8 @@ public class JobPositionServiceTest
         // Assert
         Assert.False(result);
         Assert.False(model.IsValid);
+        Assert.False(_jobPositionService.IsValid);
+        Assert.Equal(2, _jobPositionService.Notifications.Count);
         Assert.Equal(2, model.Notifications.Count);
         Assert.Equal(Error.JobPosition.INVALID_NAME, model.Notifications.First().Message);
         Assert.Equal(Error.Department.INVALID_NAME, model.Notifications.Last().Message);
@@ -156,4 +160,106 @@ public class JobPositionServiceTest
 
     #endregion
 
+    #region GetJobPositionByNameAsync
+
+    [Fact]
+    public async Task GetJobPositionByNameAsync_ShouldReturnsNullWithError_WithInvalidName()
+    {
+        // Arrange
+        var name = "";
+
+        // Act
+        var result = await _jobPositionService.GetJobPositionByNameAsync(name);
+
+        // Assert
+        Assert.Null(result);
+        Assert.False(_jobPositionService.IsValid);
+        Assert.Single(_jobPositionService.Notifications);
+        Assert.Equal(Error.JobPosition.NAME_IS_REQUIRED, _jobPositionService.Notifications.First().Message);
+    }
+
+    [Fact]
+    public async Task GetJobPositionByNameAsync_ShouldReturnsNull_WithNameNotFounded()
+    {
+        // Arrange
+        var name = "Developer";
+        _jobPositionRepositoryMock
+            .Setup(x => x.GetJobPositionByNameIncludeDepartmentAsync(name))
+            .ReturnsAsync((JobPosition?)null);
+
+        // Act
+        var result = await _jobPositionService.GetJobPositionByNameAsync(name);
+
+        // Assert
+        Assert.Null(result);
+        Assert.True(_jobPositionService.IsValid);
+        Assert.Empty(_jobPositionService.Notifications);
+    }
+
+    [Fact]
+    public async Task GetJobPositionByNameAsync_ShouldReturnsJobPosition()
+    {
+        // Arrange
+        var name = "Developer";
+        var department = new Department("Development");
+        var jobPosition = new JobPosition(name, department.Id, department);
+        _jobPositionRepositoryMock
+            .Setup(x => x.GetJobPositionByNameAsync(name))
+            .ReturnsAsync(jobPosition);
+
+        // Act
+        var result = await _jobPositionService.GetJobPositionByNameAsync(name);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(jobPosition.Name, result.Name);
+        Assert.Equal(jobPosition.Id, result.Id);
+        Assert.True(string.IsNullOrEmpty(result.Department.Name));
+        Assert.Equal(Guid.Empty, result.Department.Id);
+        Assert.True(_jobPositionService.IsValid);
+        Assert.Empty(_jobPositionService.Notifications);
+    }
+
+    [Fact]
+    public async Task GetJobPositionByNameIncludeDepartmentAsync_ShouldReturnsJobPosition_WithDepartment()
+    {
+        // Arrange
+        var name = "Developer";
+        var department = new Department("Development");
+        var jobPosition = new JobPosition(name, department.Id, department);
+        _jobPositionRepositoryMock
+            .Setup(x => x.GetJobPositionByNameIncludeDepartmentAsync(name))
+            .ReturnsAsync(jobPosition);
+
+        // Act
+        var result = await _jobPositionService.GetJobPositionByNameIncludeDepartmentAsync(name);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(jobPosition.Name, result.Name);
+        Assert.Equal(jobPosition.Id, result.Id);
+        Assert.Equal(jobPosition.Department.Name, result.Department.Name);
+        Assert.Equal(jobPosition.Department.Id, result.Department.Id);
+        Assert.True(_jobPositionService.IsValid);
+        Assert.Empty(_jobPositionService.Notifications);
+    }
+
+    [Fact]
+    public async Task GetJobPositionByNameIncludeDepartmentAsync_ShouldReturnsNull_WithNameNotFounded()
+    {
+        // Arrange
+        var name = "Developer";
+        _jobPositionRepositoryMock
+            .Setup(x => x.GetJobPositionByNameIncludeDepartmentAsync(name))
+            .ReturnsAsync((JobPosition?)null);
+
+        // Act
+        var result = await _jobPositionService.GetJobPositionByNameIncludeDepartmentAsync(name);
+
+        // Assert
+        Assert.Null(result);
+        Assert.True(_jobPositionService.IsValid);
+        Assert.Empty(_jobPositionService.Notifications);
+    }
+    #endregion
 }

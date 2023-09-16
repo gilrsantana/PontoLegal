@@ -20,6 +20,8 @@ public static class Error
 
     public static class JobPosition
     {
+        public const string NOT_FOUNDED         = "Job Position not founded";
+        public const string NAME_IS_REQUIRED    = "Name of Job Position is required";
         public const string INVALID_NAME        = "Job Position name can't be null and must be between 3 and 30 chars";
         public const string NAME_ALREADY_EXISTS = "Already exists a Job Position at this Department";
         public const string ERROR_ADDING        = "Error adding Department";
