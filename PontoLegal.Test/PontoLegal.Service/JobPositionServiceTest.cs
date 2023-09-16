@@ -1,7 +1,4 @@
-﻿using System.Diagnostics.Contracts;
-using PontoLegal.Service.Entities;
-
-namespace PontoLegal.Test.PontoLegal.Service;
+﻿namespace PontoLegal.Test.PontoLegal.Service;
 
 public class JobPositionServiceTest
 {
