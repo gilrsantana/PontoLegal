@@ -10,4 +10,5 @@ public interface IJobPositionService
     Task<JobPositionDTO?> GetJobPositionByNameIncludeDepartmentAsync(string name);
     Task<JobPositionDTO?> GetJobPositionByIdAsync(Guid id);
     Task<JobPositionDTO?> GetJobPositionByIdIncludeDepartmentAsync(Guid id);
+    Task<ICollection<JobPositionDTO>> GetAllJobPositionsAsync(int skip = 0, int take = 25);
 }

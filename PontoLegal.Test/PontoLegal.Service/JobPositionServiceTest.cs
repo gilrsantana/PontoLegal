@@ -383,4 +383,77 @@ public class JobPositionServiceTest
         Assert.Equal(Error.JobPosition.ID_IS_REQUIRED, _jobPositionService.Notifications.First().Message);
     }
     #endregion
+
+    #region GetAllJobPositionsAsync
+
+    [Fact]
+    public async Task GetAllJobPositionsAsync_ShouldReturnsEmptyList()
+    {
+        // Arrange
+        _jobPositionRepositoryMock
+            .Setup(x => x.GetAllJobPositionsAsync(0, 25))
+            .ReturnsAsync((ICollection<JobPosition>?)null);
+
+        // Act
+        var result = await _jobPositionService.GetAllJobPositionsAsync();
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Empty(result);
+        Assert.IsAssignableFrom<ICollection<JobPositionDTO>>(result);
+        Assert.True(_jobPositionService.IsValid);
+        Assert.Empty(_jobPositionService.Notifications);
+    }
+
+    [Fact]
+    public async Task GetAllJobPositionsAsync_ShouldReturnsList()
+    {
+        // Arrange
+        var department = new Department("Development");
+        var jobPosition = new JobPosition("Developer", department.Id, department);
+        var jobPosition2 = new JobPosition("Developer", department.Id, department);
+        var jobPosition3 = new JobPosition("Developer", department.Id, department);
+        var jobPositions = new List<JobPosition> { jobPosition, jobPosition2, jobPosition3 };
+        _jobPositionRepositoryMock
+            .Setup(x => x.GetAllJobPositionsAsync(0, 25))
+            .ReturnsAsync(jobPositions);
+
+        // Act
+        var result = await _jobPositionService.GetAllJobPositionsAsync();
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.NotEmpty(result);
+        Assert.IsAssignableFrom<ICollection<JobPositionDTO>>(result);
+        Assert.Equal(jobPositions.Count, result.Count);
+        Assert.True(_jobPositionService.IsValid);
+        Assert.Empty(_jobPositionService.Notifications);
+    }
+
+    [Theory]
+    [InlineData(-1, 25)]
+    [InlineData(0, 0)]
+    [InlineData(1, 0)]
+    [InlineData(-1, 0)]
+    [InlineData(-1, -1)]
+    [InlineData(0, -1)]
+    public async Task GetAllJobPositionsAsync_ShouldReturnsEmptyList_WithInvalidParameters(int skip, int take)
+    {
+        // Arrange
+        _jobPositionRepositoryMock
+            .Setup(x => x.GetAllJobPositionsAsync(skip, take))
+            .ReturnsAsync((ICollection<JobPosition>?)null);
+
+        // Act
+        var result = await _jobPositionService.GetAllJobPositionsAsync(skip, take);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Empty(result);
+        Assert.IsAssignableFrom<ICollection<JobPositionDTO>>(result);
+        Assert.False(_jobPositionService.IsValid);
+        Assert.Single(_jobPositionService.Notifications);
+        Assert.Equal(Error.JobPosition.INVALID_PAGINATION, _jobPositionService.Notifications.First().Message);
+    }
+    #endregion
 }

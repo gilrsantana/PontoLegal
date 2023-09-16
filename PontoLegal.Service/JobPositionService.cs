@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Nodes;
+﻿using System.Collections;
+using System.Text.Json.Nodes;
 using PontoLegal.Domain.Entities;
 using PontoLegal.Repository.Interfaces;
 using PontoLegal.Service.DTOs;
@@ -126,5 +127,23 @@ public class JobPositionService : BaseService, IJobPositionService
         if (id != Guid.Empty) return true;
         AddNotification("JobPosition.Id", Error.JobPosition.ID_IS_REQUIRED);
         return false;
+    }
+
+    public async Task<ICollection<JobPositionDTO>> GetAllJobPositionsAsync(int skip = 0, int take = 25)
+    {
+        if (skip < 0 || take < 1)
+        {
+            AddNotification("DepartmentService", Error.JobPosition.INVALID_PAGINATION);
+            return new List<JobPositionDTO>();
+        }
+
+        var result = await _jobPositionRepository.GetAllJobPositionsAsync(skip, take);
+        if (result == null) return new List<JobPositionDTO>();
+
+        return result.Select(jobPosition => new JobPositionDTO
+        {
+            Id = jobPosition.Id,
+            Name = jobPosition.Name
+        }).ToList();
     }
 }

@@ -19,6 +19,7 @@ public static class Error
 
     public static class JobPosition
     {
+        public const string INVALID_PAGINATION  = "Invalid skip and/or take value";
         public const string ID_IS_REQUIRED      = "Id for Job Position is required";
         public const string NAME_IS_REQUIRED    = "Name of Job Position is required";
         public const string INVALID_NAME        = "Job Position name can't be null and must be between 3 and 30 chars";
