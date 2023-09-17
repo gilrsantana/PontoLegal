@@ -164,4 +164,39 @@ public class JobPositionService : BaseService, IJobPositionService
         AddNotification("JobPosition", Error.JobPosition.ERROR_REMOVING);
         return false;
     }
+
+    public async Task<bool> UpdateJobPositionAsync(Guid id, JobPositionModel model)
+    {
+        if (!model.IsValid)
+        {
+            AddNotifications(model.Notifications);
+            return false;
+        }
+
+        if (!ValidateIdForSearch(id)) return false;
+
+        var jobPosition = await GetJobPositionByIdAsync(id);
+        if (jobPosition == null)
+        {
+            AddNotification("JobPosition.Id", Error.JobPosition.NOT_FOUNDED);
+            return false;
+        }
+        var existentJobPosition = await _jobPositionRepository.GetJobPositionByNameIncludeDepartmentAsync(model.Name);
+        if (existentJobPosition != null && 
+            existentJobPosition.Department.Name == model.Department.Name && 
+            existentJobPosition.Name == model.Name)
+        {
+            AddNotification("JobPosition.Name", Error.JobPosition.NAME_ALREADY_EXISTS);
+            return false;
+        }
+        
+        var department = new Department(model.Name);
+        var newJobPosition = new JobPosition(model.Name, department.Id, department);
+        
+        var result = await _jobPositionRepository.UpdateJobPositionAsync(id, newJobPosition);
+        if (result) return true;
+        AddNotification("JobPosition", Error.JobPosition.ERROR_UPDATING);
+        
+        return false;
+    }
 }

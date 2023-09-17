@@ -19,6 +19,7 @@ public static class Error
 
     public static class JobPosition
     {
+        public const string ERROR_UPDATING      = "Error updating Job Position";
         public const string ERROR_REMOVING      = "Error removing Job Position";
         public const string NOT_FOUNDED         = "Job Position not founded";
         public const string INVALID_PAGINATION  = "Invalid skip and/or take value";
