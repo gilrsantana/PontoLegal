@@ -456,4 +456,88 @@ public class JobPositionServiceTest
         Assert.Equal(Error.JobPosition.INVALID_PAGINATION, _jobPositionService.Notifications.First().Message);
     }
     #endregion
+
+    #region RemoveJobPositionAsync
+    [Fact]
+    public async Task RemoveJobPositionByIdAsync_ShouldReturnsFalseWithError_WithInvalidId()
+    {
+        // Arrange
+        var id = Guid.Empty;
+
+        // Act
+        var result = await _jobPositionService.RemoveJobPositionByIdAsync(id);
+
+        // Assert
+        Assert.False(result);
+        Assert.False(_jobPositionService.IsValid);
+        Assert.Single(_jobPositionService.Notifications);
+        Assert.Equal(Error.JobPosition.ID_IS_REQUIRED, _jobPositionService.Notifications.First().Message);
+    }
+    
+    [Fact]
+    public async Task RemoveJobPositionByIdAsync_ShouldReturnsFalseWithError_WithJobPositionNotFounded()
+    {
+        // Arrange
+        var id = Guid.NewGuid();
+        _jobPositionRepositoryMock
+            .Setup(x => x.GetJobPositionByIdAsync(id))
+            .ReturnsAsync((JobPosition?)null);
+
+        // Act
+        var result = await _jobPositionService.RemoveJobPositionByIdAsync(id);
+
+        // Assert
+        Assert.False(result);
+        Assert.False(_jobPositionService.IsValid);
+        Assert.Single(_jobPositionService.Notifications);
+        Assert.Equal(Error.JobPosition.NOT_FOUNDED, _jobPositionService.Notifications.First().Message);
+    }
+    
+    [Fact]
+    public async Task RemoveJobPositionByIdAsyncShouldReturnsFalseWithError_WithRepositoryError()
+    {
+        // Arrange
+        var id = Guid.NewGuid();
+        var department = new Department("Development");
+        var jobPosition = new JobPosition("Developer", department.Id, department);
+        _jobPositionRepositoryMock
+            .Setup(x => x.GetJobPositionByIdAsync(id))
+            .ReturnsAsync(jobPosition);
+        _jobPositionRepositoryMock
+            .Setup(x => x.RemoveJobPositionAsync(jobPosition))
+            .ReturnsAsync(false);
+
+        // Act
+        var result = await _jobPositionService.RemoveJobPositionByIdAsync(id);
+
+        // Assert
+        Assert.False(result);
+        Assert.False(_jobPositionService.IsValid);
+        Assert.Single(_jobPositionService.Notifications);
+        Assert.Equal(Error.JobPosition.ERROR_REMOVING, _jobPositionService.Notifications.First().Message);
+    }
+    
+    [Fact]
+    public async Task RemoveJobPositionByIdAsync_ShouldReturnsTrue()
+    {
+        // Arrange
+        var id = Guid.NewGuid();
+        var department = new Department("Development");
+        var jobPosition = new JobPosition("Developer", department.Id, department);
+        _jobPositionRepositoryMock
+            .Setup(x => x.GetJobPositionByIdAsync(id))
+            .ReturnsAsync(jobPosition);
+        _jobPositionRepositoryMock
+            .Setup(x => x.RemoveJobPositionAsync(jobPosition))
+            .ReturnsAsync(true);
+
+        // Act
+        var result = await _jobPositionService.RemoveJobPositionByIdAsync(id);
+
+        // Assert
+        Assert.True(result);
+        Assert.True(_jobPositionService.IsValid);
+        Assert.Empty(_jobPositionService.Notifications);
+    }
+    #endregion
 }

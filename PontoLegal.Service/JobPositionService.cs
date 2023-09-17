@@ -95,7 +95,7 @@ public class JobPositionService : BaseService, IJobPositionService
 
         var jobPosition = await _jobPositionRepository.GetJobPositionByIdAsync(id);
         if (jobPosition == null) return null;
-
+        
         return new JobPositionDTO
         {
             Id = jobPosition.Id,
@@ -145,5 +145,23 @@ public class JobPositionService : BaseService, IJobPositionService
             Id = jobPosition.Id,
             Name = jobPosition.Name
         }).ToList();
+    }
+
+    public async Task<bool> RemoveJobPositionByIdAsync(Guid id)
+    {
+        if (!ValidateIdForSearch(id)) return false;
+        
+        var jobPosition = await _jobPositionRepository.GetJobPositionByIdAsync(id);
+        if (jobPosition == null)
+        {
+            AddNotification("JobPosition.Id", Error.JobPosition.NOT_FOUNDED);
+            return false;
+        }
+        
+        var result = await _jobPositionRepository.RemoveJobPositionAsync(jobPosition);
+        if (result) return true;
+        
+        AddNotification("JobPosition", Error.JobPosition.ERROR_REMOVING);
+        return false;
     }
 }

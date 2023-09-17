@@ -10,4 +10,5 @@ public interface IJobPositionRepository
     Task<JobPosition?> GetJobPositionByIdAsync(Guid id);
     Task<JobPosition?> GetJobPositionByIdIncludeDepartmentAsync(Guid id);
     Task<ICollection<JobPosition>?> GetAllJobPositionsAsync(int skip=0, int take=25);
+    Task<bool> RemoveJobPositionAsync(JobPosition jobPosition);
 }
