@@ -29,4 +29,19 @@ public static class Error
         public const string NAME_ALREADY_EXISTS = "Already exists a Job Position at this Department";
         public const string ERROR_ADDING        = "Error adding Department";
     }
+
+    public static class Company
+    {
+        public const string INVALID_ID       = "Invalid Id";
+        public const string NAME_IS_REQUIRED = "Name of Company is required";
+        public const string ADD_ERROR        = "Error adding Company";
+        public const string ALREADY_EXISTS   = "Company already exists";
+        public const string INVALID_NAME     = "Company name can't be null and must be between 3 and 30 chars";
+    }
+
+    public static class Cnpj
+    {
+        public const string INVALID_CNPJ_FORMAT = "CNPJ invalid Format";
+        public const string INVALID_CNPJ_DIGITS = "CNPJ invalid Check Digits";
+    }
 }

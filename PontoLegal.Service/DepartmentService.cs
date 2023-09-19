@@ -20,11 +20,7 @@ public class DepartmentService : BaseService, IDepartmentService
     {
         if (!model.IsValid)
         {
-            foreach (var notification in model.Notifications)
-            {
-                AddNotification(notification);
-            }
-
+            AddNotifications(model.Notifications);
             return false;
         }
 

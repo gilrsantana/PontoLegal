@@ -86,7 +86,6 @@ public class JobPositionService : BaseService, IJobPositionService
         if (!string.IsNullOrWhiteSpace(name)) return true;
         AddNotification("JobPosition.Name", Error.JobPosition.NAME_IS_REQUIRED);
         return false;
-
     }
 
     public async Task<JobPositionDTO?> GetJobPositionByIdAsync(Guid id)

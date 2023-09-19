@@ -14,4 +14,16 @@
     <ProjectReference Include="..\PontoLegal.Repository\PontoLegal.Repository.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Remove="ValueObjects\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Remove="ValueObjects\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="ValueObjects\**" />
+  </ItemGroup>
+
 </Project>
