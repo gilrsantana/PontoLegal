@@ -15,6 +15,168 @@ public class CompanyServiceTest
         _companyService = new CompanyService(_companyRepositoryMock.Object);
     }
     
+    #region GetCompanyById
+    [Fact]
+    public async Task GetCompanyById_ShouldReturnsNullWithError_WithInvalidId()
+    {
+        // Arrange
+        var id = Guid.Empty;
+        
+        // Act
+        var result = await _companyService.GetCompanyByIdAsync(id);
+        
+        // Assert
+        Assert.Null(result);
+        Assert.False(_companyService.IsValid);
+        Assert.Single(_companyService.Notifications);
+        Assert.Equal(Error.Company.INVALID_ID, _companyService.Notifications.First().Message);
+    }
+    
+    [Fact]
+    public async Task GetCompanyById_ShouldReturnsNull_WithUnknownId()
+    {
+        // Arrange
+        var id = Guid.NewGuid();
+        _companyRepositoryMock
+            .Setup(x => x.GetCompanyByIdAsync(id))
+            .ReturnsAsync((Company?)null);
+        
+        // Act
+        var result = await _companyService.GetCompanyByIdAsync(id);
+        
+        // Assert
+        Assert.Null(result);
+        Assert.True(_companyService.IsValid);
+        Assert.Empty(_companyService.Notifications);
+    }
+    
+    [Fact]
+    public async Task GetCompanyById_ShouldReturnsDto()
+    {
+        // Arrange
+        var id = Guid.NewGuid();
+        var company = new Company("Company", new Cnpj(MockCnpj.ValidCnpj));
+        _companyRepositoryMock
+            .Setup(x => x.GetCompanyByIdAsync(id))
+            .ReturnsAsync(company);
+        
+        // Act
+        var result = await _companyService.GetCompanyByIdAsync(id);
+        
+        // Assert
+        Assert.NotNull(result);
+        Assert.IsType<CompanyDTO?>(result);
+        Assert.Equal(company.Id, result.Id);
+        Assert.Equal(company.Name, result.Name);
+        Assert.Equal(company.Cnpj, result.Cnpj);
+        Assert.True(_companyService.IsValid);
+        Assert.Empty(_companyService.Notifications);
+    }
+    
+    #endregion
+    
+    #region GetCompanyByCnpjAsync
+    
+    [Fact]
+    public async Task GetCompanyByCnpjAsync_ShouldReturnsNullWithError_WithInvalidCnpj()
+    {
+        // Arrange
+        var cnpj = new Cnpj("123");
+        
+        // Act
+        var result = await _companyService.GetCompanyByCnpjAsync(cnpj);
+        
+        // Assert
+        Assert.Null(result);
+        Assert.False(_companyService.IsValid);
+        Assert.Single(_companyService.Notifications);
+        Assert.Equal(Error.Cnpj.INVALID_CNPJ_FORMAT, _companyService.Notifications.First().Message);
+    }
+    
+    [Fact]
+    public async Task GetCompanyByCnpjAsync_ShouldReturnsNullWithError_WithUnknownCnpj()
+    {
+        // Arrange
+        var cnpj = new Cnpj(MockCnpj.ValidCnpj);
+        _companyRepositoryMock
+            .Setup(x => x.GetCompanyByCnpjAsync(cnpj))
+            .ReturnsAsync((Company?)null);
+        
+        // Act
+        var result = await _companyService.GetCompanyByCnpjAsync(cnpj);
+        
+        // Assert
+        Assert.Null(result);
+        Assert.True(_companyService.IsValid);
+        Assert.Empty(_companyService.Notifications);
+    }
+    
+    [Fact]
+    public async Task GetCompanyByCnpjAsync_ShouldReturnsDto()
+    {
+        // Arrange
+        var cnpj = new Cnpj(MockCnpj.ValidCnpj);
+        var company = new Company("Company", cnpj);
+        _companyRepositoryMock
+            .Setup(x => x.GetCompanyByCnpjAsync(cnpj))
+            .ReturnsAsync(company);
+        
+        // Act
+        var result = await _companyService.GetCompanyByCnpjAsync(cnpj);
+        
+        // Assert
+        Assert.NotNull(result);
+        Assert.IsType<CompanyDTO?>(result);
+        Assert.Equal(company.Id, result.Id);
+        Assert.Equal(company.Name, result.Name);
+        Assert.Equal(company.Cnpj, result.Cnpj);
+        Assert.True(_companyService.IsValid);
+        Assert.Empty(_companyService.Notifications);
+    }
+    #endregion
+    
+    #region GetCompanyByNameAsync
+    [Fact]
+    public async Task GetCompanyByNameAsync_ShouldReturnsNullWithError_WithInvalidName()
+    {
+        // Arrange
+        var name = "";
+        
+        // Act
+        var result = await _companyService.GetCompanyByNameAsync(name);
+        
+        // Assert
+        Assert.Null(result);
+        Assert.False(_companyService.IsValid);
+        Assert.Single(_companyService.Notifications);
+        Assert.Equal(Error.Company.NAME_IS_REQUIRED, _companyService.Notifications.First().Message);
+    }
+
+    [Fact]
+    public async Task GetCompanyByNameAsync_ShouldReturnsDto()
+    {
+        // Arrange
+        var name = "My Company";
+        var company = new Company(name, new Cnpj(MockCnpj.ValidCnpj));
+        _companyRepositoryMock
+            .Setup(x => x.GetCompanyByNameAsync(name))
+            .ReturnsAsync(company);
+        
+        // Act
+        var result = await _companyService.GetCompanyByNameAsync(name);
+        
+        // Assert
+        Assert.NotNull(result);
+        Assert.IsType<CompanyDTO?>(result);
+        Assert.Equal(company.Id, result.Id);
+        Assert.Equal(company.Name, result.Name);
+        Assert.Equal(company.Cnpj, result.Cnpj);
+        Assert.True(_companyService.IsValid);
+        Assert.Empty(_companyService.Notifications);
+    }
+    
+    #endregion
+    
     #region AddCompanyAsync
     [Theory]
     [InlineData("")]
@@ -164,168 +326,6 @@ public class CompanyServiceTest
         Assert.True(model.IsValid);
         Assert.True(_companyService.IsValid);
         Assert.True(result);
-        Assert.Empty(_companyService.Notifications);
-    }
-    
-    #endregion
-    
-    #region GetCompanyByCnpjAsync
-    
-    [Fact]
-    public async Task GetCompanyByCnpjAsync_ShouldReturnsNullWithError_WithInvalidCnpj()
-    {
-        // Arrange
-        var cnpj = new Cnpj("123");
-        
-        // Act
-        var result = await _companyService.GetCompanyByCnpjAsync(cnpj);
-        
-        // Assert
-        Assert.Null(result);
-        Assert.False(_companyService.IsValid);
-        Assert.Single(_companyService.Notifications);
-        Assert.Equal(Error.Cnpj.INVALID_CNPJ_FORMAT, _companyService.Notifications.First().Message);
-    }
-    
-    [Fact]
-    public async Task GetCompanyByCnpjAsync_ShouldReturnsNullWithError_WithUnknownCnpj()
-    {
-        // Arrange
-        var cnpj = new Cnpj(MockCnpj.ValidCnpj);
-        _companyRepositoryMock
-            .Setup(x => x.GetCompanyByCnpjAsync(cnpj))
-            .ReturnsAsync((Company?)null);
-        
-        // Act
-        var result = await _companyService.GetCompanyByCnpjAsync(cnpj);
-        
-        // Assert
-        Assert.Null(result);
-        Assert.True(_companyService.IsValid);
-        Assert.Empty(_companyService.Notifications);
-    }
-    
-    [Fact]
-    public async Task GetCompanyByCnpjAsync_ShouldReturnsDto()
-    {
-        // Arrange
-        var cnpj = new Cnpj(MockCnpj.ValidCnpj);
-        var company = new Company("Company", cnpj);
-        _companyRepositoryMock
-            .Setup(x => x.GetCompanyByCnpjAsync(cnpj))
-            .ReturnsAsync(company);
-        
-        // Act
-        var result = await _companyService.GetCompanyByCnpjAsync(cnpj);
-        
-        // Assert
-        Assert.NotNull(result);
-        Assert.IsType<CompanyDTO?>(result);
-        Assert.Equal(company.Id, result.Id);
-        Assert.Equal(company.Name, result.Name);
-        Assert.Equal(company.Cnpj, result.Cnpj);
-        Assert.True(_companyService.IsValid);
-        Assert.Empty(_companyService.Notifications);
-    }
-    #endregion
-    
-    #region GetCompanyByNameAsync
-    [Fact]
-    public async Task GetCompanyByNameAsync_ShouldReturnsNullWithError_WithInvalidName()
-    {
-        // Arrange
-        var name = "";
-        
-        // Act
-        var result = await _companyService.GetCompanyByNameAsync(name);
-        
-        // Assert
-        Assert.Null(result);
-        Assert.False(_companyService.IsValid);
-        Assert.Single(_companyService.Notifications);
-        Assert.Equal(Error.Company.NAME_IS_REQUIRED, _companyService.Notifications.First().Message);
-    }
-
-    [Fact]
-    public async Task GetCompanyByNameAsync_ShouldReturnsDto()
-    {
-        // Arrange
-        var name = "My Company";
-        var company = new Company(name, new Cnpj(MockCnpj.ValidCnpj));
-        _companyRepositoryMock
-            .Setup(x => x.GetCompanyByNameAsync(name))
-            .ReturnsAsync(company);
-        
-        // Act
-        var result = await _companyService.GetCompanyByNameAsync(name);
-        
-        // Assert
-        Assert.NotNull(result);
-        Assert.IsType<CompanyDTO?>(result);
-        Assert.Equal(company.Id, result.Id);
-        Assert.Equal(company.Name, result.Name);
-        Assert.Equal(company.Cnpj, result.Cnpj);
-        Assert.True(_companyService.IsValid);
-        Assert.Empty(_companyService.Notifications);
-    }
-    
-    #endregion
-    
-    #region GetCompanyById
-    [Fact]
-    public async Task GetCompanyById_ShouldReturnsNullWithError_WithInvalidId()
-    {
-        // Arrange
-        var id = Guid.Empty;
-        
-        // Act
-        var result = await _companyService.GetCompanyByIdAsync(id);
-        
-        // Assert
-        Assert.Null(result);
-        Assert.False(_companyService.IsValid);
-        Assert.Single(_companyService.Notifications);
-        Assert.Equal(Error.Company.INVALID_ID, _companyService.Notifications.First().Message);
-    }
-    
-    [Fact]
-    public async Task GetCompanyById_ShouldReturnsNull_WithUnknownId()
-    {
-        // Arrange
-        var id = Guid.NewGuid();
-        _companyRepositoryMock
-            .Setup(x => x.GetCompanyByIdAsync(id))
-            .ReturnsAsync((Company?)null);
-        
-        // Act
-        var result = await _companyService.GetCompanyByIdAsync(id);
-        
-        // Assert
-        Assert.Null(result);
-        Assert.True(_companyService.IsValid);
-        Assert.Empty(_companyService.Notifications);
-    }
-    
-    [Fact]
-    public async Task GetCompanyById_ShouldReturnsDto()
-    {
-        // Arrange
-        var id = Guid.NewGuid();
-        var company = new Company("Company", new Cnpj(MockCnpj.ValidCnpj));
-        _companyRepositoryMock
-            .Setup(x => x.GetCompanyByIdAsync(id))
-            .ReturnsAsync(company);
-        
-        // Act
-        var result = await _companyService.GetCompanyByIdAsync(id);
-        
-        // Assert
-        Assert.NotNull(result);
-        Assert.IsType<CompanyDTO?>(result);
-        Assert.Equal(company.Id, result.Id);
-        Assert.Equal(company.Name, result.Name);
-        Assert.Equal(company.Cnpj, result.Cnpj);
-        Assert.True(_companyService.IsValid);
         Assert.Empty(_companyService.Notifications);
     }
     

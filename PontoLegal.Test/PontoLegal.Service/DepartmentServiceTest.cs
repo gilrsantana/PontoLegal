@@ -13,6 +13,221 @@ public class DepartmentServiceTest
         _departmentService = new DepartmentService(_departmentRepositoryMock.Object);
     }
 
+    #region GetDepartmentByIdAsync
+    [Fact]
+    public async Task GetDepartmentByIdAsync_ShouldReturnsNull_WithEmptyGuid()
+    {
+        // Arrange
+        var guid = Guid.Empty;
+        _departmentRepositoryMock
+            .Setup(repo => repo.GetDepartmentByIdAsync(guid))
+            .ReturnsAsync((Department?)null);
+
+        // Act
+        var result = await _departmentService.GetDepartmentByIdAsync(guid);
+
+        // Assert
+        Assert.Null(result);
+        Assert.True(_departmentService.IsValid);
+        Assert.Empty(_departmentService.Notifications);
+    }
+
+    [Fact]
+    public async Task GetDepartmentByIdAsync_ShouldReturnsNull_WithGuidNotFound()
+    {
+        // Arrange
+        var guid = Guid.NewGuid();
+        _departmentRepositoryMock
+            .Setup(repo => repo.GetDepartmentByIdAsync(guid))
+            .ReturnsAsync((Department?)null);
+
+        // Act
+        var result = await _departmentService.GetDepartmentByIdAsync(guid);
+
+        // Assert
+        Assert.Null(result);
+        Assert.True(_departmentService.IsValid);
+        Assert.Empty(_departmentService.Notifications);
+    }
+
+    [Fact]
+    public async Task GetDepartmentByIdAsync_ShouldReturnsDTO()
+    {
+        // Arrange
+        var name = "Products Development";
+        var model = new Department(name);
+        _departmentRepositoryMock
+            .Setup(repo => repo.GetDepartmentByIdAsync(It.IsAny<Guid>()))
+            .ReturnsAsync(model);
+
+        // Act
+        var result = await _departmentService.GetDepartmentByIdAsync(Guid.NewGuid());
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(model.Id, result.Id);
+        Assert.Equal(model.Name, result.Name);
+        Assert.IsType<DepartmentDTO?>(result);
+        Assert.True(_departmentService.IsValid);
+        Assert.Empty(_departmentService.Notifications);
+    }
+    #endregion
+    
+    #region GetDepartmentByNameAsync
+    [Fact]
+    public async Task GetDepartmentByNameAsync_ShouldReturnsNull_WithEmptyName()
+    {
+        // Arrange
+        var name = string.Empty;
+        _departmentRepositoryMock
+            .Setup(repo => repo.GetDepartmentByNameAsync(name))
+            .ReturnsAsync((Department?)null);
+
+        // Act
+        var result = await _departmentService.GetDepartmentByNameAsync(name);
+
+        // Assert
+        Assert.Null(result);
+        Assert.True(_departmentService.IsValid);
+        Assert.Empty(_departmentService.Notifications);
+    }
+
+    [Fact]
+    public async Task GetDepartmentByNameAsync_ShouldReturnsNull_WithNameNotFound()
+    {
+        // Arrange
+        var name = "Department Name";
+        _departmentRepositoryMock
+            .Setup(repo => repo.GetDepartmentByNameAsync(name))
+            .ReturnsAsync((Department?)null);
+
+        // Act
+        var result = await _departmentService.GetDepartmentByNameAsync(name);
+
+        // Assert
+        Assert.Null(result);
+        Assert.True(_departmentService.IsValid);
+        Assert.Empty(_departmentService.Notifications);
+    }
+
+    [Fact]
+    public async Task GetDepartmentByNameAsync_ShouldReturnsDTO()
+    {
+        // Arrange
+        var name = "Products Development";
+        var model = new Department(name);
+        _departmentRepositoryMock
+            .Setup(repo => repo.GetDepartmentByNameAsync(It.IsAny<string>()))
+            .ReturnsAsync(model);
+
+        // Act
+        var result = await _departmentService.GetDepartmentByNameAsync(name);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(model.Id, result.Id);
+        Assert.Equal(model.Name, result.Name);
+        Assert.IsType<DepartmentDTO?>(result);
+        Assert.True(_departmentService.IsValid);
+        Assert.Empty(_departmentService.Notifications);
+    }
+    #endregion
+    
+    #region GetAllDepartmentsAsync
+    [Theory]
+    [InlineData(-1, 25)]
+    [InlineData(0, 0)]
+    [InlineData(1, 0)]
+    [InlineData(-1, 0)]
+    [InlineData(-1, -1)]
+    [InlineData(0, -1)]
+    public async Task GetAllDepartmentsAsync_ShouldReturnsEmptyList_WithInvalidSkipTake(int skip, int take)
+    {
+        // Arrange
+        _departmentRepositoryMock
+            .Setup(repo => repo.GetAllDepartmentsAsync(skip, take))
+            .ReturnsAsync((ICollection<Department>?)null);
+
+        // Act
+        var result = await _departmentService.GetAllDepartmentsAsync(skip, take);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Empty(result);
+        Assert.False(_departmentService.IsValid);
+        Assert.Single(_departmentService.Notifications);
+        Assert.Equal(Error.Department.INVALID_PAGINATION, _departmentService.Notifications.First().Message);
+    }
+
+    [Fact]
+    public async Task GetAllDepartmentsAsync_ShouldReturnsEmptyList_WithNoDepartments()
+    {
+        // Arrange
+        _departmentRepositoryMock
+            .Setup(repo => repo.GetAllDepartmentsAsync(It.IsAny<int>(), It.IsAny<int>()))
+            .ReturnsAsync((ICollection<Department>?)null);
+
+        // Act
+        var result = await _departmentService.GetAllDepartmentsAsync(0, 25);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Empty(result);
+        Assert.True(_departmentService.IsValid);
+        Assert.Empty(_departmentService.Notifications);
+    }
+
+    [Theory]
+    [InlineData(0, 25)]
+    [InlineData(0, 1)]
+    [InlineData(0, 50)]
+    [InlineData(25, 1)]
+    [InlineData(25, 25)]
+    [InlineData(1, 30)]
+    public async Task GetAllDepartmentsAsync_ShouldReturnsEmptyList_WithRepositoryError(int skip, int take)
+    {
+        // Arrange
+        _departmentRepositoryMock
+            .Setup(repo => repo.GetAllDepartmentsAsync(It.IsAny<int>(), It.IsAny<int>()))
+            .ReturnsAsync((ICollection<Department>?)null);
+
+        // Act
+        var result = await _departmentService.GetAllDepartmentsAsync(skip, take);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Empty(result);
+        Assert.True(_departmentService.IsValid);
+        Assert.Empty(_departmentService.Notifications);
+    }
+
+    [Fact]
+    public async Task GetAllDepartmentsAsync_ShouldReturnsNotEmptyLis()
+    {
+                // Arrange
+        var model = new List<Department>
+        {
+            new Department("Department 1"),
+            new Department("Department 2"),
+            new Department("Department 3"),
+            new Department("Department 4"),
+            new Department("Department 5")
+        };
+        _departmentRepositoryMock
+            .Setup(repo => repo.GetAllDepartmentsAsync(It.IsAny<int>(), It.IsAny<int>()))
+            .ReturnsAsync(model);
+
+        // Act
+        var result = await _departmentService.GetAllDepartmentsAsync(0, 25);
+
+        // Assert
+        Assert.True(_departmentService.IsValid);
+        Assert.NotNull(result);
+        Assert.NotEmpty(result);
+        Assert.Equal(model.Count, result.Count);
+    }
+    #endregion
+    
     #region AddDepartmentAsync
     
     [Theory]
@@ -328,219 +543,6 @@ public class DepartmentServiceTest
         Assert.Empty(_departmentService.Notifications);
     }
     #endregion
-
-    #region GetDepartmentByNameAsync
-    [Fact]
-    public async Task GetDepartmentByNameAsync_ShouldReturnsNull_WithEmptyName()
-    {
-        // Arrange
-        var name = string.Empty;
-        _departmentRepositoryMock
-            .Setup(repo => repo.GetDepartmentByNameAsync(name))
-            .ReturnsAsync((Department?)null);
-
-        // Act
-        var result = await _departmentService.GetDepartmentByNameAsync(name);
-
-        // Assert
-        Assert.Null(result);
-        Assert.True(_departmentService.IsValid);
-        Assert.Empty(_departmentService.Notifications);
-    }
-
-    [Fact]
-    public async Task GetDepartmentByNameAsync_ShouldReturnsNull_WithNameNotFound()
-    {
-        // Arrange
-        var name = "Department Name";
-        _departmentRepositoryMock
-            .Setup(repo => repo.GetDepartmentByNameAsync(name))
-            .ReturnsAsync((Department?)null);
-
-        // Act
-        var result = await _departmentService.GetDepartmentByNameAsync(name);
-
-        // Assert
-        Assert.Null(result);
-        Assert.True(_departmentService.IsValid);
-        Assert.Empty(_departmentService.Notifications);
-    }
-
-    [Fact]
-    public async Task GetDepartmentByNameAsync_ShouldReturnsDTO()
-    {
-        // Arrange
-        var name = "Products Development";
-        var model = new Department(name);
-        _departmentRepositoryMock
-            .Setup(repo => repo.GetDepartmentByNameAsync(It.IsAny<string>()))
-            .ReturnsAsync(model);
-
-        // Act
-        var result = await _departmentService.GetDepartmentByNameAsync(name);
-
-        // Assert
-        Assert.NotNull(result);
-        Assert.Equal(model.Id, result.Id);
-        Assert.Equal(model.Name, result.Name);
-        Assert.IsType<DepartmentDTO?>(result);
-        Assert.True(_departmentService.IsValid);
-        Assert.Empty(_departmentService.Notifications);
-    }
-    #endregion
-
-    #region GetDepartmentByIdAsync
-    [Fact]
-    public async Task GetDepartmentByIdAsync_ShouldReturnsNull_WithEmptyGuid()
-    {
-        // Arrange
-        var guid = Guid.Empty;
-        _departmentRepositoryMock
-            .Setup(repo => repo.GetDepartmentByIdAsync(guid))
-            .ReturnsAsync((Department?)null);
-
-        // Act
-        var result = await _departmentService.GetDepartmentByIdAsync(guid);
-
-        // Assert
-        Assert.Null(result);
-        Assert.True(_departmentService.IsValid);
-        Assert.Empty(_departmentService.Notifications);
-    }
-
-    [Fact]
-    public async Task GetDepartmentByIdAsync_ShouldReturnsNull_WithGuidNotFound()
-    {
-        // Arrange
-        var guid = Guid.NewGuid();
-        _departmentRepositoryMock
-            .Setup(repo => repo.GetDepartmentByIdAsync(guid))
-            .ReturnsAsync((Department?)null);
-
-        // Act
-        var result = await _departmentService.GetDepartmentByIdAsync(guid);
-
-        // Assert
-        Assert.Null(result);
-        Assert.True(_departmentService.IsValid);
-        Assert.Empty(_departmentService.Notifications);
-    }
-
-    [Fact]
-    public async Task GetDepartmentByIdAsync_ShouldReturnsDTO()
-    {
-        // Arrange
-        var name = "Products Development";
-        var model = new Department(name);
-        _departmentRepositoryMock
-            .Setup(repo => repo.GetDepartmentByIdAsync(It.IsAny<Guid>()))
-            .ReturnsAsync(model);
-
-        // Act
-        var result = await _departmentService.GetDepartmentByIdAsync(Guid.NewGuid());
-
-        // Assert
-        Assert.NotNull(result);
-        Assert.Equal(model.Id, result.Id);
-        Assert.Equal(model.Name, result.Name);
-        Assert.IsType<DepartmentDTO?>(result);
-        Assert.True(_departmentService.IsValid);
-        Assert.Empty(_departmentService.Notifications);
-    }
-    #endregion
     
-    #region GetAllDepartmentsAsync
-    [Theory]
-    [InlineData(-1, 25)]
-    [InlineData(0, 0)]
-    [InlineData(1, 0)]
-    [InlineData(-1, 0)]
-    [InlineData(-1, -1)]
-    [InlineData(0, -1)]
-    public async Task GetAllDepartmentsAsync_ShouldReturnsEmptyList_WithInvalidSkipTake(int skip, int take)
-    {
-        // Arrange
-        _departmentRepositoryMock
-            .Setup(repo => repo.GetAllDepartmentsAsync(skip, take))
-            .ReturnsAsync((ICollection<Department>?)null);
-
-        // Act
-        var result = await _departmentService.GetAllDepartmentsAsync(skip, take);
-
-        // Assert
-        Assert.NotNull(result);
-        Assert.Empty(result);
-        Assert.False(_departmentService.IsValid);
-        Assert.Single(_departmentService.Notifications);
-        Assert.Equal(Error.Department.INVALID_PAGINATION, _departmentService.Notifications.First().Message);
-    }
-
-    [Fact]
-    public async Task GetAllDepartmentsAsync_ShouldReturnsEmptyList_WithNoDepartments()
-    {
-        // Arrange
-        _departmentRepositoryMock
-            .Setup(repo => repo.GetAllDepartmentsAsync(It.IsAny<int>(), It.IsAny<int>()))
-            .ReturnsAsync((ICollection<Department>?)null);
-
-        // Act
-        var result = await _departmentService.GetAllDepartmentsAsync(0, 25);
-
-        // Assert
-        Assert.NotNull(result);
-        Assert.Empty(result);
-        Assert.True(_departmentService.IsValid);
-        Assert.Empty(_departmentService.Notifications);
-    }
-
-    [Theory]
-    [InlineData(0, 25)]
-    [InlineData(0, 1)]
-    [InlineData(0, 50)]
-    [InlineData(25, 1)]
-    [InlineData(25, 25)]
-    [InlineData(1, 30)]
-    public async Task GetAllDepartmentsAsync_ShouldReturnsEmptyList_WithRepositoryError(int skip, int take)
-    {
-        // Arrange
-        _departmentRepositoryMock
-            .Setup(repo => repo.GetAllDepartmentsAsync(It.IsAny<int>(), It.IsAny<int>()))
-            .ReturnsAsync((ICollection<Department>?)null);
-
-        // Act
-        var result = await _departmentService.GetAllDepartmentsAsync(skip, take);
-
-        // Assert
-        Assert.NotNull(result);
-        Assert.Empty(result);
-        Assert.True(_departmentService.IsValid);
-        Assert.Empty(_departmentService.Notifications);
-    }
-
-    [Fact]
-    public async Task GetAllDepartmentsAsync_ShouldReturnsNotEmptyLis()
-    {
-                // Arrange
-        var model = new List<Department>
-        {
-            new Department("Department 1"),
-            new Department("Department 2"),
-            new Department("Department 3"),
-            new Department("Department 4"),
-            new Department("Department 5")
-        };
-        _departmentRepositoryMock
-            .Setup(repo => repo.GetAllDepartmentsAsync(It.IsAny<int>(), It.IsAny<int>()))
-            .ReturnsAsync(model);
-
-        // Act
-        var result = await _departmentService.GetAllDepartmentsAsync(0, 25);
-
-        // Assert
-        Assert.True(_departmentService.IsValid);
-        Assert.NotNull(result);
-        Assert.NotEmpty(result);
-        Assert.Equal(model.Count, result.Count);
-    }
-    #endregion
+    
 }

@@ -6,9 +6,9 @@ namespace PontoLegal.Service.Interfaces;
 
 public interface ICompanyService
 {
-    Task<bool> AddCompanyAsync(CompanyModel model);
+    Task<CompanyDTO?> GetCompanyByIdAsync(Guid id);
     Task<CompanyDTO?> GetCompanyByNameAsync(string modelName);
     Task<CompanyDTO?> GetCompanyByCnpjAsync(Cnpj cnpj);
-    Task<CompanyDTO?> GetCompanyByIdAsync(Guid id);
+    Task<bool> AddCompanyAsync(CompanyModel model);
     Task<bool> RemoveCompanyByIdAsync(Guid id);
 }
