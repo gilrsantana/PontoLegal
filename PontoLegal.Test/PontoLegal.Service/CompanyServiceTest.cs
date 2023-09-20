@@ -1,4 +1,5 @@
 using PontoLegal.Domain.ValueObjects;
+using PontoLegal.Service.DTOs;
 using PontoLegal.Test.Mock;
 
 namespace PontoLegal.Test.PontoLegal.Service;
@@ -219,6 +220,7 @@ public class CompanyServiceTest
         
         // Assert
         Assert.NotNull(result);
+        Assert.IsType<CompanyDTO?>(result);
         Assert.Equal(company.Id, result.Id);
         Assert.Equal(company.Name, result.Name);
         Assert.Equal(company.Cnpj, result.Cnpj);
@@ -259,6 +261,7 @@ public class CompanyServiceTest
         
         // Assert
         Assert.NotNull(result);
+        Assert.IsType<CompanyDTO?>(result);
         Assert.Equal(company.Id, result.Id);
         Assert.Equal(company.Name, result.Name);
         Assert.Equal(company.Cnpj, result.Cnpj);
@@ -318,6 +321,7 @@ public class CompanyServiceTest
         
         // Assert
         Assert.NotNull(result);
+        Assert.IsType<CompanyDTO?>(result);
         Assert.Equal(company.Id, result.Id);
         Assert.Equal(company.Name, result.Name);
         Assert.Equal(company.Cnpj, result.Cnpj);
@@ -326,7 +330,91 @@ public class CompanyServiceTest
     }
     
     #endregion
+    
+    #region RemoveCompanyAsync
+    
+    [Fact]
+    public async Task RemoveCompanyAsync_ShouldReturnsFalseWithError_WithInvalidId()
+    {
+        // Arrange
+        var id = Guid.Empty;
+        
+        // Act
+        var result = await _companyService.RemoveCompanyByIdAsync(id);
+        
+        // Assert
+        Assert.False(result);
+        Assert.False(_companyService.IsValid);
+        Assert.Single(_companyService.Notifications);
+        Assert.Equal(Error.Company.INVALID_ID, _companyService.Notifications.First().Message);
+    }
+    
+    [Fact]
+    public async Task RemoveCompanyAsync_ShouldReturnsFalse_WithUnknownId()
+    {
+        // Arrange
+        var id = Guid.NewGuid();
+        _companyRepositoryMock
+            .Setup(x => x.GetCompanyByIdAsync(id))
+            .ReturnsAsync((Company?)null);
+        
+        // Act
+        var result = await _companyService.RemoveCompanyByIdAsync(id);
+        
+        // Assert
+        Assert.False(result);
+        Assert.True(_companyService.IsValid);
+        Assert.Empty(_companyService.Notifications);
+    }
+    
+    [Fact]
+    public async Task RemoveCompanyAsync_ShouldReturnsFalse_WithRepositoryError()
+    {
+        // Arrange
+        var id = Guid.NewGuid();
+        var company = new Company("Company", new Cnpj(MockCnpj.ValidCnpj));
+        _companyRepositoryMock
+            .Setup(x => x.GetCompanyByIdAsync(id))
+            .ReturnsAsync(company);
+        _companyRepositoryMock
+            .Setup(x => x.RemoveCompanyByIdAsync(id))
+            .ReturnsAsync(false);
+        
+        // Act
+        var result = await _companyService.RemoveCompanyByIdAsync(id);
+        
+        // Assert
+        Assert.False(result);
+        Assert.True(_companyService.IsValid);
+        Assert.Empty(_companyService.Notifications);
+    }
+    
+    [Fact]
+    public async Task RemoveCompanyAsync_ShouldReturnsTrue()
+    {
+        // Arrange
+        var id = Guid.NewGuid();
+        var company = new Company("Company", new Cnpj(MockCnpj.ValidCnpj));
+        _companyRepositoryMock
+            .Setup(x => x.GetCompanyByIdAsync(id))
+            .ReturnsAsync(company);
+        _companyRepositoryMock
+            .Setup(x => x.RemoveCompanyByIdAsync(id))
+            .ReturnsAsync(true);
+        
+        // Act
+        var result = await _companyService.RemoveCompanyByIdAsync(id);
+        
+        // Assert
+        Assert.True(result);
+        Assert.True(_companyService.IsValid);
+        Assert.Empty(_companyService.Notifications);
+    }
+
+    #endregion
 }
+
+
 
 
 

@@ -9,4 +9,6 @@ public interface ICompanyRepository
     Task<Company?> GetCompanyByNameAsync(string name);
     Task<bool> AddCompanyAsync(Company company);
     Task<Company?> GetCompanyByIdAsync(Guid id);
+    Task<bool> RemoveCompanyByIdAsync(Guid id);
+    
 }

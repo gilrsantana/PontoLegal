@@ -96,4 +96,21 @@ public class CompanyService : BaseService, ICompanyService
             ? null
             : new CompanyDTO { Id = company.Id, Name = company.Name, Cnpj = company.Cnpj };
     }
+
+    public async Task<bool> RemoveCompanyByIdAsync(Guid id)
+    {
+        if (id == Guid.Empty)
+        {
+            AddNotification("CompanyService.Id", Error.Company.INVALID_ID);
+            return false;
+        }
+        
+        var companyDto = await GetCompanyByIdAsync(id);
+        
+        if (companyDto == null) return false;
+        
+        var result = await _companyRepository.RemoveCompanyByIdAsync(id);
+
+        return result;
+    }
 }

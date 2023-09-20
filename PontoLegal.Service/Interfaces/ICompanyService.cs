@@ -10,4 +10,5 @@ public interface ICompanyService
     Task<CompanyDTO?> GetCompanyByNameAsync(string modelName);
     Task<CompanyDTO?> GetCompanyByCnpjAsync(Cnpj cnpj);
     Task<CompanyDTO?> GetCompanyByIdAsync(Guid id);
+    Task<bool> RemoveCompanyByIdAsync(Guid id);
 }
