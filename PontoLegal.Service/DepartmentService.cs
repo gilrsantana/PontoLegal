@@ -16,15 +16,50 @@ public class DepartmentService : BaseService, IDepartmentService
         _departmentRepository = departmentRepository;
     }
 
+    public async Task<DepartmentDTO?> GetDepartmentByIdAsync(Guid departmentId)
+    {
+        var department = await _departmentRepository.GetDepartmentByIdAsync(departmentId);
+        return department == null
+            ? null
+            : new DepartmentDTO { Id = department.Id, Name = department.Name };
+    }
+    
+    public async Task<DepartmentDTO?> GetDepartmentByNameAsync(string departmentName)
+    {
+        var department = await _departmentRepository.GetDepartmentByNameAsync(departmentName);
+            
+        return department == null 
+            ? null 
+            : new DepartmentDTO { Id = department.Id, Name = department.Name };
+    }
+    
+    public async Task<ICollection<DepartmentDTO>> GetAllDepartmentsAsync(int skip=0, int take=25)
+    {
+        if (skip < 0 || take < 1)
+        {
+            AddNotification("DepartmentService", Error.Department.INVALID_PAGINATION);
+            return new List<DepartmentDTO>();
+        }
+
+        var result = await _departmentRepository.GetAllDepartmentsAsync(skip, take);
+        if (result != null)
+        {
+            var departments = new List<DepartmentDTO>();
+            foreach (var department in result)
+            {
+                departments.Add(new DepartmentDTO { Id = department.Id, Name = department.Name });
+            }
+            return departments;
+        }
+        
+        return new List<DepartmentDTO>();
+    }
+    
     public async Task<bool> AddDepartmentAsync(DepartmentModel model)
     {
         if (!model.IsValid)
         {
-            foreach (var notification in model.Notifications)
-            {
-                AddNotification(notification);
-            }
-
+            AddNotifications(model.Notifications);
             return false;
         }
 
@@ -46,24 +81,7 @@ public class DepartmentService : BaseService, IDepartmentService
         AddNotification("DepartmentService", Error.Department.ERROR_ADDING);
         return false;
     }
-
-    public async Task<DepartmentDTO?> GetDepartmentByNameAsync(string departmentName)
-    {
-        var department = await _departmentRepository.GetDepartmentByNameAsync(departmentName);
-            
-        return department == null 
-            ? null 
-            : new DepartmentDTO { Id = department.Id, Name = department.Name };
-    }
-
-    public async Task<DepartmentDTO?> GetDepartmentByIdAsync(Guid departmentId)
-    {
-        var department = await _departmentRepository.GetDepartmentByIdAsync(departmentId);
-        return department == null
-            ? null
-            : new DepartmentDTO { Id = department.Id, Name = department.Name };
-    }
-
+    
     public async Task<bool> UpdateDepartmentAsync(Guid id, DepartmentModel model)
     {
         if (!model.IsValid)
@@ -122,27 +140,5 @@ public class DepartmentService : BaseService, IDepartmentService
 
         AddNotification("DepartmentService", Error.Department.ERROR_REMOVING);
         return false;
-    }
-
-    public async Task<ICollection<DepartmentDTO>> GetAllDepartmentsAsync(int skip=0, int take=25)
-    {
-        if (skip < 0 || take < 1)
-        {
-            AddNotification("DepartmentService", Error.Department.INVALID_PAGINATION);
-            return new List<DepartmentDTO>();
-        }
-
-        var result = await _departmentRepository.GetAllDepartmentsAsync(skip, take);
-        if (result != null)
-        {
-            var departments = new List<DepartmentDTO>();
-            foreach (var department in result)
-            {
-                departments.Add(new DepartmentDTO { Id = department.Id, Name = department.Name });
-            }
-            return departments;
-        }
-        
-        return new List<DepartmentDTO>();
     }
 }
