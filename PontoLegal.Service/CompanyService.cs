@@ -109,7 +109,48 @@ public class CompanyService : BaseService, ICompanyService
         if (result)
             return true;
         
-        AddNotification("CompanyService", Error.Company.ADD_ERROR);
+        AddNotification("CompanyService", Error.Company.ERROR_ADDING);
+        return false;
+    }
+    
+    public async Task<bool> UpdateCompanyAsync(Guid id, CompanyModel model)
+    {
+        if (!ValidateIdForSearch(id)) return false;
+        
+        if (!model.IsValid)
+        {
+            AddNotifications(model.Notifications);
+            return false;
+        }
+        
+        var dtoById = await GetCompanyByIdAsync(id);
+        var dtoByCnpj = await GetCompanyByCnpjAsync(model.Cnpj);
+        var nameExists = await GetCompanyByNameAsync(model.Name);
+
+        if (dtoById == null)
+        {
+            AddNotification("CompanyService.Id", Error.Company.NOT_FOUNDED);
+            return false;
+        }
+        
+        if (dtoByCnpj != null && dtoByCnpj.Id != id)
+        {
+            AddNotification("CompanyService.Cnpj", Error.Company.ALREADY_EXISTS);
+            return false;
+        }
+        
+        if (nameExists != null && nameExists.Id != id)
+        {
+            AddNotification("CompanyService.Name", Error.Company.ALREADY_EXISTS);
+            return false;
+        }
+        
+        var company = new Company(model.Name, model.Cnpj);
+        var result = await _companyRepository.UpdateCompanyAsync(id, company);
+
+        if (result) return true;
+        
+        AddNotification("CompanyService", Error.Company.ERROR_UPDATING);
         return false;
     }
     
@@ -134,6 +175,13 @@ public class CompanyService : BaseService, ICompanyService
     {
         if (!string.IsNullOrWhiteSpace(name)) return true;
         AddNotification("Company.Name", Error.Company.NAME_IS_REQUIRED);
+        return false;
+    }
+
+    private bool ValidateIdForSearch(Guid id)
+    {
+        if (id != Guid.Empty) return true;
+        AddNotification("Company.Id", Error.Company.ID_IS_REQUIRED);
         return false;
     }
 }
