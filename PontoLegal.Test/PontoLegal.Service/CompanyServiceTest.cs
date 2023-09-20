@@ -29,7 +29,7 @@ public class CompanyServiceTest
         Assert.Null(result);
         Assert.False(_companyService.IsValid);
         Assert.Single(_companyService.Notifications);
-        Assert.Equal(Error.Company.INVALID_ID, _companyService.Notifications.First().Message);
+        Assert.Equal(Error.Company.ID_IS_REQUIRED, _companyService.Notifications.First().Message);
     }
     
     [Fact]
@@ -343,7 +343,7 @@ public class CompanyServiceTest
     }
     
     [Fact]
-    public async Task AddCompanyAsync_ShouldReturnsFalseWithError_ExistentCompany()
+    public async Task AddCompanyAsync_ShouldReturnsFalseWithError_ExistentCompanyByName()
     {
         // Arrange
         var model = new CompanyModel("Company", MockCnpj.ValidCnpj);
@@ -367,6 +367,31 @@ public class CompanyServiceTest
         Assert.Equal(Error.Company.ALREADY_EXISTS, _companyService.Notifications.First().Message);
     }
 
+    [Fact]
+    public async Task AddCompanyAsync_ShouldReturnsFalseWithError_ExistentCompanyByCnpj()
+    {
+        // Arrange
+        var model = new CompanyModel("Company", MockCnpj.ValidCnpj);
+        var cnpj = new Cnpj(MockCnpj.ValidCnpj);
+        var company = new Company(model.Name, cnpj);
+        _companyRepositoryMock
+            .Setup(x => x.GetCompanyByCnpjAsync(It.IsAny<Cnpj>()))
+            .ReturnsAsync(company);
+        _companyRepositoryMock
+            .Setup(x => x.GetCompanyByNameAsync(model.Name))
+            .ReturnsAsync((Company?)null);
+        
+        // Act
+        var result = await _companyService.AddCompanyAsync(model);
+        
+        // Assert
+        Assert.True(model.IsValid);
+        Assert.False(_companyService.IsValid);
+        Assert.False(result);
+        Assert.Single(_companyService.Notifications);
+        Assert.Equal(Error.Company.ALREADY_EXISTS, _companyService.Notifications.First().Message);
+    }
+    
     [Fact]
     public async Task AddCompanyAsync_ShouldReturnsFalseWithError_WithRepositoryError()
     {
@@ -613,7 +638,7 @@ public class CompanyServiceTest
         Assert.False(result);
         Assert.False(_companyService.IsValid);
         Assert.Single(_companyService.Notifications);
-        Assert.Equal(Error.Company.INVALID_ID, _companyService.Notifications.First().Message);
+        Assert.Equal(Error.Company.ID_IS_REQUIRED, _companyService.Notifications.First().Message);
     }
     
     [Fact]

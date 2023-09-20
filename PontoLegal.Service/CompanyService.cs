@@ -20,11 +20,7 @@ public class CompanyService : BaseService, ICompanyService
 
     public async Task<CompanyDTO?> GetCompanyByIdAsync(Guid id)
     {
-        if (id == Guid.Empty)
-        {
-            AddNotification("CompanyService.Id", Error.Company.INVALID_ID);
-            return null;
-        }
+        if (!ValidateIdForSearch(id)) return null;
         
         var company = await _companyRepository.GetCompanyByIdAsync(id);
         
@@ -156,11 +152,7 @@ public class CompanyService : BaseService, ICompanyService
     
     public async Task<bool> RemoveCompanyByIdAsync(Guid id)
     {
-        if (id == Guid.Empty)
-        {
-            AddNotification("CompanyService.Id", Error.Company.INVALID_ID);
-            return false;
-        }
+        if (!ValidateIdForSearch(id)) return false;
         
         var companyDto = await GetCompanyByIdAsync(id);
         
