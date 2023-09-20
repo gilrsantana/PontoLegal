@@ -1,7 +1,11 @@
 global using Xunit;
 global using Moq;
 global using PontoLegal.Domain.Entities;
+global using PontoLegal.Domain.ValueObjects;
 global using PontoLegal.Repository.Interfaces;
 global using PontoLegal.Shared.Messages;
 global using PontoLegal.Service;
 global using PontoLegal.Service.Entities;
+global using PontoLegal.Service.DTOs;
+global using PontoLegal.Test.Mock;
+global using PontoLegal.Domain.Enums;

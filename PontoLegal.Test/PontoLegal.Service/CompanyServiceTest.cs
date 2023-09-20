@@ -1,7 +1,3 @@
-using PontoLegal.Domain.ValueObjects;
-using PontoLegal.Service.DTOs;
-using PontoLegal.Test.Mock;
-
 namespace PontoLegal.Test.PontoLegal.Service;
 
 public class CompanyServiceTest

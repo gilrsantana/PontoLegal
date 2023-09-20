@@ -1,5 +1,3 @@
-using PontoLegal.Service.DTOs;
-
 namespace PontoLegal.Test.PontoLegal.Service;
 
 public class DepartmentServiceTest
