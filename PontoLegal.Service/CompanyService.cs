@@ -1,3 +1,4 @@
+using System.Collections;
 using PontoLegal.Domain.Entities;
 using PontoLegal.Domain.ValueObjects;
 using PontoLegal.Repository.Interfaces;
@@ -56,6 +57,27 @@ public class CompanyService : BaseService, ICompanyService
         return company == null
             ? null
             : new CompanyDTO { Id = company.Id, Name = company.Name, Cnpj = company.Cnpj };
+    }
+    
+    public async Task<ICollection<CompanyDTO>> GetAllCompaniesAsync(int skip=0, int take=25)
+    {
+        if (skip < 0 || take < 1)
+        {
+            AddNotification("CompanyService", Error.Company.INVALID_PAGINATION);
+            return new List<CompanyDTO>();
+        }
+        
+        var result = await _companyRepository.GetAllCompaniesAsync(skip, take);
+        if (result != null)
+        {
+            var companies = new List<CompanyDTO>();
+            foreach (var company in result)
+            {
+                companies.Add(new CompanyDTO { Id = company.Id, Name = company.Name, Cnpj = company.Cnpj });
+            }
+            return companies;
+        }
+        return new List<CompanyDTO>();
     }
     
     public async Task<bool> AddCompanyAsync(CompanyModel model)

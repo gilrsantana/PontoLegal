@@ -32,11 +32,12 @@ public static class Error
 
     public static class Company
     {
-        public const string INVALID_ID       = "Invalid Id";
-        public const string NAME_IS_REQUIRED = "Name of Company is required";
-        public const string ADD_ERROR        = "Error adding Company";
-        public const string ALREADY_EXISTS   = "Company already exists";
-        public const string INVALID_NAME     = "Company name can't be null and must be between 3 and 30 chars";
+        public const string INVALID_PAGINATION = "Invalid skip and/or take value";
+        public const string INVALID_ID         = "Invalid Id";
+        public const string NAME_IS_REQUIRED   = "Name of Company is required";
+        public const string ADD_ERROR          = "Error adding Company";
+        public const string ALREADY_EXISTS     = "Company already exists";
+        public const string INVALID_NAME       = "Company name can't be null and must be between 3 and 30 chars";
     }
 
     public static class Cnpj

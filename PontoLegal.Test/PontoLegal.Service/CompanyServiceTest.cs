@@ -177,6 +177,98 @@ public class CompanyServiceTest
     
     #endregion
     
+    #region GetAllCompaniesAsync
+    
+    [Theory]
+    [InlineData(-1, 25)]
+    [InlineData(0, 0)]
+    [InlineData(1, 0)]
+    [InlineData(-1, 0)]
+    [InlineData(-1, -1)]
+    [InlineData(0, -1)]
+    public async Task GetAllCompaniesAsync_ShouldReturnsEmptyList_WithInvalidSkipTake(int skip, int take)
+    {
+        // Arrange
+        _companyRepositoryMock
+            .Setup(repo => repo.GetAllCompaniesAsync(skip, take))!
+            .ReturnsAsync((ICollection<Company>?)null);
+        
+        // Act
+        var result = await _companyService.GetAllCompaniesAsync(skip, take);
+        
+        // Assert
+        Assert.NotNull(result);
+        Assert.Empty(result);
+        Assert.False(_companyService.IsValid);
+        Assert.Single(_companyService.Notifications);
+        Assert.Equal(Error.Company.INVALID_PAGINATION, _companyService.Notifications.First().Message);
+    }
+    
+    [Fact]
+    public async Task GetAllCompaniesAsync_ShouldReturnsEmptyList_WithUnknownCompanies()
+    {
+        // Arrange
+        var companies = new List<Company>();
+        _companyRepositoryMock
+            .Setup(repo => repo.GetAllCompaniesAsync(0, 25))!
+            .ReturnsAsync(companies);
+        
+        // Act
+        var result = await _companyService.GetAllCompaniesAsync(0, 25);
+        
+        // Assert
+        Assert.NotNull(result);
+        Assert.Empty(result);
+        Assert.True(_companyService.IsValid);
+        Assert.Empty(_companyService.Notifications);
+    }
+    
+    [Fact]
+    public async Task GetAllCompaniesAsync_ShouldReturnsEmptyList_WithRepositoryError()
+    {
+        // Arrange
+        _companyRepositoryMock
+            .Setup(repo => repo.GetAllCompaniesAsync(0, 25))!
+            .ReturnsAsync((ICollection<Company>?)null);
+        
+        // Act
+        var result = await _companyService.GetAllCompaniesAsync(0, 25);
+        
+        // Assert
+        Assert.NotNull(result);
+        Assert.Empty(result);
+        Assert.True(_companyService.IsValid);
+        Assert.Empty(_companyService.Notifications);
+    } 
+    
+    [Fact]
+    public async Task GetAllCompaniesAsync_ShouldReturnsDtoList()
+    {
+        // Arrange
+        var companies = new List<Company>
+        {
+            new("Company 1", new Cnpj(MockCnpj.ValidCnpj)),
+            new("Company 2", new Cnpj(MockCnpj.ValidCnpj)),
+            new("Company 3", new Cnpj(MockCnpj.ValidCnpj)),
+        };
+        _companyRepositoryMock
+            .Setup(repo => repo.GetAllCompaniesAsync(0, 25))!
+            .ReturnsAsync(companies);
+        
+        // Act
+        var result = await _companyService.GetAllCompaniesAsync(0, 25);
+        
+        // Assert
+        Assert.NotNull(result);
+        Assert.NotEmpty(result);
+        Assert.IsType<List<CompanyDTO>>(result);
+        Assert.Equal(companies.Count, result.Count);
+        Assert.True(_companyService.IsValid);
+        Assert.Empty(_companyService.Notifications);
+    }
+    
+    #endregion
+    
     #region AddCompanyAsync
     [Theory]
     [InlineData("")]
