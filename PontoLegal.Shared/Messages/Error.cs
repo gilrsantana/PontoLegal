@@ -50,6 +50,7 @@ public static class Error
 
     public static class WorkingDay
     {
+        public const string ERROR_UPDATING      = "Error updating Working Day";
         public const string ERROR_REMOVING      = "Error removing Working Day";
         public const string NOT_FOUNDED         = "Working Day not founded";
         public const string INVALID_PAGINATION  = "Invalid skip and/or take value";

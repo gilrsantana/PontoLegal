@@ -404,6 +404,251 @@ public class WorkingDayServiceTest
     }
     #endregion
     
+    #region UpdateWorkingDayAsync
+    [Fact]
+    public async Task UpdateWorkingDayAsync_ShouldReturnsFalseWithError_WithInvalidId()
+    {
+        // Arrange
+        var id = Guid.Empty;
+        var name = "Name of Working Day";
+        var startWork = new TimeOnly(7, 0);
+        var startBreak = new TimeOnly(11, 0);
+        var endBreak = new TimeOnly(12, 0);
+        var endWork = new TimeOnly(16, 0);
+        var model = new WorkingDayModel(name, WorkingDayType.NINE_HOURS, startWork, startBreak, endBreak, endWork);
+        
+        // Act
+        var result = await _workingDayService.UpdateWorkingDayAsync(id, model);
+        
+        // Assert
+        Assert.False(result);
+        Assert.True(model.IsValid);
+        Assert.Single(_workingDayService.Notifications);
+        Assert.Equal(Error.WorkingDay.ID_IS_REQUIRED, _workingDayService.Notifications.First().Message);
+    }    
+    
+    [Fact]
+    public async Task UpdateWorkingDayAsync_ShouldReturnsFalseWithError_WithInvalidName()
+    {
+        // Arrange
+        var id = Guid.NewGuid();
+        var name = "";
+        var startWork = new TimeOnly(7, 0);
+        var startBreak = new TimeOnly(11, 0);
+        var endBreak = new TimeOnly(12, 0);
+        var endWork = new TimeOnly(16, 0);
+        var model = new WorkingDayModel(name, WorkingDayType.NINE_HOURS, startWork, startBreak, endBreak, endWork);
+        
+        // Act
+        var result = await _workingDayService.UpdateWorkingDayAsync(id, model);
+        
+        // Assert
+        Assert.False(result);
+        Assert.False(model.IsValid);
+        Assert.Single(model.Notifications);
+        Assert.Single(_workingDayService.Notifications);
+        Assert.Equal(Error.WorkingDay.INVALID_NAME, model.Notifications.First().Message);
+        Assert.Equal(Error.WorkingDay.INVALID_NAME, _workingDayService.Notifications.First().Message);
+    }
+    
+    [Fact]
+    public async Task UpdateWorkingDayAsync_ShouldReturnsFalseWithError_WithInvalidStartWork()
+    {
+        // Arrange
+        var id = Guid.NewGuid();
+        var name = "Name of Working Day";
+        var startWork = new TimeOnly(7, 0);
+        var startBreak = new TimeOnly(6, 0);
+        var endBreak = new TimeOnly(12, 0);
+        var endWork = new TimeOnly(16, 0);
+        var model = new WorkingDayModel(name, WorkingDayType.NINE_HOURS, startWork, startBreak, endBreak, endWork);
+
+        // Act
+        var result = await _workingDayService.UpdateWorkingDayAsync(id, model);
+        
+        // Assert
+        Assert.False(result);
+        Assert.False(model.IsValid);
+        Assert.Single(model.Notifications);
+        Assert.Single(_workingDayService.Notifications);
+        Assert.Equal(Error.WorkingDay.INVALID_START_WORK, model.Notifications.First().Message);
+        Assert.Equal(Error.WorkingDay.INVALID_START_WORK, _workingDayService.Notifications.First().Message);
+    }
+    
+    [Fact]
+    public async Task UpdateWorkingDayAsync_ShouldReturnsFalseWithError_WithInvalidStartBreak()
+    {
+        // Arrange
+        var id = Guid.NewGuid();
+        var name = "Name of Working Day";
+        var startWork = new TimeOnly(7, 0);
+        var startBreak = new TimeOnly(11, 0);
+        var endBreak = new TimeOnly(10, 0);
+        var endWork = new TimeOnly(16, 0);
+        var model = new WorkingDayModel(name, WorkingDayType.NINE_HOURS, startWork, startBreak, endBreak, endWork);
+
+        // Act
+        var result = await _workingDayService.UpdateWorkingDayAsync(id, model);
+        
+        // Assert
+        Assert.False(result);
+        Assert.False(model.IsValid);
+        Assert.Single(model.Notifications);
+        Assert.Single(_workingDayService.Notifications);
+        Assert.Equal(Error.WorkingDay.INVALID_START_BREAK, model.Notifications.First().Message);
+        Assert.Equal(Error.WorkingDay.INVALID_START_BREAK, _workingDayService.Notifications.First().Message);
+    }
+    
+    [Fact]
+    public async Task UpdateWorkingDayAsync_ShouldReturnsFalseWithError_WithInvalidEndBreak()
+    {
+        // Arrange
+        var id = Guid.NewGuid();
+        var name = "Name of Working Day";
+        var startWork = new TimeOnly(7, 0);
+        var startBreak = new TimeOnly(11, 0);
+        var endBreak = new TimeOnly(17, 0);
+        var endWork = new TimeOnly(16, 0);
+        var model = new WorkingDayModel(name, WorkingDayType.NINE_HOURS, startWork, startBreak, endBreak, endWork);
+
+        // Act
+        var result = await _workingDayService.UpdateWorkingDayAsync(id, model);
+        
+        // Assert
+        Assert.False(result);
+        Assert.False(model.IsValid);
+        Assert.Single(model.Notifications);
+        Assert.Single(_workingDayService.Notifications);
+        Assert.Equal(Error.WorkingDay.INVALID_END_BREAK, model.Notifications.First().Message);
+        Assert.Equal(Error.WorkingDay.INVALID_END_BREAK, _workingDayService.Notifications.First().Message);
+    }
+    
+    [Fact]
+    public async Task UpdateWorkingDayAsync_ShouldReturnsFalseWithError_WithInvalidType()
+    {
+        // Arrange
+        var id = Guid.NewGuid();
+        var name = "Name of Working Day";
+        var startWork = new TimeOnly(7, 0);
+        var startBreak = new TimeOnly(11, 0);
+        var endBreak = new TimeOnly(12, 0);
+        var endWork = new TimeOnly(16, 0);
+        var model = new WorkingDayModel(name, WorkingDayType.EIGHT_HOURS, startWork, startBreak, endBreak, endWork);
+
+        // Act
+        var result = await _workingDayService.UpdateWorkingDayAsync(id, model);
+        
+        // Assert
+        Assert.False(result);
+        Assert.False(model.IsValid);
+        Assert.Single(model.Notifications);
+        Assert.Single(_workingDayService.Notifications);
+        Assert.Equal(Error.WorkingDay.INVALID_TYPE, model.Notifications.First().Message);
+        Assert.Equal(Error.WorkingDay.INVALID_TYPE, _workingDayService.Notifications.First().Message);
+    }
+    
+    [Fact]
+    public async Task UpdateWorkingDayAsync_ShouldReturnsFalseWithError_WithNotExistingWorkingDay()
+    {
+        // Arrange
+        var id = Guid.NewGuid();
+        var name = "Name of Working Day";
+        var startWork = new TimeOnly(7, 0);
+        var startBreak = new TimeOnly(11, 0);
+        var endBreak = new TimeOnly(12, 0);
+        var endWork = new TimeOnly(16, 0);
+        var model = new WorkingDayModel(name, WorkingDayType.NINE_HOURS, startWork, startBreak, endBreak, endWork);
+
+        _workingDayRepositoryMock
+            .Setup(x => x.GetWorkingDayByIdAsync(It.IsAny<Guid>()))
+            .ReturnsAsync((WorkingDay?)null);
+        
+        // Act
+        var result = await _workingDayService.UpdateWorkingDayAsync(id, model);
+        
+        // Assert
+        Assert.False(result);
+        Assert.True(model.IsValid);
+        Assert.Single(_workingDayService.Notifications);
+        Assert.Equal(Error.WorkingDay.NOT_FOUNDED, _workingDayService.Notifications.First().Message);
+    }
+    
+    [Fact]
+    public async Task UpdateWorkingDayAsync_ShouldReturnsFalseWithError_WithExistingWorkingDay()
+    {
+        // Arrange
+        var id = Guid.NewGuid();
+        var name = "Name of Working Day";
+        var startWork = new TimeOnly(7, 0);
+        var startBreak = new TimeOnly(11, 0);
+        var endBreak = new TimeOnly(12, 0);
+        var endWork = new TimeOnly(16, 0);
+        var model = new WorkingDayModel(name, WorkingDayType.NINE_HOURS, startWork, startBreak, endBreak, endWork);
+
+        var workingDay = new WorkingDay(
+            "Name of Working Day", 
+            WorkingDayType.NINE_HOURS, 
+            new TimeOnly(7, 0), 
+            new TimeOnly(11, 0), 
+            new TimeOnly(12, 0), 
+            new TimeOnly(16, 0));
+        _workingDayRepositoryMock
+            .Setup(x => x.GetWorkingDayByIdAsync(It.IsAny<Guid>()))
+            .ReturnsAsync(workingDay);
+        _workingDayRepositoryMock
+            .Setup(x => x.GetWorkingDayByNameAsync(It.IsAny<string>()))
+            .ReturnsAsync(workingDay);
+        
+        // Act
+        var result = await _workingDayService.UpdateWorkingDayAsync(id, model);
+        
+        // Assert
+        Assert.False(result);
+        Assert.True(model.IsValid);
+        Assert.Single(_workingDayService.Notifications);
+        Assert.Equal(Error.WorkingDay.NAME_ALREADY_EXISTS, _workingDayService.Notifications.First().Message);
+    }
+    
+    [Fact]
+    public async Task UpdateWorkingDayAsync_ShouldReturnsTrue()
+    {
+        // Arrange
+        var id = Guid.NewGuid();
+        var name = "Name of Working Day";
+        var startWork = new TimeOnly(7, 0);
+        var startBreak = new TimeOnly(11, 0);
+        var endBreak = new TimeOnly(12, 0);
+        var endWork = new TimeOnly(16, 0);
+        var model = new WorkingDayModel(name, WorkingDayType.NINE_HOURS, startWork, startBreak, endBreak, endWork);
+
+        var workingDay = new WorkingDay(
+            "New Working Day", 
+            WorkingDayType.NINE_HOURS, 
+            new TimeOnly(7, 0), 
+            new TimeOnly(11, 0), 
+            new TimeOnly(12, 0), 
+            new TimeOnly(16, 0));
+        _workingDayRepositoryMock
+            .Setup(x => x.GetWorkingDayByIdAsync(It.IsAny<Guid>()))
+            .ReturnsAsync(workingDay);
+        _workingDayRepositoryMock
+            .Setup(x => x.GetWorkingDayByNameAsync(It.IsAny<string>()))
+            .ReturnsAsync((WorkingDay?)null);
+        _workingDayRepositoryMock
+            .Setup(x => x.UpdateWorkingDayAsync(It.IsAny<Guid>(), It.IsAny<WorkingDay>()))
+            .ReturnsAsync(true);
+        
+        // Act
+        var result = await _workingDayService.UpdateWorkingDayAsync(id, model);
+        
+        // Assert
+        Assert.True(result);
+        Assert.True(model.IsValid);
+        Assert.Empty(_workingDayService.Notifications);
+    }
+    
+    #endregion
+    
     #region RemoveWorkingDayByIdAsync
     [Fact]
     public async Task RemoveWorkingDayByIdAsync_ShouldReturnsFalse_WithInvalidId()

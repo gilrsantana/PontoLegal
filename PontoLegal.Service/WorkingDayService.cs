@@ -16,47 +16,12 @@ public class WorkingDayService : BaseService, IWorkingDayService
     {
         _workingDayRepository = workingDayRepository;
     }
-
-    public async Task<bool> AddWorkingDayAsync(WorkingDayModel model)
+    
+    public async Task<WorkingDayDTO?> GetWorkingDayByIdAsync(Guid id)
     {
-        if (!model.IsValid)
-        {
-            AddNotifications(model.Notifications);
-            return false;
-        }
-        
-        var existingWorkingDay = await GetWorkingDayByNameAsync(model.Name);
-        
-        if (existingWorkingDay != null)
-        {
-            AddNotification("WorkingDay.Name", Error.WorkingDay.NAME_ALREADY_EXISTS);
-            return false;
-        }
-        
-        var workingDay = new WorkingDay(
-            model.Name, 
-            model.Type, 
-            model.StartWork, 
-            model.StartBreak, 
-            model.EndBreak, 
-            model.EndWork);
-        
-        var result = await _workingDayRepository.AddWorkingDayAsync(workingDay);
-        
-        if (!result)
-        {
-            AddNotification("WorkingDay", Error.WorkingDay.ERROR_ADDING);
-            return false;
-        }
+        if (!ValidateIdForSearch(id)) return null;
 
-        return true;
-    }
-
-    public async Task<WorkingDayDTO?> GetWorkingDayByNameAsync(string name)
-    {
-        if (!ValidateNameForSearch(name)) return null;
-        
-        var workingDay = await _workingDayRepository.GetWorkingDayByNameAsync(name);
+        var workingDay = await _workingDayRepository.GetWorkingDayByIdAsync(id);
         if (workingDay == null) return null;
         
         return new WorkingDayDTO
@@ -71,11 +36,11 @@ public class WorkingDayService : BaseService, IWorkingDayService
         };
     }
     
-    public async Task<WorkingDayDTO?> GetWorkingDayByIdAsync(Guid id)
+    public async Task<WorkingDayDTO?> GetWorkingDayByNameAsync(string name)
     {
-        if (!ValidateIdForSearch(id)) return null;
-
-        var workingDay = await _workingDayRepository.GetWorkingDayByIdAsync(id);
+        if (!ValidateNameForSearch(name)) return null;
+        
+        var workingDay = await _workingDayRepository.GetWorkingDayByNameAsync(name);
         if (workingDay == null) return null;
         
         return new WorkingDayDTO
@@ -115,6 +80,83 @@ public class WorkingDayService : BaseService, IWorkingDayService
         return new List<WorkingDayDTO>();
     }
 
+    public async Task<bool> AddWorkingDayAsync(WorkingDayModel model)
+    {
+        if (!model.IsValid)
+        {
+            AddNotifications(model.Notifications);
+            return false;
+        }
+        
+        var existingWorkingDay = await GetWorkingDayByNameAsync(model.Name);
+        
+        if (existingWorkingDay != null)
+        {
+            AddNotification("WorkingDay.Name", Error.WorkingDay.NAME_ALREADY_EXISTS);
+            return false;
+        }
+        
+        var workingDay = new WorkingDay(
+            model.Name, 
+            model.Type, 
+            model.StartWork, 
+            model.StartBreak, 
+            model.EndBreak, 
+            model.EndWork);
+        
+        var result = await _workingDayRepository.AddWorkingDayAsync(workingDay);
+        
+        if (!result)
+        {
+            AddNotification("WorkingDay", Error.WorkingDay.ERROR_ADDING);
+            return false;
+        }
+
+        return true;
+    }
+    
+    public async Task<bool> UpdateWorkingDayAsync(Guid id, WorkingDayModel model)
+    {
+        if (!ValidateIdForSearch(id)) return false;
+        
+        if (!model.IsValid)
+        {
+            AddNotifications(model.Notifications);
+            return false;
+        }
+        
+        var existingWorkingDay = await GetWorkingDayByIdAsync(id);
+        if (existingWorkingDay == null)
+        {
+            AddNotification("WorkingDay.Id", Error.WorkingDay.NOT_FOUNDED);
+            return false;
+        }
+        
+        var workingDayByName = await GetWorkingDayByNameAsync(model.Name);
+        if (workingDayByName != null && workingDayByName.Id != id)
+        {
+            AddNotification("WorkingDay.Name", Error.WorkingDay.NAME_ALREADY_EXISTS);
+            return false;
+        }
+        
+        var workingDay = new WorkingDay(
+            model.Name, 
+            model.Type, 
+            model.StartWork, 
+            model.StartBreak, 
+            model.EndBreak, 
+            model.EndWork);
+        
+        var result = await _workingDayRepository.UpdateWorkingDayAsync(id, workingDay);
+        
+        if (!result)
+        {
+            AddNotification("WorkingDay", Error.WorkingDay.ERROR_UPDATING);
+            return false;
+        }
+        return true;
+    }
+    
     public async Task<bool> RemoveWorkingDayByIdAsync(Guid id)
     {
         if (!ValidateIdForSearch(id)) return false;
