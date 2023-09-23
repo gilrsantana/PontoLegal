@@ -73,6 +73,9 @@ public static class Error
 
     public static class Employee
     {
+        public const string ERROR_REMOVING              = "Error removing Employee";
+        public const string INVALID_ID                  = "Invalid Id";
+        public const string EMPLOYEE_NOT_FOUNDED        = "Employee Id not founded";
         public const string ERROR_ADDING                = "Error adding Employee";
         public const string PIS_ALREADY_EXISTS          = "PIS already exists";
         public const string PIS_NOT_FOUNDED             = "PIS not founded";

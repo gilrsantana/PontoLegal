@@ -1,4 +1,5 @@
 using PontoLegal.Domain.Entities;
+using PontoLegal.Domain.ValueObjects;
 using PontoLegal.Repository.Interfaces;
 using PontoLegal.Service.DTOs;
 using PontoLegal.Service.Entities;
@@ -78,6 +79,16 @@ public class EmployeeService : BaseService, IEmployeeService
     
     public async Task<EmployeeDTO?> GetEmployeeByPisAsync(string pisNumber)
     {
+        var pis = new Pis(pisNumber);
+        if (!pis.IsValid)
+        {
+            foreach (var error in pis.GetErrors())
+            {
+                AddNotification("EmployeeService.Pis",error);
+            }
+            return null;
+        }
+        
         var employee = await _employeeRepository.GetEmployeeByPisAsync(pisNumber);
         if (employee == null)
         {
@@ -97,6 +108,57 @@ public class EmployeeService : BaseService, IEmployeeService
             WorkingDayId = employee.WorkingDayId,
             ManagerId = employee.ManagerId
         };
+    }
+
+    public async Task<EmployeeDTO?> GetEmployeeByIdAsync(Guid id)
+    {
+        if(id == Guid.Empty)
+        {
+            AddNotification("EmployeeService.Id", Error.Employee.INVALID_ID);
+            return null;
+        }
+        
+        var employee = await _employeeRepository.GetEmployeeByIdAsync(id);
+        if (employee == null)
+        {
+            AddNotification("EmployeeService.Id", Error.Employee.EMPLOYEE_NOT_FOUNDED);
+            return null;
+        }
+        
+        return new EmployeeDTO
+        {
+            EmployeeId = employee.Id,
+            Name = employee.Name,
+            HireDate = employee.HireDate,
+            RegistrationNumber = employee.RegistrationNumber,
+            JobPositionId = employee.JobPositionId,
+            PisNumber = employee.Pis.Number,
+            CompanyId = employee.CompanyId,
+            WorkingDayId = employee.WorkingDayId,
+            ManagerId = employee.ManagerId
+        };
+    }
+
+    public async Task<bool> RemoveEmployeeByIdAsync(Guid id)
+    {
+        if(id == Guid.Empty)
+        {
+            AddNotification("EmployeeService.Id", Error.Employee.INVALID_ID);
+            return false;
+        }
+        
+        var employee = await _employeeRepository.GetEmployeeByIdAsync(id);
+        if (employee == null)
+        {
+            AddNotification("EmployeeService.Id", Error.Employee.EMPLOYEE_NOT_FOUNDED);
+            return false;
+        }
+        
+        var result = await _employeeRepository.RemoveEmployeeByIdAsync(employee);
+        if(result) return true;
+        
+        AddNotification("EmployeeService", Error.Employee.ERROR_REMOVING);
+        return false;
     }
 }
 

@@ -25,6 +25,157 @@ public class EmployeeServiceTest
         _employeeService = new EmployeeService(_employeeRepositoryMock.Object, _jobPositionServiceMock, _companyServiceMock, _workingDayServiceMock);
     }
 
+    #region GetEmployeeByIdAsync   
+    
+    [Fact]
+    public async Task GetEmployeeByIdAsync_ShouldReturnsNullWithError_WithUnknownEmployee()
+    {
+        // Arrange
+        var id = Guid.NewGuid();
+        _employeeRepositoryMock
+            .Setup(x => x.GetEmployeeByIdAsync(It.IsAny<Guid>()))
+            .ReturnsAsync((Employee?)null);
+        
+        // Act
+        var result = await _employeeService.GetEmployeeByIdAsync(id);
+
+        // Assert
+        Assert.Null(result);
+        Assert.Single(_employeeService.Notifications);
+        Assert.Equal(Error.Employee.EMPLOYEE_NOT_FOUNDED, _employeeService.Notifications.First().Message);
+    }
+    
+    [Fact]
+    public async Task GetEmployeeByIdAsync_ShouldReturnsNullWithError_WithInvalidId()
+    {
+        // Arrange
+        var id = Guid.Empty;
+        
+        // Act
+        var result = await _employeeService.GetEmployeeByIdAsync(id);
+
+        // Assert
+        Assert.Null(result);
+        Assert.Single(_employeeService.Notifications);
+        Assert.Equal(Error.Employee.INVALID_ID, _employeeService.Notifications.First().Message);
+    }
+    
+    [Fact]
+    public async Task GetEmployeeByIdAsync_ShouldReturnsEmployeeDTO()
+    {
+        // Arrange
+        var id = Guid.NewGuid();
+        var employee = MockEmployee.GetEmployee();
+        _employeeRepositoryMock
+            .Setup(x => x.GetEmployeeByIdAsync(It.IsAny<Guid>()))
+            .ReturnsAsync(employee);
+        
+        // Act
+        var result = await _employeeService.GetEmployeeByIdAsync(id);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.IsType<EmployeeDTO?>(result);
+        Assert.Empty(_employeeService.Notifications);
+        Assert.Equal(employee.Id, result.EmployeeId);
+        Assert.Equal(employee.Name, result.Name);
+        Assert.Equal(employee.HireDate, result.HireDate);
+        Assert.Equal(employee.RegistrationNumber, result.RegistrationNumber);
+        Assert.Equal(employee.JobPositionId, result.JobPositionId);
+        Assert.Equal(employee.Pis.Number, result.PisNumber);
+        Assert.Equal(employee.CompanyId, result.CompanyId);
+        Assert.Equal(employee.WorkingDayId, result.WorkingDayId);
+        Assert.Equal(employee.ManagerId, result.ManagerId);
+    }
+    #endregion
+    
+    #region GetEmployeeByPisAsync
+    
+    [Theory]
+    [InlineData("")]
+    [InlineData("1234567890")]
+    [InlineData("654.18058.84-3")]
+    [InlineData("123456789012")]
+    
+    public async Task GetEmployeeByPisAsync_ShouldReturnsNullWithError_WithInvalidPisLength(string numberPis)
+    {
+        // Arrange
+
+        
+        // Act
+        var result = await _employeeService.GetEmployeeByPisAsync(numberPis);
+
+        // Assert
+        Assert.Null(result);
+        Assert.Single(_employeeService.Notifications);
+        Assert.Equal(Error.Pis.INVALID_PIS_FORMAT, _employeeService.Notifications.First().Message);
+    }
+    
+    [Theory]
+    [InlineData("12345678901")]
+    [InlineData("35463463700")]
+    [InlineData("13445709340")]
+    public async Task GetEmployeeByPisAsync_ShouldReturnsNullWithError_WithInvalidPisDigits(string numberPis)
+    {
+        // Arrange
+
+        
+        // Act
+        var result = await _employeeService.GetEmployeeByPisAsync(numberPis);
+
+        // Assert
+        Assert.Null(result);
+        Assert.Single(_employeeService.Notifications);
+        Assert.Equal(Error.Pis.INVALID_PIS_DIGITS, _employeeService.Notifications.First().Message);
+    }
+    
+    [Fact]
+    public async Task GetEmployeeByPisAsync_ShouldReturnsNullWithError_WithUnknownEmployee()
+    {
+        // Arrange
+        var pis = new Pis(MockPis.ValidPis);
+        _employeeRepositoryMock
+            .Setup(x => x.GetEmployeeByPisAsync(It.IsAny<string>()))
+            .ReturnsAsync((Employee?)null);
+        
+        // Act
+        var result = await _employeeService.GetEmployeeByPisAsync(pis.Number);
+
+        // Assert
+        Assert.Null(result);
+        Assert.Single(_employeeService.Notifications);
+        Assert.Equal(Error.Employee.PIS_NOT_FOUNDED, _employeeService.Notifications.First().Message);
+    }
+    
+    [Fact]
+    public async Task GetEmployeeByPisAsync_ShouldReturnsEmployeeDTO()
+    {
+        // Arrange
+        var pis = new Pis(MockPis.ValidPis);
+        var employee = MockEmployee.GetEmployee();
+        _employeeRepositoryMock
+            .Setup(x => x.GetEmployeeByPisAsync(It.IsAny<string>()))
+            .ReturnsAsync(employee);
+        
+        // Act
+        var result = await _employeeService.GetEmployeeByPisAsync(pis.Number);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.IsType<EmployeeDTO?>(result);
+        Assert.Empty(_employeeService.Notifications);
+        Assert.Equal(employee.Id, result.EmployeeId);
+        Assert.Equal(employee.Name, result.Name);
+        Assert.Equal(employee.HireDate, result.HireDate);
+        Assert.Equal(employee.RegistrationNumber, result.RegistrationNumber);
+        Assert.Equal(employee.JobPositionId, result.JobPositionId);
+        Assert.Equal(employee.Pis.Number, result.PisNumber);
+        Assert.Equal(employee.CompanyId, result.CompanyId);
+        Assert.Equal(employee.WorkingDayId, result.WorkingDayId);
+        Assert.Equal(employee.ManagerId, result.ManagerId);
+    }
+    #endregion
+    
     #region AddEmployeeAsync
     
     [Theory]
@@ -359,5 +510,87 @@ public class EmployeeServiceTest
         Assert.True(model.IsValid);
         Assert.Empty(_employeeService.Notifications);
     }
+    #endregion
+    
+    #region RemoveEmployeeByIdAsync
+    
+    [Fact]
+    public async Task RemoveEmployeeByIdAsync_ShouldReturnsFalseWithError_WithInvalidId()
+    {
+        // Arrange
+        var id = Guid.Empty;
+        
+        // Act
+        var result = await _employeeService.RemoveEmployeeByIdAsync(id);
+
+        // Assert
+        Assert.False(result);
+        Assert.Single(_employeeService.Notifications);
+        Assert.Equal(Error.Employee.INVALID_ID, _employeeService.Notifications.First().Message);
+    }
+    
+    [Fact]
+    public async Task RemoveEmployeeByIdAsync_ShouldReturnsFalseWithError_WithUnknownEmployee()
+    {
+        // Arrange
+        var id = Guid.NewGuid();
+        _employeeRepositoryMock
+            .Setup(x => x.GetEmployeeByIdAsync(It.IsAny<Guid>()))
+            .ReturnsAsync((Employee?)null);
+        
+        // Act
+        var result = await _employeeService.RemoveEmployeeByIdAsync(id);
+
+        // Assert
+        Assert.False(result);
+        Assert.Single(_employeeService.Notifications);
+        Assert.Equal(Error.Employee.EMPLOYEE_NOT_FOUNDED, _employeeService.Notifications.First().Message);
+    }
+    
+    [Fact]
+    public async Task RemoveEmployeeByIdAsync_ShouldReturnsFalseWithError_WithErrorOnRemoving()
+    {
+        // Arrange
+        var id = Guid.NewGuid();
+        var employee = MockEmployee.GetEmployee();
+        _employeeRepositoryMock
+            .Setup(x => x.GetEmployeeByIdAsync(It.IsAny<Guid>()))
+            .ReturnsAsync(employee);
+        
+        _employeeRepositoryMock
+            .Setup(x => x.RemoveEmployeeByIdAsync(It.IsAny<Employee>()))
+            .ReturnsAsync(false);
+        
+        // Act
+        var result = await _employeeService.RemoveEmployeeByIdAsync(id);
+
+        // Assert
+        Assert.False(result);
+        Assert.Single(_employeeService.Notifications);
+        Assert.Equal(Error.Employee.ERROR_REMOVING, _employeeService.Notifications.First().Message);
+    }
+    
+    [Fact]
+    public async Task RemoveEmployeeByIdAsync_ShouldReturnsTrue()
+    {
+        // Arrange
+        var id = Guid.NewGuid();
+        var employee = MockEmployee.GetEmployee();
+        _employeeRepositoryMock
+            .Setup(x => x.GetEmployeeByIdAsync(It.IsAny<Guid>()))
+            .ReturnsAsync(employee);
+        
+        _employeeRepositoryMock
+            .Setup(x => x.RemoveEmployeeByIdAsync(It.IsAny<Employee>()))
+            .ReturnsAsync(true);
+        
+        // Act
+        var result = await _employeeService.RemoveEmployeeByIdAsync(id);
+
+        // Assert
+        Assert.True(result);
+        Assert.Empty(_employeeService.Notifications);
+    }
+    
     #endregion
 }
