@@ -43,6 +43,7 @@ public class EmployeeServiceTest
         Assert.Null(result);
         Assert.Single(_employeeService.Notifications);
         Assert.Equal(Error.Employee.EMPLOYEE_NOT_FOUNDED, _employeeService.Notifications.First().Message);
+        Assert.Equal("EmployeeService.Id", _employeeService.Notifications.First().Key);
     }
     
     [Fact]
@@ -58,6 +59,7 @@ public class EmployeeServiceTest
         Assert.Null(result);
         Assert.Single(_employeeService.Notifications);
         Assert.Equal(Error.Employee.INVALID_ID, _employeeService.Notifications.First().Message);
+        Assert.Equal("EmployeeService.Id", _employeeService.Notifications.First().Key);
     }
     
     [Fact]
@@ -109,6 +111,7 @@ public class EmployeeServiceTest
         Assert.Null(result);
         Assert.Single(_employeeService.Notifications);
         Assert.Equal(Error.Pis.INVALID_PIS_FORMAT, _employeeService.Notifications.First().Message);
+        Assert.Equal("EmployeeService.Pis", _employeeService.Notifications.First().Key);
     }
     
     [Theory]
@@ -127,6 +130,7 @@ public class EmployeeServiceTest
         Assert.Null(result);
         Assert.Single(_employeeService.Notifications);
         Assert.Equal(Error.Pis.INVALID_PIS_DIGITS, _employeeService.Notifications.First().Message);
+        Assert.Equal("EmployeeService.Pis", _employeeService.Notifications.First().Key);
     }
     
     [Fact]
@@ -145,6 +149,7 @@ public class EmployeeServiceTest
         Assert.Null(result);
         Assert.Single(_employeeService.Notifications);
         Assert.Equal(Error.Employee.PIS_NOT_FOUNDED, _employeeService.Notifications.First().Message);
+        Assert.Equal("EmployeeService.Pis", _employeeService.Notifications.First().Key);
     }
     
     [Fact]
@@ -203,6 +208,8 @@ public class EmployeeServiceTest
         Assert.Single(_employeeService.Notifications);
         Assert.Equal(Error.Employee.INVALID_NAME, model.Notifications.First().Message);
         Assert.Equal(Error.Employee.INVALID_NAME, _employeeService.Notifications.First().Message);
+        Assert.Equal("EmployeeModel.Name", model.Notifications.First().Key);
+        Assert.Equal("EmployeeModel.Name", _employeeService.Notifications.First().Key);
     }
 
     [Theory]
@@ -230,6 +237,8 @@ public class EmployeeServiceTest
         Assert.Single(_employeeService.Notifications);
         Assert.Equal(Error.Employee.INVALID_REGISTRATION_NUMBER, model.Notifications.First().Message);
         Assert.Equal(Error.Employee.INVALID_REGISTRATION_NUMBER, _employeeService.Notifications.First().Message);
+        Assert.Equal("EmployeeModel.RegistrationNumber", model.Notifications.First().Key);
+        Assert.Equal("EmployeeModel.RegistrationNumber", _employeeService.Notifications.First().Key);
     }
     
     [Fact]
@@ -254,6 +263,8 @@ public class EmployeeServiceTest
         Assert.Single(_employeeService.Notifications);
         Assert.Equal(Error.Employee.INVALID_HIRE_DATE, model.Notifications.First().Message);
         Assert.Equal(Error.Employee.INVALID_HIRE_DATE, _employeeService.Notifications.First().Message);
+        Assert.Equal("EmployeeModel.HireDate", model.Notifications.First().Key);
+        Assert.Equal("EmployeeModel.HireDate", _employeeService.Notifications.First().Key);
     }
 
     [Fact]
@@ -278,6 +289,8 @@ public class EmployeeServiceTest
         Assert.Single(_employeeService.Notifications);
         Assert.Equal(Error.Employee.INVALID_JOB_POSITION_ID, model.Notifications.First().Message);
         Assert.Equal(Error.Employee.INVALID_JOB_POSITION_ID, _employeeService.Notifications.First().Message);
+        Assert.Equal("EmployeeModel.JobPositionId", model.Notifications.First().Key);
+        Assert.Equal("EmployeeModel.JobPositionId", _employeeService.Notifications.First().Key);
     }
 
     [Theory]
@@ -307,6 +320,8 @@ public class EmployeeServiceTest
         Assert.Single(_employeeService.Notifications);
         Assert.Contains(model.Notifications, x => x.Message == Error.Pis.INVALID_PIS_DIGITS || x.Message == Error.Pis.INVALID_PIS_FORMAT);
         Assert.Contains(_employeeService.Notifications, x => x.Message == Error.Pis.INVALID_PIS_DIGITS || x.Message == Error.Pis.INVALID_PIS_FORMAT);
+        Assert.Contains(model.Notifications, x => x.Key == "EmployeeModel.Pis");
+        Assert.Contains(_employeeService.Notifications, x => x.Key == "EmployeeModel.Pis");
     }
 
     [Fact]
@@ -331,6 +346,8 @@ public class EmployeeServiceTest
         Assert.Single(_employeeService.Notifications);
         Assert.Equal(Error.Employee.INVALID_COMPANY_ID, model.Notifications.First().Message);
         Assert.Equal(Error.Employee.INVALID_COMPANY_ID, _employeeService.Notifications.First().Message);
+        Assert.Equal("EmployeeModel.CompanyId", model.Notifications.First().Key);
+        Assert.Equal("EmployeeModel.CompanyId", _employeeService.Notifications.First().Key);
     }
     
     [Fact]
@@ -355,6 +372,8 @@ public class EmployeeServiceTest
         Assert.Single(_employeeService.Notifications);
         Assert.Equal(Error.Employee.INVALID_WORKING_DAY_ID, model.Notifications.First().Message);
         Assert.Equal(Error.Employee.INVALID_WORKING_DAY_ID, _employeeService.Notifications.First().Message);
+        Assert.Equal("EmployeeModel.WorkingDayId", model.Notifications.First().Key);
+        Assert.Equal("EmployeeModel.WorkingDayId", _employeeService.Notifications.First().Key);
     }
 
     [Fact]
@@ -375,6 +394,7 @@ public class EmployeeServiceTest
         Assert.True(model.IsValid);
         Assert.Single(_employeeService.Notifications);
         Assert.Equal(Error.Employee.JOB_POSITION_NOT_FOUNDED, _employeeService.Notifications.First().Message);
+        Assert.Equal("EmployeeService.JobPositionId", _employeeService.Notifications.First().Key);
     }
     
     [Fact]
@@ -399,6 +419,7 @@ public class EmployeeServiceTest
         Assert.True(model.IsValid);
         Assert.Single(_employeeService.Notifications);
         Assert.Equal(Error.Employee.COMPANY_NOT_FOUNDED, _employeeService.Notifications.First().Message);
+        Assert.Equal("EmployeeService.CompanyId", _employeeService.Notifications.First().Key);
     }
     
     [Fact]
@@ -427,6 +448,7 @@ public class EmployeeServiceTest
         Assert.True(model.IsValid);
         Assert.Single(_employeeService.Notifications);
         Assert.Equal(Error.Employee.WORKING_DAY_NOT_FOUNDED, _employeeService.Notifications.First().Message);
+        Assert.Equal("EmployeeService.WorkingDayId", _employeeService.Notifications.First().Key);
     }
     
     [Fact]
@@ -467,6 +489,51 @@ public class EmployeeServiceTest
         Assert.True(model.IsValid);
         Assert.Single(_employeeService.Notifications);
         Assert.Equal(Error.Employee.PIS_ALREADY_EXISTS, _employeeService.Notifications.First().Message);
+        Assert.Equal("EmployeeService.Pis", _employeeService.Notifications.First().Key);
+    }
+    
+    [Fact]
+    public async Task AddEmployeeAsync_ShouldReturnsFalseWithError_WithErrorOnAdding()
+    {
+        // Arrange
+        var model = MockEmployee.GetEmployeeModel();
+        var workingDay = new WorkingDay(
+            "Working Day",
+            WorkingDayType.TEN_HOURS,
+            new TimeOnly(8, 0),
+            new TimeOnly(12, 0),
+            new TimeOnly(14, 0),
+            new TimeOnly(18, 0)
+        );
+        _jobPositionRepositoryMock
+            .Setup(x => x.GetJobPositionByIdAsync(It.IsAny<Guid>()))
+            .ReturnsAsync(new JobPosition("Job Position", Guid.NewGuid(), new Department("Department")));
+        
+        _companyRepositoryMock
+            .Setup(x => x.GetCompanyByIdAsync(It.IsAny<Guid>()))
+            .ReturnsAsync(new Company("Company", new Cnpj(MockCnpj.ValidCnpj)));
+        
+        _workingDayRepositoryMock
+            .Setup(x => x.GetWorkingDayByIdAsync(It.IsAny<Guid>()))
+            .ReturnsAsync(workingDay);
+        
+        _employeeRepositoryMock
+            .Setup(x => x.GetEmployeeByPisAsync(It.IsAny<string>()))
+            .ReturnsAsync((Employee?)null);
+        
+        _employeeRepositoryMock
+            .Setup(x => x.AddEmployeeAsync(It.IsAny<Employee>()))
+            .ReturnsAsync(false);
+        
+        // Act
+        var result = await _employeeService.AddEmployeeAsync(model);
+
+        // Assert
+        Assert.False(result);
+        Assert.True(model.IsValid);
+        Assert.Single(_employeeService.Notifications);
+        Assert.Equal(Error.Employee.ERROR_ADDING, _employeeService.Notifications.First().Message);
+        Assert.Equal("EmployeeService", _employeeService.Notifications.First().Key);
     }
     
     [Fact]
@@ -528,6 +595,7 @@ public class EmployeeServiceTest
         Assert.False(result);
         Assert.Single(_employeeService.Notifications);
         Assert.Equal(Error.Employee.INVALID_ID, _employeeService.Notifications.First().Message);
+        Assert.Equal("EmployeeService.Id", _employeeService.Notifications.First().Key);
     }
     
     [Fact]
@@ -547,6 +615,7 @@ public class EmployeeServiceTest
         Assert.False(result);
         Assert.Single(_employeeService.Notifications);
         Assert.Equal(Error.Employee.EMPLOYEE_NOT_FOUNDED, _employeeService.Notifications.First().Message);
+        Assert.Equal("EmployeeService.Id", _employeeService.Notifications.First().Key);
     }
     
     [Fact]
@@ -605,6 +674,7 @@ public class EmployeeServiceTest
         Assert.True(model.IsValid);
         Assert.Single(_employeeService.Notifications);
         Assert.Equal(Error.Employee.JOB_POSITION_NOT_FOUNDED, _employeeService.Notifications.First().Message);
+        Assert.Equal("EmployeeService.JobPositionId", _employeeService.Notifications.First().Key);
     }
     
     [Fact]
@@ -634,6 +704,7 @@ public class EmployeeServiceTest
         Assert.True(model.IsValid);
         Assert.Single(_employeeService.Notifications);
         Assert.Equal(Error.Employee.COMPANY_NOT_FOUNDED, _employeeService.Notifications.First().Message);
+        Assert.Equal("EmployeeService.CompanyId", _employeeService.Notifications.First().Key);
     }
     
     [Fact]
@@ -667,6 +738,7 @@ public class EmployeeServiceTest
         Assert.True(model.IsValid);
         Assert.Single(_employeeService.Notifications);
         Assert.Equal(Error.Employee.WORKING_DAY_NOT_FOUNDED, _employeeService.Notifications.First().Message);
+        Assert.Equal("EmployeeService.WorkingDayId", _employeeService.Notifications.First().Key);
     }
     
     [Fact]
@@ -712,6 +784,7 @@ public class EmployeeServiceTest
         Assert.True(model.IsValid);
         Assert.Single(_employeeService.Notifications);
         Assert.Equal(Error.Employee.PIS_ALREADY_EXISTS, _employeeService.Notifications.First().Message);
+        Assert.Equal("EmployeeService.Pis", _employeeService.Notifications.First().Key);
     }
     
     [Fact]
@@ -760,6 +833,7 @@ public class EmployeeServiceTest
         Assert.True(model.IsValid);
         Assert.Single(_employeeService.Notifications);
         Assert.Equal(Error.Employee.ERROR_UPDATING, _employeeService.Notifications.First().Message);
+        Assert.Equal("EmployeeService", _employeeService.Notifications.First().Key);
     }
     
     [Fact]
@@ -826,6 +900,7 @@ public class EmployeeServiceTest
         Assert.False(result);
         Assert.Single(_employeeService.Notifications);
         Assert.Equal(Error.Employee.INVALID_ID, _employeeService.Notifications.First().Message);
+        Assert.Equal("EmployeeService.Id", _employeeService.Notifications.First().Key);
     }
     
     [Fact]
@@ -844,6 +919,7 @@ public class EmployeeServiceTest
         Assert.False(result);
         Assert.Single(_employeeService.Notifications);
         Assert.Equal(Error.Employee.EMPLOYEE_NOT_FOUNDED, _employeeService.Notifications.First().Message);
+        Assert.Equal("EmployeeService.Id", _employeeService.Notifications.First().Key);
     }
     
     [Fact]
@@ -867,6 +943,7 @@ public class EmployeeServiceTest
         Assert.False(result);
         Assert.Single(_employeeService.Notifications);
         Assert.Equal(Error.Employee.ERROR_REMOVING, _employeeService.Notifications.First().Message);
+        Assert.Equal("EmployeeService", _employeeService.Notifications.First().Key);
     }
     
     [Fact]
