@@ -64,4 +64,26 @@ public static class Error
         public const string INVALID_START_BREAK = "Start Break must be less than End Break and greater than Start Work";
         public const string INVALID_END_BREAK   = "End Break must be greater than Start Break";
     }
+
+    public static class Pis
+    {
+        public const string INVALID_PIS_DIGITS = "PIS invalid Check Digits";
+        public const string INVALID_PIS_FORMAT = "PIS invalid Format";
+    }
+
+    public static class Employee
+    {
+        public const string ERROR_ADDING                = "Error adding Employee";
+        public const string PIS_ALREADY_EXISTS          = "PIS already exists";
+        public const string PIS_NOT_FOUNDED             = "PIS not founded";
+        public const string WORKING_DAY_NOT_FOUNDED     = "Working Day not founded";
+        public const string COMPANY_NOT_FOUNDED         = "Company not founded";
+        public const string JOB_POSITION_NOT_FOUNDED    = "Job Position not founded";
+        public const string INVALID_REGISTRATION_NUMBER = "Registration Number can't be null and must be between 1 and 20 chars";
+        public const string INVALID_WORKING_DAY_ID      = "Working Day Id is required";
+        public const string INVALID_COMPANY_ID          = "Company Id is required";
+        public const string INVALID_JOB_POSITION_ID     = "Job Position Id is required";
+        public const string INVALID_HIRE_DATE           = "Hire Date must be less than today";
+        public const string INVALID_NAME                = "Employee name can't be null and must be between 3 and 80 chars";
+    }
 }
