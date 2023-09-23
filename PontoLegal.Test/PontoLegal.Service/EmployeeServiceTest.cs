@@ -512,6 +512,305 @@ public class EmployeeServiceTest
     }
     #endregion
     
+    #region UpdateEmployeeAsync
+    
+    [Fact]
+    public async Task UpdateEmployeeAsync_ShouldReturnsFalseWithError_WithInvalidId()
+    {
+        // Arrange
+        var id = Guid.Empty;
+        var model = MockEmployee.GetEmployeeModel();
+        
+        // Act
+        var result = await _employeeService.UpdateEmployeeAsync(id, model);
+
+        // Assert
+        Assert.False(result);
+        Assert.Single(_employeeService.Notifications);
+        Assert.Equal(Error.Employee.INVALID_ID, _employeeService.Notifications.First().Message);
+    }
+    
+    [Fact]
+    public async Task UpdateEmployeeAsync_ShouldReturnsFalseWithError_WithUnknownEmployee()
+    {
+        // Arrange
+        var id = Guid.NewGuid();
+        var model = MockEmployee.GetEmployeeModel();
+        _employeeRepositoryMock
+            .Setup(x => x.GetEmployeeByIdAsync(It.IsAny<Guid>()))
+            .ReturnsAsync((Employee?)null);
+        
+        // Act
+        var result = await _employeeService.UpdateEmployeeAsync(id, model);
+
+        // Assert
+        Assert.False(result);
+        Assert.Single(_employeeService.Notifications);
+        Assert.Equal(Error.Employee.EMPLOYEE_NOT_FOUNDED, _employeeService.Notifications.First().Message);
+    }
+    
+    [Fact]
+    public async Task UpdateEmployeeAsync_ShouldReturnsFalseWithError_WithInvalidModel()
+    {
+        // Arrange
+        var id = Guid.NewGuid();
+        var name = "";
+        var hireDate = DateOnly.FromDateTime(DateTime.Now.AddDays(1));
+        var registrationNumber = "";
+        var jobPositionId = Guid.Empty;
+        var pis = new Pis("123");
+        var companyId = Guid.Empty;
+        var managerId = Guid.Empty;
+        var workingDayId = Guid.Empty;
+        var model = new EmployeeModel(name, hireDate, registrationNumber, jobPositionId, pis, companyId, managerId, workingDayId);
+        _employeeRepositoryMock
+            .Setup(x => x.GetEmployeeByIdAsync(It.IsAny<Guid>()))
+            .ReturnsAsync(MockEmployee.GetEmployee());
+        // Act
+        var result = await _employeeService.UpdateEmployeeAsync(id, model);
+
+        // Assert
+        Assert.False(result);
+        Assert.True(model.Notifications.Count == 7);
+        Assert.True(_employeeService.Notifications.Count == 7);
+        Assert.Contains(model.Notifications, x => x.Key == "EmployeeModel.Name");
+        Assert.Contains(model.Notifications, x => x.Key == "EmployeeModel.HireDate");
+        Assert.Contains(model.Notifications, x => x.Key == "EmployeeModel.RegistrationNumber");
+        Assert.Contains(model.Notifications, x => x.Key == "EmployeeModel.JobPositionId");
+        Assert.Contains(model.Notifications, x => x.Key == "EmployeeModel.Pis");
+        Assert.Contains(model.Notifications, x => x.Key == "EmployeeModel.CompanyId");
+        Assert.Contains(model.Notifications, x => x.Key == "EmployeeModel.WorkingDayId");
+    }
+    
+    [Fact]
+    public async Task UpdateEmployeeAsync_ShouldReturnsFalseWithError_WithUnknownJobPositionId()
+    {
+        // Arrange
+        var id = Guid.NewGuid();
+        var model = MockEmployee.GetEmployeeModel();
+        
+        _jobPositionRepositoryMock
+            .Setup(x => x.GetJobPositionByIdAsync(It.IsAny<Guid>()))
+            .ReturnsAsync((JobPosition?)null);
+        
+        _employeeRepositoryMock
+            .Setup(x => x.GetEmployeeByIdAsync(It.IsAny<Guid>()))
+            .ReturnsAsync(MockEmployee.GetEmployee());
+        
+        // Act
+        var result = await _employeeService.UpdateEmployeeAsync(id, model);
+
+        // Assert
+        Assert.False(result);
+        Assert.True(model.IsValid);
+        Assert.Single(_employeeService.Notifications);
+        Assert.Equal(Error.Employee.JOB_POSITION_NOT_FOUNDED, _employeeService.Notifications.First().Message);
+    }
+    
+    [Fact]
+    public async Task UpdateEmployeeAsync_ShouldReturnsFalseWithError_WithUnknownCompanyId()
+    {
+        // Arrange
+        var id = Guid.NewGuid();
+        var model = MockEmployee.GetEmployeeModel();
+        
+        _jobPositionRepositoryMock
+            .Setup(x => x.GetJobPositionByIdAsync(It.IsAny<Guid>()))
+            .ReturnsAsync(new JobPosition("Job Position", Guid.NewGuid(), new Department("Department")));
+        
+        _companyRepositoryMock
+            .Setup(x => x.GetCompanyByIdAsync(It.IsAny<Guid>()))
+            .ReturnsAsync((Company?)null);
+        
+        _employeeRepositoryMock
+            .Setup(x => x.GetEmployeeByIdAsync(It.IsAny<Guid>()))
+            .ReturnsAsync(MockEmployee.GetEmployee());
+        
+        // Act
+        var result = await _employeeService.UpdateEmployeeAsync(id, model);
+
+        // Assert
+        Assert.False(result);
+        Assert.True(model.IsValid);
+        Assert.Single(_employeeService.Notifications);
+        Assert.Equal(Error.Employee.COMPANY_NOT_FOUNDED, _employeeService.Notifications.First().Message);
+    }
+    
+    [Fact]
+    public async Task UpdateEmployeeAsync_ShouldReturnsFalseWithError_WithUnknownWorkingDayId()
+    {
+        // Arrange
+        var id = Guid.NewGuid();
+        var model = MockEmployee.GetEmployeeModel();
+        
+        _jobPositionRepositoryMock
+            .Setup(x => x.GetJobPositionByIdAsync(It.IsAny<Guid>()))
+            .ReturnsAsync(new JobPosition("Job Position", Guid.NewGuid(), new Department("Department")));
+        
+        _companyRepositoryMock
+            .Setup(x => x.GetCompanyByIdAsync(It.IsAny<Guid>()))
+            .ReturnsAsync(new Company("Company", new Cnpj(MockCnpj.ValidCnpj)));
+        
+        _workingDayRepositoryMock
+            .Setup(x => x.GetWorkingDayByIdAsync(It.IsAny<Guid>()))
+            .ReturnsAsync((WorkingDay?)null);
+        
+        _employeeRepositoryMock
+            .Setup(x => x.GetEmployeeByIdAsync(It.IsAny<Guid>()))
+            .ReturnsAsync(MockEmployee.GetEmployee());
+        
+        // Act
+        var result = await _employeeService.UpdateEmployeeAsync(id, model);
+
+        // Assert
+        Assert.False(result);
+        Assert.True(model.IsValid);
+        Assert.Single(_employeeService.Notifications);
+        Assert.Equal(Error.Employee.WORKING_DAY_NOT_FOUNDED, _employeeService.Notifications.First().Message);
+    }
+    
+    [Fact]
+    public async Task UpdateEmployeeAsync_ShouldReturnsFalseWithError_WithDuplicatedEmployee()
+    {
+        // Arrange
+        var id = Guid.NewGuid();
+        var model = MockEmployee.GetEmployeeModel();
+        var workingDay = new WorkingDay(
+            "Working Day",
+            WorkingDayType.TEN_HOURS,
+            new TimeOnly(8, 0),
+            new TimeOnly(12, 0),
+            new TimeOnly(14, 0),
+            new TimeOnly(18, 0)
+        );
+        var employee = MockEmployee.GetEmployee();
+        _jobPositionRepositoryMock
+            .Setup(x => x.GetJobPositionByIdAsync(It.IsAny<Guid>()))
+            .ReturnsAsync(new JobPosition("Job Position", Guid.NewGuid(), new Department("Department")));
+        
+        _companyRepositoryMock
+            .Setup(x => x.GetCompanyByIdAsync(It.IsAny<Guid>()))
+            .ReturnsAsync(new Company("Company", new Cnpj(MockCnpj.ValidCnpj)));
+        
+        _workingDayRepositoryMock
+            .Setup(x => x.GetWorkingDayByIdAsync(It.IsAny<Guid>()))
+            .ReturnsAsync(workingDay);
+        
+        _employeeRepositoryMock
+            .Setup(x => x.GetEmployeeByPisAsync(It.IsAny<string>()))
+            .ReturnsAsync(employee);
+        
+        _employeeRepositoryMock
+            .Setup(x => x.GetEmployeeByIdAsync(It.IsAny<Guid>()))
+            .ReturnsAsync(MockEmployee.GetEmployee());
+        
+        // Act
+        var result = await _employeeService.UpdateEmployeeAsync(id, model);
+
+        // Assert
+        Assert.False(result);
+        Assert.True(model.IsValid);
+        Assert.Single(_employeeService.Notifications);
+        Assert.Equal(Error.Employee.PIS_ALREADY_EXISTS, _employeeService.Notifications.First().Message);
+    }
+    
+    [Fact]
+    public async Task UpdateEmployeeAsync_ShouldReturnsFalseWithError_WithErrorOnUpdating()
+    {
+        // Arrange
+        var id = Guid.NewGuid();
+        var model = MockEmployee.GetEmployeeModel();
+        var workingDay = new WorkingDay(
+            "Working Day",
+            WorkingDayType.TEN_HOURS,
+            new TimeOnly(8, 0),
+            new TimeOnly(12, 0),
+            new TimeOnly(14, 0),
+            new TimeOnly(18, 0)
+        );
+        _jobPositionRepositoryMock
+            .Setup(x => x.GetJobPositionByIdAsync(It.IsAny<Guid>()))
+            .ReturnsAsync(new JobPosition("Job Position", Guid.NewGuid(), new Department("Department")));
+        
+        _companyRepositoryMock
+            .Setup(x => x.GetCompanyByIdAsync(It.IsAny<Guid>()))
+            .ReturnsAsync(new Company("Company", new Cnpj(MockCnpj.ValidCnpj)));
+        
+        _workingDayRepositoryMock
+            .Setup(x => x.GetWorkingDayByIdAsync(It.IsAny<Guid>()))
+            .ReturnsAsync(workingDay);
+        
+        _employeeRepositoryMock
+            .Setup(x => x.GetEmployeeByPisAsync(It.IsAny<string>()))
+            .ReturnsAsync((Employee?)null);
+        
+        _employeeRepositoryMock
+            .Setup(x => x.GetEmployeeByIdAsync(It.IsAny<Guid>()))
+            .ReturnsAsync(MockEmployee.GetEmployee());
+        
+        _employeeRepositoryMock
+            .Setup(x => x.UpdateEmployeeAsync(It.IsAny<Guid>(), It.IsAny<Employee>()))
+            .ReturnsAsync(false);
+        
+        // Act
+        var result = await _employeeService.UpdateEmployeeAsync(id, model);
+
+        // Assert
+        Assert.False(result);
+        Assert.True(model.IsValid);
+        Assert.Single(_employeeService.Notifications);
+        Assert.Equal(Error.Employee.ERROR_UPDATING, _employeeService.Notifications.First().Message);
+    }
+    
+    [Fact]
+    public async Task UpdateEmployeeAsync_ShouldReturnsTrue()
+    {
+        // Arrange
+        var id = Guid.NewGuid();
+        var model = MockEmployee.GetEmployeeModel();
+        var workingDay = new WorkingDay(
+            "Working Day",
+            WorkingDayType.TEN_HOURS,
+            new TimeOnly(8, 0),
+            new TimeOnly(12, 0),
+            new TimeOnly(14, 0),
+            new TimeOnly(18, 0)
+        );
+        _jobPositionRepositoryMock
+            .Setup(x => x.GetJobPositionByIdAsync(It.IsAny<Guid>()))
+            .ReturnsAsync(new JobPosition("Job Position", Guid.NewGuid(), new Department("Department")));
+        
+        _companyRepositoryMock
+            .Setup(x => x.GetCompanyByIdAsync(It.IsAny<Guid>()))
+            .ReturnsAsync(new Company("Company", new Cnpj(MockCnpj.ValidCnpj)));
+        
+        _workingDayRepositoryMock
+            .Setup(x => x.GetWorkingDayByIdAsync(It.IsAny<Guid>()))
+            .ReturnsAsync(workingDay);
+        
+        _employeeRepositoryMock
+            .Setup(x => x.GetEmployeeByPisAsync(It.IsAny<string>()))
+            .ReturnsAsync((Employee?)null);
+        
+        _employeeRepositoryMock
+            .Setup(x => x.GetEmployeeByIdAsync(It.IsAny<Guid>()))
+            .ReturnsAsync(MockEmployee.GetEmployee());
+        
+        _employeeRepositoryMock
+            .Setup(x => x.UpdateEmployeeAsync(It.IsAny<Guid>(), It.IsAny<Employee>()))
+            .ReturnsAsync(true);
+        
+        // Act
+        var result = await _employeeService.UpdateEmployeeAsync(id, model);
+
+        // Assert
+        Assert.True(result);
+        Assert.True(model.IsValid);
+        Assert.Empty(_employeeService.Notifications);
+    }
+    
+    #endregion
+    
     #region RemoveEmployeeByIdAsync
     
     [Fact]

@@ -24,6 +24,68 @@ public class EmployeeService : BaseService, IEmployeeService
         _workingDayService = workingDayService;
     }
     
+    public async Task<EmployeeDTO?> GetEmployeeByIdAsync(Guid id)
+    {
+        if(id == Guid.Empty)
+        {
+            AddNotification("EmployeeService.Id", Error.Employee.INVALID_ID);
+            return null;
+        }
+        
+        var employee = await _employeeRepository.GetEmployeeByIdAsync(id);
+        if (employee == null)
+        {
+            AddNotification("EmployeeService.Id", Error.Employee.EMPLOYEE_NOT_FOUNDED);
+            return null;
+        }
+        
+        return new EmployeeDTO
+        {
+            EmployeeId = employee.Id,
+            Name = employee.Name,
+            HireDate = employee.HireDate,
+            RegistrationNumber = employee.RegistrationNumber,
+            JobPositionId = employee.JobPositionId,
+            PisNumber = employee.Pis.Number,
+            CompanyId = employee.CompanyId,
+            WorkingDayId = employee.WorkingDayId,
+            ManagerId = employee.ManagerId
+        };
+    }
+    
+    public async Task<EmployeeDTO?> GetEmployeeByPisAsync(string pisNumber)
+    {
+        var pis = new Pis(pisNumber);
+        if (!pis.IsValid)
+        {
+            foreach (var error in pis.GetErrors())
+            {
+                AddNotification("EmployeeService.Pis",error);
+            }
+            return null;
+        }
+        
+        var employee = await _employeeRepository.GetEmployeeByPisAsync(pisNumber);
+        if (employee == null)
+        {
+            AddNotification("EmployeeService.Pis", Error.Employee.PIS_NOT_FOUNDED);
+            return null;
+        }
+        
+        return new EmployeeDTO
+        {
+            EmployeeId = employee.Id,
+            Name = employee.Name,
+            HireDate = employee.HireDate,
+            RegistrationNumber = employee.RegistrationNumber,
+            JobPositionId = employee.JobPositionId,
+            PisNumber = employee.Pis.Number,
+            CompanyId = employee.CompanyId,
+            WorkingDayId = employee.WorkingDayId,
+            ManagerId = employee.ManagerId
+        };
+    }
+    
     public async Task<bool> AddEmployeeAsync(EmployeeModel model)
     {
         if (!model.IsValid)
@@ -77,68 +139,73 @@ public class EmployeeService : BaseService, IEmployeeService
         return false;
     }
     
-    public async Task<EmployeeDTO?> GetEmployeeByPisAsync(string pisNumber)
-    {
-        var pis = new Pis(pisNumber);
-        if (!pis.IsValid)
-        {
-            foreach (var error in pis.GetErrors())
-            {
-                AddNotification("EmployeeService.Pis",error);
-            }
-            return null;
-        }
-        
-        var employee = await _employeeRepository.GetEmployeeByPisAsync(pisNumber);
-        if (employee == null)
-        {
-            AddNotification("EmployeeService.Pis", Error.Employee.PIS_NOT_FOUNDED);
-            return null;
-        }
-        
-        return new EmployeeDTO
-        {
-            EmployeeId = employee.Id,
-            Name = employee.Name,
-            HireDate = employee.HireDate,
-            RegistrationNumber = employee.RegistrationNumber,
-            JobPositionId = employee.JobPositionId,
-            PisNumber = employee.Pis.Number,
-            CompanyId = employee.CompanyId,
-            WorkingDayId = employee.WorkingDayId,
-            ManagerId = employee.ManagerId
-        };
-    }
-
-    public async Task<EmployeeDTO?> GetEmployeeByIdAsync(Guid id)
+    public async Task<bool> UpdateEmployeeAsync(Guid id, EmployeeModel model)
     {
         if(id == Guid.Empty)
         {
             AddNotification("EmployeeService.Id", Error.Employee.INVALID_ID);
-            return null;
+            return false;
         }
         
         var employee = await _employeeRepository.GetEmployeeByIdAsync(id);
         if (employee == null)
         {
             AddNotification("EmployeeService.Id", Error.Employee.EMPLOYEE_NOT_FOUNDED);
-            return null;
+            return false;
         }
         
-        return new EmployeeDTO
+        if (!model.IsValid)
         {
-            EmployeeId = employee.Id,
-            Name = employee.Name,
-            HireDate = employee.HireDate,
-            RegistrationNumber = employee.RegistrationNumber,
-            JobPositionId = employee.JobPositionId,
-            PisNumber = employee.Pis.Number,
-            CompanyId = employee.CompanyId,
-            WorkingDayId = employee.WorkingDayId,
-            ManagerId = employee.ManagerId
-        };
-    }
+            AddNotifications(model.Notifications);
+            return false;
+        }
+        
+        var jobPosition = await _jobPositionService.GetJobPositionByIdAsync(model.JobPositionId);
+        if (jobPosition == null)
+        {
+            AddNotification("EmployeeService.JobPositionId", Error.Employee.JOB_POSITION_NOT_FOUNDED);
+            return false;
+        }
+        
+        var company = await _companyService.GetCompanyByIdAsync(model.CompanyId);
+        if (company == null)
+        {
+            AddNotification("EmployeeService.CompanyId", Error.Employee.COMPANY_NOT_FOUNDED);
+            return false;
+        }
+        
+        var workingDay = await _workingDayService.GetWorkingDayByIdAsync(model.WorkingDayId);
+        if (workingDay == null)
+        {
+            AddNotification("EmployeeService.WorkingDayId", Error.Employee.WORKING_DAY_NOT_FOUNDED);
+            return false;
+        }
+        
+        var existingEmployee = await _employeeRepository.GetEmployeeByPisAsync(model.Pis.Number);
+        if (existingEmployee != null && existingEmployee.Id != id)
+        {
+            AddNotification("EmployeeService.Pis", Error.Employee.PIS_ALREADY_EXISTS);
+            return false;
+        }
 
+        var employeeToUpdate = new Employee(
+            model.Name,
+            model.HireDate,
+            model.RegistrationNumber,
+            model.JobPositionId,
+            model.Pis,
+            model.CompanyId,
+            model.ManagerId,
+            model.WorkingDayId);
+        
+        var result = await _employeeRepository.UpdateEmployeeAsync(id, employeeToUpdate);
+        if(result) return true;
+        
+        AddNotification("EmployeeService", Error.Employee.ERROR_UPDATING);
+
+        return false;
+    }
+    
     public async Task<bool> RemoveEmployeeByIdAsync(Guid id)
     {
         if(id == Guid.Empty)
@@ -160,6 +227,8 @@ public class EmployeeService : BaseService, IEmployeeService
         AddNotification("EmployeeService", Error.Employee.ERROR_REMOVING);
         return false;
     }
+
+    
 }
 
 

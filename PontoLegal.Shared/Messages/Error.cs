@@ -73,6 +73,7 @@ public static class Error
 
     public static class Employee
     {
+        public const string ERROR_UPDATING              = "Error updating Employee";
         public const string ERROR_REMOVING              = "Error removing Employee";
         public const string INVALID_ID                  = "Invalid Id";
         public const string EMPLOYEE_NOT_FOUNDED        = "Employee Id not founded";
