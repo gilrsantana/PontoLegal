@@ -90,4 +90,11 @@ public static class Error
         public const string INVALID_HIRE_DATE           = "Hire Date must be less than today";
         public const string INVALID_NAME                = "Employee name can't be null and must be between 3 and 80 chars";
     }
+
+    public static class TimeClock
+    {
+        public const string START_WORKING_EXISTS  = "Already exists a Start Working Day for this Employee";
+        public const string INVALID_REGISTER_TIME = "RegisterTime must be lower or equals than now";
+        public const string INVALID_EMPLOYEE_ID   = "EmployeeId is required";
+    }
 }
