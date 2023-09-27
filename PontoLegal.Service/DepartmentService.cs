@@ -98,14 +98,14 @@ public class DepartmentService : BaseService, IDepartmentService
            
         if (idExists == null)
         {
-            AddNotification("DepartamentoService.Id", Error.Department.DEPARTMENT_NOT_FOUNDED);
+            AddNotification("DepartmentService.Id", Error.Department.DEPARTMENT_NOT_FOUNDED);
             return false;
         }
 
         if (nameExists != null &&
             nameExists.Id.ToString() != idExists.Id.ToString())
         {
-            AddNotification("DepartamentoService.Nome", Error.Department.NAME_ALREADY_EXISTS);
+            AddNotification("DepartmentService.Name", Error.Department.NAME_ALREADY_EXISTS);
             return false;
         }
         
@@ -115,7 +115,7 @@ public class DepartmentService : BaseService, IDepartmentService
             
         if (result) return true;
 
-        AddNotification("DepartamentoService", Error.Department.ERROR_UPDATING);
+        AddNotification("DepartmentService", Error.Department.ERROR_UPDATING);
         return false;
     }
 

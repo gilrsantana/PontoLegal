@@ -87,7 +87,7 @@ public class JobPositionService : BaseService, IJobPositionService
     {
         if (skip < 0 || take < 1)
         {
-            AddNotification("DepartmentService", Error.JobPosition.INVALID_PAGINATION);
+            AddNotification("JobPositionService", Error.JobPosition.INVALID_PAGINATION);
             return new List<JobPositionDTO>();
         }
 

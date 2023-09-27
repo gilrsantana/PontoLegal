@@ -155,6 +155,7 @@ public class DepartmentServiceTest
         Assert.False(_departmentService.IsValid);
         Assert.Single(_departmentService.Notifications);
         Assert.Equal(Error.Department.INVALID_PAGINATION, _departmentService.Notifications.First().Message);
+        Assert.Equal("DepartmentService", _departmentService.Notifications.First().Key);
     }
 
     [Fact]
@@ -207,9 +208,7 @@ public class DepartmentServiceTest
         {
             new Department("Department 1"),
             new Department("Department 2"),
-            new Department("Department 3"),
-            new Department("Department 4"),
-            new Department("Department 5")
+            new Department("Department 3")
         };
         _departmentRepositoryMock
             .Setup(repo => repo.GetAllDepartmentsAsync(It.IsAny<int>(), It.IsAny<int>()))
@@ -223,6 +222,12 @@ public class DepartmentServiceTest
         Assert.NotNull(result);
         Assert.NotEmpty(result);
         Assert.Equal(model.Count, result.Count);
+        Assert.Equal(model[0].Id, result.ElementAt(0).Id);
+        Assert.Equal(model[0].Name, result.ElementAt(0).Name);
+        Assert.Equal(model[1].Id, result.ElementAt(1).Id);
+        Assert.Equal(model[1].Name, result.ElementAt(1).Name);
+        Assert.Equal(model[2].Id, result.ElementAt(2).Id);
+        Assert.Equal(model[2].Name, result.ElementAt(2).Name);
     }
     #endregion
     
@@ -273,6 +278,7 @@ public class DepartmentServiceTest
         Assert.False(_departmentService.IsValid);
         Assert.Single(_departmentService.Notifications);
         Assert.Equal(Error.Department.NAME_ALREADY_EXISTS, _departmentService.Notifications.ElementAt(0).Message);
+        Assert.Equal("DepartmentService.Name", _departmentService.Notifications.ElementAt(0).Key);
     }
 
     [Fact]
@@ -293,6 +299,7 @@ public class DepartmentServiceTest
         Assert.False(_departmentService.IsValid);
         Assert.Single(_departmentService.Notifications);
         Assert.Equal(Error.Department.ERROR_ADDING, _departmentService.Notifications.ElementAt(0).Message);
+        Assert.Equal("DepartmentService", _departmentService.Notifications.ElementAt(0).Key);
     }
 
     [Fact]
@@ -368,6 +375,7 @@ public class DepartmentServiceTest
         Assert.False(_departmentService.IsValid);
         Assert.Single(_departmentService.Notifications);
         Assert.Equal(Error.Department.NAME_ALREADY_EXISTS, _departmentService.Notifications.ElementAt(0).Message);
+        Assert.Equal("DepartmentService.Name", _departmentService.Notifications.ElementAt(0).Key);
     }
 
     [Fact]
@@ -393,6 +401,7 @@ public class DepartmentServiceTest
         Assert.False(_departmentService.IsValid);
         Assert.Single(_departmentService.Notifications);
         Assert.Equal(Error.Department.DEPARTMENT_NOT_FOUNDED, _departmentService.Notifications.ElementAt(0).Message);
+        Assert.Equal("DepartmentService.Id", _departmentService.Notifications.ElementAt(0).Key);
     }
 
     [Fact]
@@ -421,6 +430,7 @@ public class DepartmentServiceTest
         Assert.False(_departmentService.IsValid);
         Assert.Single(_departmentService.Notifications);
         Assert.Equal(Error.Department.ERROR_UPDATING, _departmentService.Notifications.ElementAt(0).Message);
+        Assert.Equal("DepartmentService", _departmentService.Notifications.ElementAt(0).Key);
     }
 
     [Fact]
@@ -472,6 +482,7 @@ public class DepartmentServiceTest
         Assert.False(_departmentService.IsValid);
         Assert.Single(_departmentService.Notifications);
         Assert.Equal(Error.Department.DEPARTMENT_NOT_FOUNDED, _departmentService.Notifications.ElementAt(0).Message);
+        Assert.Equal("DepartmentService.Id", _departmentService.Notifications.ElementAt(0).Key);
     }
 
     [Fact]
@@ -495,6 +506,7 @@ public class DepartmentServiceTest
         Assert.False(_departmentService.IsValid);
         Assert.Single(_departmentService.Notifications);
         Assert.Equal(Error.Department.INVALID_ID, _departmentService.Notifications.ElementAt(0).Message);
+        Assert.Equal("DepartmentService.Id", _departmentService.Notifications.ElementAt(0).Key);
     }
     
     [Fact]
@@ -518,6 +530,7 @@ public class DepartmentServiceTest
         Assert.False(_departmentService.IsValid);
         Assert.Single(_departmentService.Notifications);
         Assert.Equal(Error.Department.ERROR_REMOVING, _departmentService.Notifications.ElementAt(0).Message);
+        Assert.Equal("DepartmentService", _departmentService.Notifications.ElementAt(0).Key);
     }
 
     [Fact]
