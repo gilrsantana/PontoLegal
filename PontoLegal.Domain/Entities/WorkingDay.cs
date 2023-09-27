@@ -4,12 +4,12 @@ namespace PontoLegal.Domain.Entities;
 
 public class WorkingDay : BaseEntity
 {
-    public string Name { get; set; }
-    public WorkingDayType Type { get; set; }
-    public TimeOnly StartWork { get; set; }
-    public TimeOnly StartBreak { get; set; }
-    public TimeOnly EndBreak { get; set; }
-    public TimeOnly EndWork { get; set; }
+    public string Name { get; private set; }
+    public WorkingDayType Type { get; private set; }
+    public TimeOnly StartWork { get; private set; }
+    public TimeOnly StartBreak { get; private set; }
+    public TimeOnly EndBreak { get; private set; }
+    public TimeOnly EndWork { get; private set; }
 
     public WorkingDay(
         string name, 

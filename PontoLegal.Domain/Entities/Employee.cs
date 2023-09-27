@@ -4,14 +4,14 @@ namespace PontoLegal.Domain.Entities;
 
 public class Employee : BaseEntity
 {
-    public string  Name { get; set; }
-    public DateOnly HireDate { get; set; }
-    public string RegistrationNumber { get; set; }
-    public Guid JobPositionId { get; set; }
-    public Pis Pis { get; set; }
-    public Guid CompanyId { get; set; }
-    public Guid ManagerId { get; set; }
-    public Guid WorkingDayId { get; set; }
+    public string  Name { get; private set; }
+    public DateOnly HireDate { get; private set; }
+    public string RegistrationNumber { get; private set; }
+    public Guid JobPositionId { get; private set; }
+    public Pis Pis { get; private set; }
+    public Guid CompanyId { get; private set; }
+    public Guid ManagerId { get; private set; }
+    public Guid WorkingDayId { get; private set; }
 
     public Employee(
         string name, 

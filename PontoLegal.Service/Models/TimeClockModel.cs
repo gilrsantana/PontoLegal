@@ -1,7 +1,7 @@
 using Flunt.Validations;
 using PontoLegal.Domain.Enums;
 
-namespace PontoLegal.Service.Entities;
+namespace PontoLegal.Service.Models;
 
 public class TimeClockModel : BaseModel
 {

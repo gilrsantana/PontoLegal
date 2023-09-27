@@ -2,7 +2,7 @@ using PontoLegal.Domain.Entities;
 using PontoLegal.Domain.ValueObjects;
 using PontoLegal.Repository.Interfaces;
 using PontoLegal.Service.DTOs;
-using PontoLegal.Service.Entities;
+using PontoLegal.Service.Models;
 using PontoLegal.Service.Interfaces;
 using PontoLegal.Shared.Messages;
 

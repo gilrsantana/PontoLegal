@@ -1,5 +1,5 @@
 using PontoLegal.Service.DTOs;
-using PontoLegal.Service.Entities;
+using PontoLegal.Service.Models;
 
 namespace PontoLegal.Service.Interfaces;
 

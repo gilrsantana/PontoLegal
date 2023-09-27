@@ -2,7 +2,7 @@ using Flunt.Validations;
 using PontoLegal.Domain.ValueObjects;
 using PontoLegal.Shared.Messages;
 
-namespace PontoLegal.Service.Entities;
+namespace PontoLegal.Service.Models;
 
 public class EmployeeModel : BaseModel
 {

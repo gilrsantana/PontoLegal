@@ -3,7 +3,7 @@ using PontoLegal.Domain.Entities;
 using PontoLegal.Domain.ValueObjects;
 using PontoLegal.Repository.Interfaces;
 using PontoLegal.Service.DTOs;
-using PontoLegal.Service.Entities;
+using PontoLegal.Service.Models;
 using PontoLegal.Service.Interfaces;
 using PontoLegal.Shared.Messages;
 
@@ -38,18 +38,19 @@ public class CompanyService : BaseService, ICompanyService
         return new CompanyDTO { Id = company.Id, Name = company.Name, Cnpj = company.Cnpj };
     }
     
-    public async Task<CompanyDTO?> GetCompanyByCnpjAsync(Cnpj cnpj)
+    public async Task<CompanyDTO?> GetCompanyByCnpjAsync(string cnpj)
     {
-        if (!cnpj.IsValid)
+        var entity = new Cnpj(cnpj);
+        if (!entity.IsValid)
         {
-            foreach (var error in cnpj.GetErrors())
+            foreach (var error in entity.GetErrors())
             {
                 AddNotification("CompanyService.Cnpj", error);
             }
             return null;
         }
 
-        var company = await _companyRepository.GetCompanyByCnpjAsync(cnpj);
+        var company = await _companyRepository.GetCompanyByCnpjAsync(entity);
         return company == null
             ? null
             : new CompanyDTO { Id = company.Id, Name = company.Name, Cnpj = company.Cnpj };
@@ -85,21 +86,35 @@ public class CompanyService : BaseService, ICompanyService
         }
         
         var dtoByCnpj = await GetCompanyByCnpjAsync(model.Cnpj);
-        var nameExists = await GetCompanyByNameAsync(model.Name);
-
+        if (Notifications.Any())
+        {
+            return false;
+        }
         if (dtoByCnpj != null )
         {
             AddNotification("CompanyService.Cnpj", Error.Company.ALREADY_EXISTS);
             return false;
         }
+
         
+        var nameExists = await GetCompanyByNameAsync(model.Name);
         if (nameExists != null)
         {
             AddNotification("CompanyService.Name", Error.Company.ALREADY_EXISTS);
             return false;
         }
         
-        var company = new Company(model.Name, model.Cnpj);
+        var entityCnpj = new Cnpj(model.Cnpj);
+        if (!entityCnpj.IsValid)
+        {
+            foreach (var error in entityCnpj.GetErrors())
+            {
+                AddNotification("CompanyService.Cnpj", error);
+            }
+            return false;
+        }
+        
+        var company = new Company(model.Name, entityCnpj);
         var result = await _companyRepository.AddCompanyAsync(company);
 
         if (result)
@@ -120,28 +135,36 @@ public class CompanyService : BaseService, ICompanyService
         }
         
         var dtoById = await GetCompanyByIdAsync(id);
-        var dtoByCnpj = await GetCompanyByCnpjAsync(model.Cnpj);
-        var nameExists = await GetCompanyByNameAsync(model.Name);
-
         if (dtoById == null)
         {
             AddNotification("CompanyService.Id", Error.Company.NOT_FOUNDED);
             return false;
         }
         
+        var dtoByCnpj = await GetCompanyByCnpjAsync(model.Cnpj);
         if (dtoByCnpj != null && dtoByCnpj.Id != id)
         {
             AddNotification("CompanyService.Cnpj", Error.Company.ALREADY_EXISTS);
             return false;
         }
         
+        var nameExists = await GetCompanyByNameAsync(model.Name);
         if (nameExists != null && nameExists.Id != id)
         {
             AddNotification("CompanyService.Name", Error.Company.ALREADY_EXISTS);
             return false;
         }
         
-        var company = new Company(model.Name, model.Cnpj);
+        var entityCnpj = new Cnpj(model.Cnpj);
+        if (!entityCnpj.IsValid)
+        {
+            foreach (var error in entityCnpj.GetErrors())
+            {
+                AddNotification("CompanyService.Cnpj", error);
+            }
+            return false;
+        }
+        var company = new Company(model.Name, entityCnpj);
         var result = await _companyRepository.UpdateCompanyAsync(id, company);
 
         if (result) return true;

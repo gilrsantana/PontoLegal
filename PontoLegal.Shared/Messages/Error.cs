@@ -32,6 +32,7 @@ public static class Error
 
     public static class Company
     {
+        public const string INVALID_CNPJ       = "CNPJ of Company is required";
         public const string ALREADY_EXISTS     = "Company already exists";
         public const string ERROR_ADDING       = "Error adding Company";
         public const string ERROR_UPDATING     = "Error updating Company";
