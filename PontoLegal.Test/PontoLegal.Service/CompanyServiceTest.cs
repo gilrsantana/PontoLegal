@@ -307,6 +307,7 @@ public class CompanyServiceTest
         Assert.Single( _companyService.Notifications);
         Assert.Equal(Error.Company.INVALID_CNPJ, model.Notifications.First().Message);
         Assert.Equal(Error.Company.INVALID_CNPJ, _companyService.Notifications.First().Message);
+        Assert.Equal("CompanyModel.Cnpj", _companyService.Notifications.First().Key);
     }
     
     [Theory]
@@ -498,6 +499,7 @@ public class CompanyServiceTest
         Assert.False(result);
         Assert.Single(_companyService.Notifications);
         Assert.Equal(Error.Company.NOT_FOUNDED, _companyService.Notifications.First().Message);
+        Assert.Equal("CompanyService.Id", _companyService.Notifications.First().Key);
     }
     
     [Fact]
@@ -524,6 +526,7 @@ public class CompanyServiceTest
         Assert.False(result);
         Assert.Single(_companyService.Notifications);
         Assert.Equal(Error.Company.ALREADY_EXISTS, _companyService.Notifications.First().Message);
+        Assert.Equal("CompanyService.Cnpj", _companyService.Notifications.First().Key);
     }
     
     [Fact]
@@ -553,6 +556,7 @@ public class CompanyServiceTest
         Assert.False(result);
         Assert.Single(_companyService.Notifications);
         Assert.Equal(Error.Company.ALREADY_EXISTS, _companyService.Notifications.First().Message);
+        Assert.Equal("CompanyService.Name", _companyService.Notifications.First().Key);
     }
     
     [Fact]
@@ -585,6 +589,7 @@ public class CompanyServiceTest
         Assert.False(result);
         Assert.Single(_companyService.Notifications);
         Assert.Equal(Error.Company.ERROR_UPDATING, _companyService.Notifications.First().Message);
+        Assert.Equal("CompanyService", _companyService.Notifications.First().Key);
     }
     
     [Fact]

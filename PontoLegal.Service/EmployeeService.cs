@@ -66,24 +66,21 @@ public class EmployeeService : BaseService, IEmployeeService
         }
         
         var employee = await _employeeRepository.GetEmployeeByPisAsync(pisNumber);
-        if (employee == null)
-        {
-            AddNotification("EmployeeService.Pis", Error.Employee.PIS_NOT_FOUNDED);
-            return null;
-        }
         
-        return new EmployeeDTO
-        {
-            EmployeeId = employee.Id,
-            Name = employee.Name,
-            HireDate = employee.HireDate,
-            RegistrationNumber = employee.RegistrationNumber,
-            JobPositionId = employee.JobPositionId,
-            PisNumber = employee.Pis.Number,
-            CompanyId = employee.CompanyId,
-            WorkingDayId = employee.WorkingDayId,
-            ManagerId = employee.ManagerId
-        };
+        return employee == null 
+            ? null
+            : new EmployeeDTO
+            {
+                EmployeeId = employee.Id,
+                Name = employee.Name,
+                HireDate = employee.HireDate,
+                RegistrationNumber = employee.RegistrationNumber,
+                JobPositionId = employee.JobPositionId,
+                PisNumber = employee.Pis.Number,
+                CompanyId = employee.CompanyId,
+                WorkingDayId = employee.WorkingDayId,
+                ManagerId = employee.ManagerId
+            };
     }
     
     public async Task<bool> AddEmployeeAsync(EmployeeModel model)
@@ -115,7 +112,10 @@ public class EmployeeService : BaseService, IEmployeeService
             return false;
         }
         
-        var existingEmployee = await _employeeRepository.GetEmployeeByPisAsync(model.Pis.Number);
+        var existingEmployee = await GetEmployeeByPisAsync(model.Pis);
+        if (Notifications.Any())
+            return false;
+        
         if (existingEmployee != null)
         {
             AddNotification("EmployeeService.Pis", Error.Employee.PIS_ALREADY_EXISTS);
@@ -127,7 +127,7 @@ public class EmployeeService : BaseService, IEmployeeService
             model.HireDate, 
             model.RegistrationNumber, 
             model.JobPositionId, 
-            model.Pis, 
+            new Pis(model.Pis), 
             model.CompanyId, 
             model.ManagerId, 
             model.WorkingDayId);
@@ -181,8 +181,8 @@ public class EmployeeService : BaseService, IEmployeeService
             return false;
         }
         
-        var existingEmployee = await _employeeRepository.GetEmployeeByPisAsync(model.Pis.Number);
-        if (existingEmployee != null && existingEmployee.Id != id)
+        var existingEmployee = await GetEmployeeByPisAsync(model.Pis);
+        if (existingEmployee != null && existingEmployee.EmployeeId != id)
         {
             AddNotification("EmployeeService.Pis", Error.Employee.PIS_ALREADY_EXISTS);
             return false;
@@ -193,7 +193,7 @@ public class EmployeeService : BaseService, IEmployeeService
             model.HireDate,
             model.RegistrationNumber,
             model.JobPositionId,
-            model.Pis,
+            new Pis(model.Pis),
             model.CompanyId,
             model.ManagerId,
             model.WorkingDayId);

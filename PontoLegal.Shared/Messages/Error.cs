@@ -90,6 +90,7 @@ public static class Error
         public const string INVALID_JOB_POSITION_ID     = "Job Position Id is required";
         public const string INVALID_HIRE_DATE           = "Hire Date must be less than today";
         public const string INVALID_NAME                = "Employee name can't be null and must be between 3 and 80 chars";
+        public const string INVALID_PIS                 = "PIS of Employee is required";
     }
 
     public static class TimeClock

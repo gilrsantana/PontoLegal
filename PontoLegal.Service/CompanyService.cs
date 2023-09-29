@@ -1,4 +1,3 @@
-using System.Collections;
 using PontoLegal.Domain.Entities;
 using PontoLegal.Domain.ValueObjects;
 using PontoLegal.Repository.Interfaces;
@@ -105,14 +104,6 @@ public class CompanyService : BaseService, ICompanyService
         }
         
         var entityCnpj = new Cnpj(model.Cnpj);
-        if (!entityCnpj.IsValid)
-        {
-            foreach (var error in entityCnpj.GetErrors())
-            {
-                AddNotification("CompanyService.Cnpj", error);
-            }
-            return false;
-        }
         
         var company = new Company(model.Name, entityCnpj);
         var result = await _companyRepository.AddCompanyAsync(company);

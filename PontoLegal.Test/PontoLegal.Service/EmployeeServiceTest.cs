@@ -147,9 +147,6 @@ public class EmployeeServiceTest
 
         // Assert
         Assert.Null(result);
-        Assert.Single(_employeeService.Notifications);
-        Assert.Equal(Error.Employee.PIS_NOT_FOUNDED, _employeeService.Notifications.First().Message);
-        Assert.Equal("EmployeeService.Pis", _employeeService.Notifications.First().Key);
     }
     
     [Fact]
@@ -194,7 +191,7 @@ public class EmployeeServiceTest
         var hireDate = DateOnly.FromDateTime(DateTime.Now);
         var registrationNumber = "123456789";
         var jobPositionId = Guid.NewGuid();
-        var pis = new Pis(MockPis.ValidPis);
+        var pis = MockPis.ValidPis;
         var companyId = Guid.NewGuid();
         var managerId = Guid.Empty;
         var workingDayId = Guid.NewGuid();
@@ -223,7 +220,7 @@ public class EmployeeServiceTest
         var hireDate = DateOnly.FromDateTime(DateTime.Now);
         var registrationNumber = reg;
         var jobPositionId = Guid.NewGuid();
-        var pis = new Pis(MockPis.ValidPis);
+        var pis = MockPis.ValidPis;
         var companyId = Guid.NewGuid();
         var managerId = Guid.Empty;
         var workingDayId = Guid.NewGuid();
@@ -249,7 +246,7 @@ public class EmployeeServiceTest
         var hireDate = DateOnly.FromDateTime(DateTime.Now.AddDays(1));
         var registrationNumber = "123456789";
         var jobPositionId = Guid.NewGuid();
-        var pis = new Pis(MockPis.ValidPis);
+        var pis = MockPis.ValidPis;
         var companyId = Guid.NewGuid();
         var managerId = Guid.Empty;
         var workingDayId = Guid.NewGuid();
@@ -275,7 +272,7 @@ public class EmployeeServiceTest
         var hireDate = DateOnly.FromDateTime(DateTime.Now);
         var registrationNumber = "123456789";
         var jobPositionId = Guid.Empty;
-        var pis = new Pis(MockPis.ValidPis);
+        var pis = MockPis.ValidPis;
         var companyId = Guid.NewGuid();
         var managerId = Guid.Empty;
         var workingDayId = Guid.NewGuid();
@@ -294,7 +291,6 @@ public class EmployeeServiceTest
     }
 
     [Theory]
-    [InlineData("")]
     [InlineData("123")]
     [InlineData("1234567890")]
     [InlineData("123456789012")]
@@ -302,26 +298,44 @@ public class EmployeeServiceTest
     public async Task AddEmployeeAsync_ShouldReturnsFalseWithError_WithInvalidPis(string pisNumber)
     {
         // Arrange
-        var name = "Employee Name";
-        var hireDate = DateOnly.FromDateTime(DateTime.Now);
-        var registrationNumber = "123456789";
-        var jobPositionId = Guid.NewGuid();
-        var pis = new Pis(pisNumber);
-        var companyId = Guid.NewGuid();
-        var managerId = Guid.Empty;
-        var workingDayId = Guid.NewGuid();
-        var model = new EmployeeModel(name, hireDate, registrationNumber, jobPositionId, pis, companyId, managerId, workingDayId);
+        var model = MockEmployee.GetEmployeeModel();
+        model.Pis = pisNumber;
+        var workingDay = new WorkingDay(
+            "Working Day",
+            WorkingDayType.TEN_HOURS,
+            new TimeOnly(8, 0),
+            new TimeOnly(12, 0),
+            new TimeOnly(14, 0),
+            new TimeOnly(18, 0)
+        );
+        _jobPositionRepositoryMock
+            .Setup(x => x.GetJobPositionByIdAsync(It.IsAny<Guid>()))
+            .ReturnsAsync(new JobPosition("Job Position", Guid.NewGuid(), new Department("Department")));
+        
+        _companyRepositoryMock
+            .Setup(x => x.GetCompanyByIdAsync(It.IsAny<Guid>()))
+            .ReturnsAsync(new Company("Company", new Cnpj(MockCnpj.ValidCnpj)));
+        
+        _workingDayRepositoryMock
+            .Setup(x => x.GetWorkingDayByIdAsync(It.IsAny<Guid>()))
+            .ReturnsAsync(workingDay);
+        
+        _employeeRepositoryMock
+            .Setup(x => x.GetEmployeeByPisAsync(It.IsAny<string>()))
+            .ReturnsAsync((Employee?)null);
+        
+        _employeeRepositoryMock
+            .Setup(x => x.AddEmployeeAsync(It.IsAny<Employee>()))
+            .ReturnsAsync(true);
         // Act
         var result = await _employeeService.AddEmployeeAsync(model);
 
         // Assert
         Assert.False(result);
-        Assert.Single(model.Notifications);
+        Assert.True(model.IsValid);
         Assert.Single(_employeeService.Notifications);
-        Assert.Contains(model.Notifications, x => x.Message == Error.Pis.INVALID_PIS_DIGITS || x.Message == Error.Pis.INVALID_PIS_FORMAT);
         Assert.Contains(_employeeService.Notifications, x => x.Message == Error.Pis.INVALID_PIS_DIGITS || x.Message == Error.Pis.INVALID_PIS_FORMAT);
-        Assert.Contains(model.Notifications, x => x.Key == "EmployeeModel.Pis");
-        Assert.Contains(_employeeService.Notifications, x => x.Key == "EmployeeModel.Pis");
+        Assert.Contains(_employeeService.Notifications, x => x.Key == "EmployeeService.Pis");
     }
 
     [Fact]
@@ -332,7 +346,7 @@ public class EmployeeServiceTest
         var hireDate = DateOnly.FromDateTime(DateTime.Now);
         var registrationNumber = "123456789";
         var jobPositionId = Guid.NewGuid();
-        var pis = new Pis(MockPis.ValidPis);
+        var pis = MockPis.ValidPis;
         var companyId = Guid.Empty;
         var managerId = Guid.Empty;
         var workingDayId = Guid.NewGuid();
@@ -358,7 +372,7 @@ public class EmployeeServiceTest
         var hireDate = DateOnly.FromDateTime(DateTime.Now);
         var registrationNumber = "123456789";
         var jobPositionId = Guid.NewGuid();
-        var pis = new Pis(MockPis.ValidPis);
+        var pis = MockPis.ValidPis;
         var companyId = Guid.NewGuid();
         var managerId = Guid.Empty;
         var workingDayId = Guid.Empty;
@@ -627,7 +641,7 @@ public class EmployeeServiceTest
         var hireDate = DateOnly.FromDateTime(DateTime.Now.AddDays(1));
         var registrationNumber = "";
         var jobPositionId = Guid.Empty;
-        var pis = new Pis("123");
+        var pis = "";
         var companyId = Guid.Empty;
         var managerId = Guid.Empty;
         var workingDayId = Guid.Empty;

@@ -8,7 +8,7 @@ public static class MockEmployee
         var hireDate = DateOnly.FromDateTime(DateTime.Now);
         var registrationNumber = "123456789";
         var jobPositionId = Guid.NewGuid();
-        var pis = new Pis(MockPis.ValidPis);
+        var pis = MockPis.ValidPis;
         var companyId = Guid.NewGuid();
         var managerId = Guid.Empty;
         var workingDayId = Guid.NewGuid();
