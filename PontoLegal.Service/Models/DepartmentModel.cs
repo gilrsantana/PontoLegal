@@ -1,7 +1,7 @@
 ﻿using Flunt.Validations;
 using PontoLegal.Shared.Messages;
 
-namespace PontoLegal.Service.Entities;
+namespace PontoLegal.Service.Models;
 
 public class DepartmentModel : BaseModel
 {

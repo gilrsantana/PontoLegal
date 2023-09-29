@@ -1,6 +1,4 @@
-﻿using PontoLegal.Service.DTOs;
-
-namespace PontoLegal.Test.PontoLegal.Service;
+﻿namespace PontoLegal.Test.PontoLegal.Service;
 
 public class JobPositionServiceTest
 {
@@ -149,6 +147,7 @@ public class JobPositionServiceTest
         Assert.False(_jobPositionService.IsValid);
         Assert.Single(_jobPositionService.Notifications);
         Assert.Equal(Error.JobPosition.NAME_IS_REQUIRED, _jobPositionService.Notifications.First().Message);
+        Assert.Equal("JobPosition.Name", _jobPositionService.Notifications.First().Key);
     }
 
     [Fact]
@@ -307,6 +306,7 @@ public class JobPositionServiceTest
         Assert.False(_jobPositionService.IsValid);
         Assert.Single(_jobPositionService.Notifications);
         Assert.Equal(Error.JobPosition.INVALID_PAGINATION, _jobPositionService.Notifications.First().Message);
+        Assert.Equal("JobPositionService", _jobPositionService.Notifications.First().Key);
     }
     #endregion
 
@@ -403,6 +403,7 @@ public class JobPositionServiceTest
         Assert.False(result);
         Assert.Single(_jobPositionService.Notifications);
         Assert.Equal(Error.JobPosition.NAME_ALREADY_EXISTS, _jobPositionService.Notifications.First().Message);
+        Assert.Equal("JobPosition.Name", _jobPositionService.Notifications.First().Key);
     }
 
     [Fact]
@@ -429,6 +430,7 @@ public class JobPositionServiceTest
         Assert.False(result);
         Assert.Single(_jobPositionService.Notifications);
         Assert.Equal(Error.JobPosition.ERROR_ADDING, _jobPositionService.Notifications.First().Message);
+        Assert.Equal("JobPosition", _jobPositionService.Notifications.First().Key);
     }
 
     [Fact]
@@ -514,6 +516,7 @@ public class JobPositionServiceTest
         Assert.False(_jobPositionService.IsValid);
         Assert.Single(_jobPositionService.Notifications);
         Assert.Equal(Error.JobPosition.NOT_FOUNDED, _jobPositionService.Notifications.First().Message);
+        Assert.Equal("JobPosition.Id", _jobPositionService.Notifications.First().Key);
     }
     
     [Fact]
@@ -540,6 +543,7 @@ public class JobPositionServiceTest
         Assert.False(_jobPositionService.IsValid);
         Assert.Single(_jobPositionService.Notifications);
         Assert.Equal(Error.JobPosition.NAME_ALREADY_EXISTS, _jobPositionService.Notifications.First().Message);
+        Assert.Equal("JobPosition.Name", _jobPositionService.Notifications.First().Key);
     }
     
     [Fact]
@@ -569,6 +573,7 @@ public class JobPositionServiceTest
         Assert.False(_jobPositionService.IsValid);
         Assert.Single(_jobPositionService.Notifications);
         Assert.Equal(Error.JobPosition.ERROR_UPDATING, _jobPositionService.Notifications.First().Message);
+        Assert.Equal("JobPosition", _jobPositionService.Notifications.First().Key);
     }
     
     [Fact]
@@ -634,6 +639,7 @@ public class JobPositionServiceTest
         Assert.False(_jobPositionService.IsValid);
         Assert.Single(_jobPositionService.Notifications);
         Assert.Equal(Error.JobPosition.NOT_FOUNDED, _jobPositionService.Notifications.First().Message);
+        Assert.Equal("JobPosition.Id", _jobPositionService.Notifications.First().Key);
     }
     
     [Fact]
@@ -658,6 +664,7 @@ public class JobPositionServiceTest
         Assert.False(_jobPositionService.IsValid);
         Assert.Single(_jobPositionService.Notifications);
         Assert.Equal(Error.JobPosition.ERROR_REMOVING, _jobPositionService.Notifications.First().Message);
+        Assert.Equal("JobPosition", _jobPositionService.Notifications.First().Key);
     }
     
     [Fact]

@@ -1,7 +1,3 @@
-using PontoLegal.Domain.ValueObjects;
-using PontoLegal.Service.DTOs;
-using PontoLegal.Test.Mock;
-
 namespace PontoLegal.Test.PontoLegal.Service;
 
 public class CompanyServiceTest
@@ -81,7 +77,7 @@ public class CompanyServiceTest
     public async Task GetCompanyByCnpjAsync_ShouldReturnsNullWithError_WithInvalidCnpj()
     {
         // Arrange
-        var cnpj = new Cnpj("123");
+        var cnpj = "123";
         
         // Act
         var result = await _companyService.GetCompanyByCnpjAsync(cnpj);
@@ -91,6 +87,7 @@ public class CompanyServiceTest
         Assert.False(_companyService.IsValid);
         Assert.Single(_companyService.Notifications);
         Assert.Equal(Error.Cnpj.INVALID_CNPJ_FORMAT, _companyService.Notifications.First().Message);
+        Assert.Equal("CompanyService.Cnpj", _companyService.Notifications.First().Key);
     }
     
     [Fact]
@@ -103,7 +100,7 @@ public class CompanyServiceTest
             .ReturnsAsync((Company?)null);
         
         // Act
-        var result = await _companyService.GetCompanyByCnpjAsync(cnpj);
+        var result = await _companyService.GetCompanyByCnpjAsync(MockCnpj.ValidCnpj);
         
         // Assert
         Assert.Null(result);
@@ -118,11 +115,11 @@ public class CompanyServiceTest
         var cnpj = new Cnpj(MockCnpj.ValidCnpj);
         var company = new Company("Company", cnpj);
         _companyRepositoryMock
-            .Setup(x => x.GetCompanyByCnpjAsync(cnpj))
+            .Setup(x => x.GetCompanyByCnpjAsync(It.IsAny<Cnpj>()))
             .ReturnsAsync(company);
         
         // Act
-        var result = await _companyService.GetCompanyByCnpjAsync(cnpj);
+        var result = await _companyService.GetCompanyByCnpjAsync(MockCnpj.ValidCnpj);
         
         // Assert
         Assert.NotNull(result);
@@ -190,7 +187,7 @@ public class CompanyServiceTest
     {
         // Arrange
         _companyRepositoryMock
-            .Setup(repo => repo.GetAllCompaniesAsync(skip, take))!
+            .Setup(repo => repo.GetAllCompaniesAsync(skip, take))
             .ReturnsAsync((ICollection<Company>?)null);
         
         // Act
@@ -202,6 +199,7 @@ public class CompanyServiceTest
         Assert.False(_companyService.IsValid);
         Assert.Single(_companyService.Notifications);
         Assert.Equal(Error.Company.INVALID_PAGINATION, _companyService.Notifications.First().Message);
+        Assert.Equal("CompanyService", _companyService.Notifications.First().Key);
     }
     
     [Fact]
@@ -210,11 +208,11 @@ public class CompanyServiceTest
         // Arrange
         var companies = new List<Company>();
         _companyRepositoryMock
-            .Setup(repo => repo.GetAllCompaniesAsync(0, 25))!
+            .Setup(repo => repo.GetAllCompaniesAsync(0, 25))
             .ReturnsAsync(companies);
         
         // Act
-        var result = await _companyService.GetAllCompaniesAsync(0, 25);
+        var result = await _companyService.GetAllCompaniesAsync();
         
         // Assert
         Assert.NotNull(result);
@@ -228,11 +226,11 @@ public class CompanyServiceTest
     {
         // Arrange
         _companyRepositoryMock
-            .Setup(repo => repo.GetAllCompaniesAsync(0, 25))!
+            .Setup(repo => repo.GetAllCompaniesAsync(0, 25))
             .ReturnsAsync((ICollection<Company>?)null);
         
         // Act
-        var result = await _companyService.GetAllCompaniesAsync(0, 25);
+        var result = await _companyService.GetAllCompaniesAsync();
         
         // Assert
         Assert.NotNull(result);
@@ -252,11 +250,11 @@ public class CompanyServiceTest
             new("Company 3", new Cnpj(MockCnpj.ValidCnpj)),
         };
         _companyRepositoryMock
-            .Setup(repo => repo.GetAllCompaniesAsync(0, 25))!
+            .Setup(repo => repo.GetAllCompaniesAsync(0, 25))
             .ReturnsAsync(companies);
         
         // Act
-        var result = await _companyService.GetAllCompaniesAsync(0, 25);
+        var result = await _companyService.GetAllCompaniesAsync();
         
         // Assert
         Assert.NotNull(result);
@@ -291,9 +289,28 @@ public class CompanyServiceTest
         Assert.Equal(Error.Company.INVALID_NAME, model.Notifications.First().Message);
         Assert.Equal(Error.Company.INVALID_NAME, _companyService.Notifications.First().Message);
     }
+
+    [Fact]
+    public async Task AddCompanyAsync_ShouldReturnsFalseWithError_WithEmptyCnpj()
+    {
+        // Arrange
+        var model = new CompanyModel("Company", "");
+        
+        // Act
+        var result = await _companyService.AddCompanyAsync(model);
+        
+        // Assert
+        Assert.False(model.IsValid);
+        Assert.False(_companyService.IsValid);
+        Assert.False(result);
+        Assert.Single( model.Notifications);
+        Assert.Single( _companyService.Notifications);
+        Assert.Equal(Error.Company.INVALID_CNPJ, model.Notifications.First().Message);
+        Assert.Equal(Error.Company.INVALID_CNPJ, _companyService.Notifications.First().Message);
+        Assert.Equal("CompanyModel.Cnpj", _companyService.Notifications.First().Key);
+    }
     
     [Theory]
-    [InlineData("Company", "")]
     [InlineData("Company", "123")]
     [InlineData("Company", "1239012345678901234567890")]
     [InlineData("Company", "94.664.304/0001-05")]
@@ -307,39 +324,12 @@ public class CompanyServiceTest
         var result = await _companyService.AddCompanyAsync(model);
         
         // Assert
-        Assert.False(model.IsValid);
+        Assert.True(model.IsValid);
         Assert.False(_companyService.IsValid);
         Assert.False(result);
-        Assert.Single( model.Notifications);
         Assert.Single( _companyService.Notifications);
-        Assert.Equal(Error.Cnpj.INVALID_CNPJ_FORMAT, model.Notifications.First().Message);
         Assert.Equal(Error.Cnpj.INVALID_CNPJ_FORMAT, _companyService.Notifications.First().Message);
-    }
-    
-    [Theory]
-    [InlineData("", "")]
-    [InlineData("C", "123")]
-    [InlineData("Co", "1239012345678901234567890")]
-    [InlineData("Name with more than 30 characters", "9466430400010A")]
-    [InlineData("Name of Company with more than 30 characters", "94.664.304/0001-05")]
-    public async Task AddCompanyAsync_ShouldReturnsFalseWithError_WithInvalidNameAndCnpj(string companyName, string cnpjNumber)
-    {
-        // Arrange
-        var model = new CompanyModel(companyName, cnpjNumber);
-        
-        // Act
-        var result = await _companyService.AddCompanyAsync(model);
-        
-        // Assert
-        Assert.False(model.IsValid);
-        Assert.False(_companyService.IsValid);
-        Assert.False(result);
-        Assert.Equal(2, model.Notifications.Count);
-        Assert.Equal(2, _companyService.Notifications.Count);
-        Assert.Equal(Error.Company.INVALID_NAME, model.Notifications.First().Message);
-        Assert.Equal(Error.Cnpj.INVALID_CNPJ_FORMAT, model.Notifications.Last().Message);
-        Assert.Equal(Error.Company.INVALID_NAME, _companyService.Notifications.First().Message);
-        Assert.Equal(Error.Cnpj.INVALID_CNPJ_FORMAT, _companyService.Notifications.Last().Message);
+        Assert.Equal("CompanyService.Cnpj", _companyService.Notifications.First().Key);
     }
     
     [Fact]
@@ -365,6 +355,7 @@ public class CompanyServiceTest
         Assert.False(result);
         Assert.Single(_companyService.Notifications);
         Assert.Equal(Error.Company.ALREADY_EXISTS, _companyService.Notifications.First().Message);
+        Assert.Equal("CompanyService.Name", _companyService.Notifications.First().Key);
     }
 
     [Fact]
@@ -390,6 +381,7 @@ public class CompanyServiceTest
         Assert.False(result);
         Assert.Single(_companyService.Notifications);
         Assert.Equal(Error.Company.ALREADY_EXISTS, _companyService.Notifications.First().Message);
+        Assert.Equal("CompanyService.Cnpj", _companyService.Notifications.First().Key);
     }
     
     [Fact]
@@ -418,6 +410,7 @@ public class CompanyServiceTest
         Assert.False(result);
         Assert.Single(_companyService.Notifications);
         Assert.Equal(Error.Company.ERROR_ADDING, _companyService.Notifications.First().Message);
+        Assert.Equal("CompanyService", _companyService.Notifications.First().Key);
     }
     
     [Fact]
@@ -473,7 +466,7 @@ public class CompanyServiceTest
     {
         // Arrange
         var id = Guid.NewGuid();
-        var model = new CompanyModel("", "123");
+        var model = new CompanyModel("", "");
         
         // Act
         var result = await _companyService.UpdateCompanyAsync(id, model);
@@ -484,7 +477,7 @@ public class CompanyServiceTest
         Assert.False(result);
         Assert.Equal(2, _companyService.Notifications.Count);
         Assert.Equal(Error.Company.INVALID_NAME, _companyService.Notifications.First().Message);
-        Assert.Equal(Error.Cnpj.INVALID_CNPJ_FORMAT, _companyService.Notifications.Last().Message);
+        Assert.Equal(Error.Company.INVALID_CNPJ, _companyService.Notifications.Last().Message);
     }
     
     [Fact]
@@ -506,6 +499,7 @@ public class CompanyServiceTest
         Assert.False(result);
         Assert.Single(_companyService.Notifications);
         Assert.Equal(Error.Company.NOT_FOUNDED, _companyService.Notifications.First().Message);
+        Assert.Equal("CompanyService.Id", _companyService.Notifications.First().Key);
     }
     
     [Fact]
@@ -514,12 +508,13 @@ public class CompanyServiceTest
         // Arrange
         var id = Guid.NewGuid();
         var model = new CompanyModel("Company", MockCnpj.ValidCnpj);
-        var company = new Company(model.Name, model.Cnpj);
+        var cnpj = new Cnpj(model.Cnpj);
+        var company = new Company(model.Name, cnpj);
         _companyRepositoryMock
             .Setup(x => x.GetCompanyByIdAsync(id))
             .ReturnsAsync(company);
         _companyRepositoryMock
-            .Setup(x => x.GetCompanyByCnpjAsync(model.Cnpj))
+            .Setup(x => x.GetCompanyByCnpjAsync(It.IsAny<Cnpj>()))
             .ReturnsAsync(company);
         
         // Act
@@ -531,6 +526,7 @@ public class CompanyServiceTest
         Assert.False(result);
         Assert.Single(_companyService.Notifications);
         Assert.Equal(Error.Company.ALREADY_EXISTS, _companyService.Notifications.First().Message);
+        Assert.Equal("CompanyService.Cnpj", _companyService.Notifications.First().Key);
     }
     
     [Fact]
@@ -539,12 +535,13 @@ public class CompanyServiceTest
         // Arrange
         var id = Guid.NewGuid();
         var model = new CompanyModel("Company", MockCnpj.ValidCnpj);
-        var company = new Company(model.Name, model.Cnpj);
+        var cnpj = new Cnpj(model.Cnpj);
+        var company = new Company(model.Name, cnpj);
         _companyRepositoryMock
             .Setup(x => x.GetCompanyByIdAsync(id))
             .ReturnsAsync(company);
         _companyRepositoryMock
-            .Setup(x => x.GetCompanyByCnpjAsync(model.Cnpj))
+            .Setup(x => x.GetCompanyByCnpjAsync(cnpj))
             .ReturnsAsync((Company?)null);
         _companyRepositoryMock
             .Setup(x => x.GetCompanyByNameAsync(model.Name))
@@ -559,6 +556,7 @@ public class CompanyServiceTest
         Assert.False(result);
         Assert.Single(_companyService.Notifications);
         Assert.Equal(Error.Company.ALREADY_EXISTS, _companyService.Notifications.First().Message);
+        Assert.Equal("CompanyService.Name", _companyService.Notifications.First().Key);
     }
     
     [Fact]
@@ -567,12 +565,13 @@ public class CompanyServiceTest
         // Arrange
         var id = Guid.NewGuid();
         var model = new CompanyModel("Company", MockCnpj.ValidCnpj);
-        var company = new Company(model.Name, model.Cnpj);
+        var cnpj = new Cnpj(model.Cnpj);
+        var company = new Company(model.Name, cnpj);
         _companyRepositoryMock
             .Setup(x => x.GetCompanyByIdAsync(id))
             .ReturnsAsync(company);
         _companyRepositoryMock
-            .Setup(x => x.GetCompanyByCnpjAsync(model.Cnpj))
+            .Setup(x => x.GetCompanyByCnpjAsync(cnpj))
             .ReturnsAsync((Company?)null);
         _companyRepositoryMock
             .Setup(x => x.GetCompanyByNameAsync(model.Name))
@@ -590,6 +589,7 @@ public class CompanyServiceTest
         Assert.False(result);
         Assert.Single(_companyService.Notifications);
         Assert.Equal(Error.Company.ERROR_UPDATING, _companyService.Notifications.First().Message);
+        Assert.Equal("CompanyService", _companyService.Notifications.First().Key);
     }
     
     [Fact]
@@ -598,12 +598,13 @@ public class CompanyServiceTest
         // Arrange
         var id = Guid.NewGuid();
         var model = new CompanyModel("Company", MockCnpj.ValidCnpj);
-        var company = new Company(model.Name, model.Cnpj);
+        var cnpj = new Cnpj(model.Cnpj);
+        var company = new Company(model.Name, cnpj);
         _companyRepositoryMock
             .Setup(x => x.GetCompanyByIdAsync(id))
             .ReturnsAsync(company);
         _companyRepositoryMock
-            .Setup(x => x.GetCompanyByCnpjAsync(model.Cnpj))
+            .Setup(x => x.GetCompanyByCnpjAsync(cnpj))
             .ReturnsAsync((Company?)null);
         _companyRepositoryMock
             .Setup(x => x.GetCompanyByNameAsync(model.Name))

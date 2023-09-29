@@ -1,9 +1,7 @@
-﻿using System.Collections;
-using System.Text.Json.Nodes;
-using PontoLegal.Domain.Entities;
+﻿using PontoLegal.Domain.Entities;
 using PontoLegal.Repository.Interfaces;
 using PontoLegal.Service.DTOs;
-using PontoLegal.Service.Entities;
+using PontoLegal.Service.Models;
 using PontoLegal.Service.Interfaces;
 using PontoLegal.Shared.Messages;
 
@@ -89,7 +87,7 @@ public class JobPositionService : BaseService, IJobPositionService
     {
         if (skip < 0 || take < 1)
         {
-            AddNotification("DepartmentService", Error.JobPosition.INVALID_PAGINATION);
+            AddNotification("JobPositionService", Error.JobPosition.INVALID_PAGINATION);
             return new List<JobPositionDTO>();
         }
 
