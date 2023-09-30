@@ -190,9 +190,29 @@ public class WorkingDayServiceTest
         Assert.Empty(result);
         Assert.Empty(_workingDayService.Notifications);
     }
-    
+
     [Fact]
-    public async Task GetAllWorkingDaysAsync_ShouldReturnsWorkingDayDTOList()
+    public async Task GetAllWorkingDaysAsync_ShouldReturnsEmptyList_WithNullRepositoryList()
+    {
+        // Arrange
+        var workingDays = new List<WorkingDay>();
+        _workingDayRepositoryMock
+            .Setup(x => x.GetAllWorkingDaysAsync<WorkingDay>(It.IsAny<int>(), It.IsAny<int>()))
+            .ReturnsAsync((ICollection<WorkingDay>?)null);
+        // Act
+        var result = await _workingDayService.GetAllWorkingDaysAsync();
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.IsType<List<WorkingDayDTO>>(result);
+        Assert.Empty(result);
+        Assert.Empty(_workingDayService.Notifications);
+    }
+
+    [Theory]
+    [InlineData(0, 1)]
+    [InlineData(0, 25)]
+    public async Task GetAllWorkingDaysAsync_ShouldReturnsWorkingDayDTOList(int skip, int take)
     {
         // Arrange
         var workingDays = new List<WorkingDay>
@@ -216,7 +236,7 @@ public class WorkingDayServiceTest
             .Setup(x => x.GetAllWorkingDaysAsync<WorkingDay>(It.IsAny<int>(), It.IsAny<int>()))
             .ReturnsAsync(workingDays);
         // Act
-        var result = await _workingDayService.GetAllWorkingDaysAsync();
+        var result = await _workingDayService.GetAllWorkingDaysAsync(skip, take);
         
         // Assert
         Assert.NotNull(result);
@@ -830,6 +850,74 @@ public class WorkingDayServiceTest
         Assert.True(result);
         Assert.Empty(_workingDayService.Notifications);
     }
-    
+
+    #endregion
+
+    #region Internal Methods
+
+    [Fact]
+    public async Task ValidateIdForSearch_ShouldReturnsFalseWithError_WithInvalidId()
+    {
+        // Arrange
+        var id = Guid.Empty;
+
+        // Act
+        var result = _workingDayService.ValidateIdForSearch(id);
+
+        // Assert
+        Assert.False(result);
+        Assert.False(_workingDayService.IsValid);
+        Assert.Single(_workingDayService.Notifications);
+        Assert.Equal(Error.WorkingDay.ID_IS_REQUIRED, _workingDayService.Notifications.First().Message);
+        Assert.Equal("WorkingDay.Id", _workingDayService.Notifications.First().Key);
+    }
+
+    [Fact]
+    public async Task ValidateIdForSearch_ShouldReturnsTrue()
+    {
+        // Arrange
+        var id = Guid.NewGuid();
+
+        // Act
+        var result = _workingDayService.ValidateIdForSearch(id);
+
+        // Assert
+        Assert.True(result);
+        Assert.True(_workingDayService.IsValid);
+        Assert.Empty(_workingDayService.Notifications);
+    }
+
+    [Fact]
+    public async Task ValidateNameForSearch_ShouldReturnsFalseWithError_WithInvalidName()
+    {
+        // Arrange
+        var name = "";
+
+        // Act
+        var result = _workingDayService.ValidateNameForSearch(name);
+
+        // Assert
+        Assert.False(result);
+        Assert.False(_workingDayService.IsValid);
+        Assert.Single(_workingDayService.Notifications);
+        Assert.Equal(Error.WorkingDay.NAME_IS_REQUIRED, _workingDayService.Notifications.First().Message);
+        Assert.Equal("WorkingDay.Name", _workingDayService.Notifications.First().Key);
+    }
+
+    [Fact]
+    public async Task ValidateNameForSearch_ShouldReturnsTrue()
+    {
+        // Arrange
+        var name = "Job";
+
+        // Act
+        var result = _workingDayService.ValidateNameForSearch(name);
+
+        // Assert
+        Assert.True(result);
+        Assert.True(_workingDayService.IsValid);
+        Assert.Empty(_workingDayService.Notifications);
+    }
+
     #endregion
 }

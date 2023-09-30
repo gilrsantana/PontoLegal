@@ -177,12 +177,11 @@ public class CompanyServiceTest
     #region GetAllCompaniesAsync
     
     [Theory]
-    [InlineData(-1, 25)]
+    [InlineData(-1, 1)]
     [InlineData(0, 0)]
     [InlineData(1, 0)]
-    [InlineData(-1, 0)]
     [InlineData(-1, -1)]
-    [InlineData(0, -1)]
+
     public async Task GetAllCompaniesAsync_ShouldReturnsEmptyList_WithInvalidSkipTake(int skip, int take)
     {
         // Arrange
@@ -237,10 +236,12 @@ public class CompanyServiceTest
         Assert.Empty(result);
         Assert.True(_companyService.IsValid);
         Assert.Empty(_companyService.Notifications);
-    } 
-    
-    [Fact]
-    public async Task GetAllCompaniesAsync_ShouldReturnsDtoList()
+    }
+
+    [Theory]
+    [InlineData(0, 25)]
+    [InlineData(0, 1)]
+    public async Task GetAllCompaniesAsync_ShouldReturnsDtoList(int skip, int take)
     {
         // Arrange
         var companies = new List<Company>
@@ -250,11 +251,11 @@ public class CompanyServiceTest
             new("Company 3", new Cnpj(MockCnpj.ValidCnpj)),
         };
         _companyRepositoryMock
-            .Setup(repo => repo.GetAllCompaniesAsync(0, 25))
+            .Setup(repo => repo.GetAllCompaniesAsync(skip, take))
             .ReturnsAsync(companies);
         
         // Act
-        var result = await _companyService.GetAllCompaniesAsync();
+        var result = await _companyService.GetAllCompaniesAsync(skip, take);
         
         // Assert
         Assert.NotNull(result);
@@ -263,6 +264,9 @@ public class CompanyServiceTest
         Assert.Equal(companies.Count, result.Count);
         Assert.True(_companyService.IsValid);
         Assert.Empty(_companyService.Notifications);
+        Assert.Equal(companies[0].Id, result.ToList()[0].Id);
+        Assert.Equal(companies[0].Name, result.ToList()[0].Name);
+        Assert.Equal(companies[0].Cnpj, result.ToList()[0].Cnpj);
     }
     
     #endregion
@@ -501,7 +505,32 @@ public class CompanyServiceTest
         Assert.Equal(Error.Company.NOT_FOUNDED, _companyService.Notifications.First().Message);
         Assert.Equal("CompanyService.Id", _companyService.Notifications.First().Key);
     }
-    
+
+    [Fact]
+    public async Task UpdateCompanyAsync_ShouldReturnsFalseWithError_WithInvalidCnpj()
+    {
+        // Arrange
+        var id = Guid.NewGuid();
+        var cnpjNumber = "1234567890";
+        var model = new CompanyModel("Company", cnpjNumber);
+        var cnpj = new Cnpj(MockCnpj.ValidCnpj);
+        var company = new Company(model.Name, cnpj);
+        _companyRepositoryMock
+            .Setup(x => x.GetCompanyByIdAsync(id))
+            .ReturnsAsync(company);
+
+        // Act
+        var result = await _companyService.UpdateCompanyAsync(id, model);
+
+        // Assert
+        Assert.True(model.IsValid);
+        Assert.False(_companyService.IsValid);
+        Assert.False(result);
+        Assert.Single(_companyService.Notifications);
+        Assert.Equal(Error.Cnpj.INVALID_CNPJ_FORMAT, _companyService.Notifications.First().Message);
+        Assert.Equal("CompanyService.Cnpj", _companyService.Notifications.First().Key);
+    }
+
     [Fact]
     public async Task UpdateCompanyAsync_ShouldReturnsFalseWithError_WithExistentCnpj()
     {
@@ -698,6 +727,74 @@ public class CompanyServiceTest
         // Act
         var result = await _companyService.RemoveCompanyByIdAsync(id);
         
+        // Assert
+        Assert.True(result);
+        Assert.True(_companyService.IsValid);
+        Assert.Empty(_companyService.Notifications);
+    }
+
+    #endregion
+
+    #region Internal Methods
+
+    [Fact]
+    public async Task ValidateIdForSearch_ShouldReturnsFalseWithError_WithInvalidId()
+    {
+        // Arrange
+        var id = Guid.Empty;
+        
+        // Act
+        var result = _companyService.ValidateIdForSearch(id);
+        
+        // Assert
+        Assert.False(result);
+        Assert.False(_companyService.IsValid);
+        Assert.Single(_companyService.Notifications);
+        Assert.Equal(Error.Company.ID_IS_REQUIRED, _companyService.Notifications.First().Message);
+        Assert.Equal("Company.Id", _companyService.Notifications.First().Key);
+    }
+
+    [Fact]
+    public async Task ValidateIdForSearch_ShouldReturnsTrue()
+    {
+        // Arrange
+        var id = Guid.NewGuid();
+
+        // Act
+        var result = _companyService.ValidateIdForSearch(id);
+
+        // Assert
+        Assert.True(result);
+        Assert.True(_companyService.IsValid);
+        Assert.Empty(_companyService.Notifications);
+    }
+
+    [Fact]
+    public async Task ValidateNameForSearch_ShouldReturnsFalseWithError_WithInvalidName()
+    {
+        // Arrange
+        var name = "";
+
+        // Act
+        var result = _companyService.ValidateNameForSearch(name);
+
+        // Assert
+        Assert.False(result);
+        Assert.False(_companyService.IsValid);
+        Assert.Single(_companyService.Notifications);
+        Assert.Equal(Error.Company.NAME_IS_REQUIRED, _companyService.Notifications.First().Message);
+        Assert.Equal("Company.Name", _companyService.Notifications.First().Key);
+    }
+
+    [Fact]
+    public async Task ValidateNameForSearch_ShouldReturnsTrue()
+    {
+        // Arrange
+        var name = "Company";
+
+        // Act
+        var result = _companyService.ValidateNameForSearch(name);
+
         // Assert
         Assert.True(result);
         Assert.True(_companyService.IsValid);

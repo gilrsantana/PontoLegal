@@ -1,10 +1,12 @@
-﻿using PontoLegal.Domain.Entities;
+﻿using System.Runtime.CompilerServices;
+using PontoLegal.Domain.Entities;
 using PontoLegal.Repository.Interfaces;
 using PontoLegal.Service.DTOs;
 using PontoLegal.Service.Models;
 using PontoLegal.Service.Interfaces;
 using PontoLegal.Shared.Messages;
 
+[assembly: InternalsVisibleTo("PontoLegal.Tests")]
 namespace PontoLegal.Service;
 
 public class JobPositionService : BaseService, IJobPositionService
@@ -183,14 +185,14 @@ public class JobPositionService : BaseService, IJobPositionService
         return false;
     }
     
-    private bool ValidateNameForSearch(string name)
+    internal bool ValidateNameForSearch(string name)
     {
         if (!string.IsNullOrWhiteSpace(name)) return true;
         AddNotification("JobPosition.Name", Error.JobPosition.NAME_IS_REQUIRED);
         return false;
     }
     
-    private bool ValidateIdForSearch(Guid id)
+    internal bool ValidateIdForSearch(Guid id)
     {
         if (id != Guid.Empty) return true;
         AddNotification("JobPosition.Id", Error.JobPosition.ID_IS_REQUIRED);

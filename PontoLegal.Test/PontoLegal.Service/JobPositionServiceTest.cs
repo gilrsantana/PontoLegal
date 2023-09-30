@@ -257,8 +257,10 @@ public class JobPositionServiceTest
         Assert.Empty(_jobPositionService.Notifications);
     }
 
-    [Fact]
-    public async Task GetAllJobPositionsAsync_ShouldReturnsList()
+    [Theory]
+    [InlineData(0, 25)]
+    [InlineData(0, 1)]
+    public async Task GetAllJobPositionsAsync_ShouldReturnsList(int skip, int take)
     {
         // Arrange
         var department = new Department("Development");
@@ -267,11 +269,11 @@ public class JobPositionServiceTest
         var jobPosition3 = new JobPosition("Developer", department.Id, department);
         var jobPositions = new List<JobPosition> { jobPosition, jobPosition2, jobPosition3 };
         _jobPositionRepositoryMock
-            .Setup(x => x.GetAllJobPositionsAsync(0, 25))
+            .Setup(x => x.GetAllJobPositionsAsync(skip, take))
             .ReturnsAsync(jobPositions);
 
         // Act
-        var result = await _jobPositionService.GetAllJobPositionsAsync();
+        var result = await _jobPositionService.GetAllJobPositionsAsync(skip, take);
 
         // Assert
         Assert.NotNull(result);
@@ -280,15 +282,15 @@ public class JobPositionServiceTest
         Assert.Equal(jobPositions.Count, result.Count);
         Assert.True(_jobPositionService.IsValid);
         Assert.Empty(_jobPositionService.Notifications);
+        Assert.Equal(jobPositions[0].Name, result.ToList()[0].Name);
+        Assert.Equal(jobPositions[0].Id, result.ToList()[0].Id);
     }
 
     [Theory]
-    [InlineData(-1, 25)]
+    [InlineData(-1, 1)]
     [InlineData(0, 0)]
     [InlineData(1, 0)]
-    [InlineData(-1, 0)]
     [InlineData(-1, -1)]
-    [InlineData(0, -1)]
     public async Task GetAllJobPositionsAsync_ShouldReturnsEmptyList_WithInvalidParameters(int skip, int take)
     {
         // Arrange
@@ -689,5 +691,73 @@ public class JobPositionServiceTest
         Assert.True(_jobPositionService.IsValid);
         Assert.Empty(_jobPositionService.Notifications);
     }
+    #endregion
+
+    #region Internal Methods
+
+    [Fact]
+    public async Task ValidateIdForSearch_ShouldReturnsFalseWithError_WithInvalidId()
+    {
+        // Arrange
+        var id = Guid.Empty;
+
+        // Act
+        var result = _jobPositionService.ValidateIdForSearch(id);
+
+        // Assert
+        Assert.False(result);
+        Assert.False(_jobPositionService.IsValid);
+        Assert.Single(_jobPositionService.Notifications);
+        Assert.Equal(Error.JobPosition.ID_IS_REQUIRED, _jobPositionService.Notifications.First().Message);
+        Assert.Equal("JobPosition.Id", _jobPositionService.Notifications.First().Key);
+    }
+
+    [Fact]
+    public async Task ValidateIdForSearch_ShouldReturnsTrue()
+    {
+        // Arrange
+        var id = Guid.NewGuid();
+
+        // Act
+        var result = _jobPositionService.ValidateIdForSearch(id);
+
+        // Assert
+        Assert.True(result);
+        Assert.True(_jobPositionService.IsValid);
+        Assert.Empty(_jobPositionService.Notifications);
+    }
+
+    [Fact]
+    public async Task ValidateNameForSearch_ShouldReturnsFalseWithError_WithInvalidName()
+    {
+        // Arrange
+        var name = "";
+
+        // Act
+        var result = _jobPositionService.ValidateNameForSearch(name);
+
+        // Assert
+        Assert.False(result);
+        Assert.False(_jobPositionService.IsValid);
+        Assert.Single(_jobPositionService.Notifications);
+        Assert.Equal(Error.JobPosition.NAME_IS_REQUIRED, _jobPositionService.Notifications.First().Message);
+        Assert.Equal("JobPosition.Name", _jobPositionService.Notifications.First().Key);
+    }
+
+    [Fact]
+    public async Task ValidateNameForSearch_ShouldReturnsTrue()
+    {
+        // Arrange
+        var name = "Company";
+
+        // Act
+        var result = _jobPositionService.ValidateNameForSearch(name);
+
+        // Assert
+        Assert.True(result);
+        Assert.True(_jobPositionService.IsValid);
+        Assert.Empty(_jobPositionService.Notifications);
+    }
+
     #endregion
 }

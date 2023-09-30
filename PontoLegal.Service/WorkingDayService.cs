@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Runtime.CompilerServices;
 using PontoLegal.Domain.Entities;
 using PontoLegal.Repository.Interfaces;
 using PontoLegal.Service.DTOs;
@@ -6,6 +7,7 @@ using PontoLegal.Service.Models;
 using PontoLegal.Service.Interfaces;
 using PontoLegal.Shared.Messages;
 
+[assembly: InternalsVisibleTo("PontoLegal.Tests")]
 namespace PontoLegal.Service;
 
 public class WorkingDayService : BaseService, IWorkingDayService
@@ -178,14 +180,14 @@ public class WorkingDayService : BaseService, IWorkingDayService
         return true;
     }
     
-    private bool ValidateIdForSearch(Guid id)
+    internal bool ValidateIdForSearch(Guid id)
     {
         if (id != Guid.Empty) return true;
         AddNotification("WorkingDay.Id", Error.WorkingDay.ID_IS_REQUIRED);
         return false;
     }
     
-    private bool ValidateNameForSearch(string name)
+    internal bool ValidateNameForSearch(string name)
     {
         if (!string.IsNullOrWhiteSpace(name)) return true;
         AddNotification("WorkingDay.Name", Error.WorkingDay.NAME_IS_REQUIRED);
