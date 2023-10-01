@@ -111,7 +111,7 @@ public class DepartmentService : BaseService, IDepartmentService
         
         var department = new Department(id, model.Name);
 
-        var result = await _departmentRepository.UpdateDepartmentAsync(id, department);
+        var result = await _departmentRepository.UpdateDepartmentAsync(department);
             
         if (result) return true;
 

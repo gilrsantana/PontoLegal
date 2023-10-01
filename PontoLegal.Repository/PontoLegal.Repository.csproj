@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\PontoLegal.Data\PontoLegal.Data.csproj" />
     <ProjectReference Include="..\PontoLegal.Domain\PontoLegal.Domain.csproj" />
   </ItemGroup>
 

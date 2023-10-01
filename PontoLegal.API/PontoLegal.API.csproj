@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\PontoLegal.Data\PontoLegal.Data.csproj" />
+    <ProjectReference Include="..\PontoLegal.Service\PontoLegal.Service.csproj" />
   </ItemGroup>
 
 </Project>
