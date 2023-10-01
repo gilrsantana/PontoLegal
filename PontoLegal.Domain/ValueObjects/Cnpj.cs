@@ -5,7 +5,7 @@ namespace PontoLegal.Domain.ValueObjects;
 
 public class Cnpj
 {
-    public string Number { get; }
+    public string Number { get; private set; }
     private readonly ICollection<string> _errors = new List<string>();
     public IEnumerable<string> GetErrors() => _errors.ToList();
     public bool IsValid => _errors.Count == 0;

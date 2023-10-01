@@ -17,6 +17,10 @@ public class Employee : BaseEntity
     public WorkingDay WorkingDay { get; private set; }
     public ICollection<TimeClock> TimeClocks { get; private set; }
 
+    public Employee()
+    {
+        
+    }
     public Employee(
         string name, 
         DateOnly hireDate, 

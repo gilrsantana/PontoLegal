@@ -8,6 +8,8 @@ public class Company : BaseEntity
     public Cnpj Cnpj { get; private set; }
     public ICollection<Employee>? Employees { get; private set; }
 
+    public Company() { }
+
     public Company(string name, Cnpj cnpj)
     {
         Name = name;
