@@ -6,6 +6,7 @@ public class Company : BaseEntity
 {
     public string Name { get; private set; }
     public Cnpj Cnpj { get; private set; }
+    public ICollection<Employee>? Employees { get; private set; }
 
     public Company(string name, Cnpj cnpj)
     {

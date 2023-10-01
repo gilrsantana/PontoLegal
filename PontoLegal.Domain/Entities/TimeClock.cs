@@ -6,6 +6,7 @@ public class TimeClock : BaseEntity
 {
     public DateTime RegisterTime { get; private set; }
     public Guid EmployeeId { get; private set; }
+    public Employee Employee { get; private set; }
     public RegisterType RegisterType { get; private set; }
     public ClockTimeStatus ClockTimeStatus { get; private set; }
 

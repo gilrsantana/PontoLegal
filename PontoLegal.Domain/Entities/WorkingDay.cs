@@ -11,6 +11,7 @@ public class WorkingDay : BaseEntity
     public TimeOnly EndBreak { get; private set; }
     public TimeOnly EndWork { get; private set; }
     public short MinutesTolerance { get; private set; }
+    public ICollection<Employee> Employees { get; private set; }
 
     public WorkingDay(
         string name, 

@@ -8,10 +8,14 @@ public class Employee : BaseEntity
     public DateOnly HireDate { get; private set; }
     public string RegistrationNumber { get; private set; }
     public Guid JobPositionId { get; private set; }
+    public JobPosition JobPosition { get; private set; }
     public Pis Pis { get; private set; }
     public Guid CompanyId { get; private set; }
+    public Company Company { get; private set; }
     public Guid ManagerId { get; private set; }
     public Guid WorkingDayId { get; private set; }
+    public WorkingDay WorkingDay { get; private set; }
+    public ICollection<TimeClock> TimeClocks { get; private set; }
 
     public Employee(
         string name, 
