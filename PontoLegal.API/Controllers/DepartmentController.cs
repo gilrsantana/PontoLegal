@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Common.Model;
+using Microsoft.AspNetCore.Mvc;
+using PontoLegal.API.Notifications;
+using PontoLegal.Service.DTOs;
 using PontoLegal.Service.Interfaces;
 using PontoLegal.Service.Models;
 using PontoLegal.Shared.Messages;
@@ -22,21 +25,17 @@ namespace PontoLegal.API.Controllers
             try
             {
                 if (id == Guid.Empty)
-                {
-                    return BadRequest(Error.Department.INVALID_ID);
-                }
+                    return BadRequest(new ResultViewModelApi<string>(Error.Department.INVALID_ID, MessageType.ERROR));
+                
                 var department = await _departmentService.GetDepartmentByIdAsync(id);
                 if (department == null)
-                {
-                    return NotFound(Error.Department.DEPARTMENT_NOT_FOUNDED);
-                }
-
-                return Ok(department);
+                    return NotFound(new ResultViewModelApi<string>(Error.Department.DEPARTMENT_NOT_FOUNDED, MessageType.WARNING));
+                
+                return Ok(new ResultViewModelApi<DepartmentDTO>(department));
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
-                throw;
+                return BadRequest(new ResultViewModelApi<string>(e.Message, MessageType.ERROR));
             }
            
         }
@@ -47,24 +46,19 @@ namespace PontoLegal.API.Controllers
             try
             {
                 if (string.IsNullOrEmpty(name))
-                {
-                    return BadRequest(Error.Department.INVALID_NAME);
-                }
-
+                    return BadRequest(new ResultViewModelApi<string>(Error.Department.INVALID_NAME, MessageType.ERROR));
+                
                 var department = await _departmentService.GetDepartmentByNameAsync(name);
                 if (department == null)
-                {
-                    return NotFound(Error.Department.DEPARTMENT_NOT_FOUNDED);
-                }
+                    return NotFound(new ResultViewModelApi<string>(Error.Department.DEPARTMENT_NOT_FOUNDED, MessageType.WARNING));
+                
 
-                return Ok(department);
+                return Ok(new ResultViewModelApi<DepartmentDTO>(department));
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
-                throw;
+                return BadRequest(new ResultViewModelApi<string>(e.Message, MessageType.ERROR));
             }
-           
         }
 
         [HttpGet("GetAll/{skip:int}/{take:int}")]
@@ -72,25 +66,19 @@ namespace PontoLegal.API.Controllers
         {
             try
             {
-                if (skip < 0 || take < 0)
+                if (skip < 0 || take < 1)
                 {
-                    return BadRequest(Error.Department.INVALID_PAGINATION);
+                    return BadRequest(new ResultViewModelApi<string>(Error.Department.INVALID_PAGINATION, MessageType.ERROR));
                 }
 
                 var departments = await _departmentService.GetAllDepartmentsAsync(skip, take);
-                if (departments == null)
-                {
-                    return NotFound(Error.Department.DEPARTMENT_NOT_FOUNDED);
-                }
 
-                return Ok(departments);
+                return Ok(new ResultViewModelApi<ICollection<DepartmentDTO>?>(departments));
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
-                throw;
+                return BadRequest(new ResultViewModelApi<string>(e.Message, MessageType.ERROR));
             }
-           
         }
 
         [HttpPost]
@@ -98,20 +86,21 @@ namespace PontoLegal.API.Controllers
         {
             try
             {
+                if (!model.IsValid)
+                    return BadRequest(
+                        new ResultViewModelApi<string>(model.Notifications.Select(n => n.Message).ToList(), MessageType.ERROR));
+                
                 var result = await _departmentService.AddDepartmentAsync(model);
                 if (result)
-                {
-                    return Ok();
-                }
+                    return Ok(new ResultViewModelApi<bool>(result, new List<MessageModel> { new("Success") }));
+                
 
-                return BadRequest(Error.Department.ERROR_ADDING);
+                return BadRequest(new ResultViewModelApi<string>(Error.Department.ERROR_ADDING, MessageType.ERROR));
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
-                throw;
+                return BadRequest(new ResultViewModelApi<string>(e.Message, MessageType.ERROR));
             }
-           
         }
 
         [HttpPut("Update/{id:guid}")]
@@ -119,20 +108,19 @@ namespace PontoLegal.API.Controllers
         {
             try
             {
+                if (id == Guid.Empty)
+                    return BadRequest(new ResultViewModelApi<string>(Error.Department.INVALID_ID, MessageType.ERROR));
+
                 var result = await _departmentService.UpdateDepartmentAsync(id, model);
                 if (result)
-                {
-                    return Ok();
-                }
+                    return Ok(new ResultViewModelApi<bool>(result, new List<MessageModel> { new("Success") }));
 
-                return BadRequest(Error.Department.ERROR_UPDATING);
+                return BadRequest(new ResultViewModelApi<string>(Error.Department.ERROR_UPDATING, MessageType.ERROR));
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
-                throw;
+                return BadRequest(new ResultViewModelApi<string>(e.Message, MessageType.ERROR));
             }
-           
         }
 
         [HttpDelete("Delete/{id:guid}")]
@@ -140,18 +128,18 @@ namespace PontoLegal.API.Controllers
         {
             try
             {
+                if (id == Guid.Empty)
+                    return BadRequest(new ResultViewModelApi<string>(Error.Department.INVALID_ID, MessageType.ERROR));
+
                 var result = await _departmentService.RemoveDepartmentByIdAsync(id);
                 if (result)
-                {
-                    return Ok();
-                }
+                    return Ok(new ResultViewModelApi<bool>(result, new List<MessageModel> { new("Success") }));
 
-                return BadRequest(Error.Department.ERROR_REMOVING);
+                return BadRequest(new ResultViewModelApi<string>(Error.Department.ERROR_REMOVING, MessageType.ERROR));
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
-                throw;
+                return BadRequest(new ResultViewModelApi<string>(e.Message, MessageType.ERROR));
             }
         }
     }
