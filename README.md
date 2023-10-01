@@ -21,9 +21,8 @@ dotnet-ef migrations add "Nome da migration" --project <nome__projeto_de_dados> 
 ```
 
 - Atualizar o Banco
-- ```
+ ```
 dotnet-ef database update --project <nome__projeto_de_dados> -s <nome_projeto_principal(API)> --verbose
-```
-```
+
 Obs: -s igual a --startup-project
 ```
