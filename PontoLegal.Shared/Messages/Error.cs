@@ -95,8 +95,13 @@ public static class Error
 
     public static class TimeClock
     {
-        public const string START_WORKING_EXISTS  = "Already exists a Start Working Day for this Employee";
-        public const string INVALID_REGISTER_TIME = "RegisterTime must be lower or equals than now";
-        public const string INVALID_EMPLOYEE_ID   = "EmployeeId is required";
+        public const string ERROR_SET_STATUS        = "Error on set status";
+        public const string UPDATE_TIME_CLOCK_ERROR = "Error on updating Time Clock";
+        public const string TIME_CLOCK_NOT_FOUND    = "Time Clock not founded";
+        public const string INVALID_TIME_CLOCK_ID   = "Invalid Time Clock Id";
+        public const string ADD_TIME_CLOCK_ERROR    = "Error adding Time Clock";
+        public const string START_WORKING_EXISTS    = "Already exists a Start Working Day for this Employee";
+        public const string INVALID_REGISTER_TIME   = "RegisterTime must be lower or equals than now";
+        public const string INVALID_EMPLOYEE_ID     = "EmployeeId is required";
     }
 }

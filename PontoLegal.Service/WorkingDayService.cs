@@ -34,7 +34,8 @@ public class WorkingDayService : BaseService, IWorkingDayService
             StartWork = workingDay.StartWork,
             StartBreak = workingDay.StartBreak,
             EndBreak = workingDay.EndBreak,
-            EndWork = workingDay.EndWork
+            EndWork = workingDay.EndWork,
+            MinutesTolerance = workingDay.MinutesTolerance
         };
     }
     
@@ -104,7 +105,8 @@ public class WorkingDayService : BaseService, IWorkingDayService
             model.StartWork, 
             model.StartBreak, 
             model.EndBreak, 
-            model.EndWork);
+            model.EndWork,
+            model.MinutesTolerance);
         
         var result = await _workingDayRepository.AddWorkingDayAsync(workingDay);
         
@@ -147,7 +149,8 @@ public class WorkingDayService : BaseService, IWorkingDayService
             model.StartWork, 
             model.StartBreak, 
             model.EndBreak, 
-            model.EndWork);
+            model.EndWork,
+            model.MinutesTolerance);
         
         var result = await _workingDayRepository.UpdateWorkingDayAsync(id, workingDay);
         

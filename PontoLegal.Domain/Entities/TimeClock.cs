@@ -9,11 +9,16 @@ public class TimeClock : BaseEntity
     public RegisterType RegisterType { get; private set; }
     public ClockTimeStatus ClockTimeStatus { get; private set; }
 
-    public TimeClock(DateTime registerTime, Guid employeeId, RegisterType registerType, ClockTimeStatus clockTimeStatus)
+    public TimeClock(Guid employeeId, RegisterType registerType)
     {
-        RegisterTime = registerTime;
+        RegisterTime = DateTime.Now;
         EmployeeId = employeeId;
         RegisterType = registerType;
+        ClockTimeStatus = ClockTimeStatus.APPROVED;
+    }
+
+    public void SetClockTimeStatus(ClockTimeStatus clockTimeStatus)
+    {
         ClockTimeStatus = clockTimeStatus;
     }
 }

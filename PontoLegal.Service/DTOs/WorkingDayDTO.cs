@@ -11,4 +11,5 @@ public class WorkingDayDTO
     public TimeOnly StartBreak { get; set; }
     public TimeOnly EndBreak { get; set; }
     public TimeOnly EndWork { get; set; }
+    public short MinutesTolerance { get; set; }
 }

@@ -696,7 +696,7 @@ public class JobPositionServiceTest
     #region Internal Methods
 
     [Fact]
-    public async Task ValidateIdForSearch_ShouldReturnsFalseWithError_WithInvalidId()
+    public Task ValidateIdForSearch_ShouldReturnsFalseWithError_WithInvalidId()
     {
         // Arrange
         var id = Guid.Empty;
@@ -710,6 +710,7 @@ public class JobPositionServiceTest
         Assert.Single(_jobPositionService.Notifications);
         Assert.Equal(Error.JobPosition.ID_IS_REQUIRED, _jobPositionService.Notifications.First().Message);
         Assert.Equal("JobPosition.Id", _jobPositionService.Notifications.First().Key);
+        return Task.CompletedTask;
     }
 
     [Fact]

@@ -67,7 +67,7 @@ public class EmployeeServiceTest
     {
         // Arrange
         var id = Guid.NewGuid();
-        var employee = MockEmployee.GetEmployee();
+        var employee = Mocks.GetEmployee();
         _employeeRepositoryMock
             .Setup(x => x.GetEmployeeByIdAsync(It.IsAny<Guid>()))
             .ReturnsAsync(employee);
@@ -137,7 +137,7 @@ public class EmployeeServiceTest
     public async Task GetEmployeeByPisAsync_ShouldReturnsNullWithError_WithUnknownEmployee()
     {
         // Arrange
-        var pis = new Pis(MockPis.ValidPis);
+        var pis = new Pis(Mocks.ValidPis);
         _employeeRepositoryMock
             .Setup(x => x.GetEmployeeByPisAsync(It.IsAny<string>()))
             .ReturnsAsync((Employee?)null);
@@ -153,8 +153,8 @@ public class EmployeeServiceTest
     public async Task GetEmployeeByPisAsync_ShouldReturnsEmployeeDTO()
     {
         // Arrange
-        var pis = new Pis(MockPis.ValidPis);
-        var employee = MockEmployee.GetEmployee();
+        var pis = new Pis(Mocks.ValidPis);
+        var employee = Mocks.GetEmployee();
         _employeeRepositoryMock
             .Setup(x => x.GetEmployeeByPisAsync(It.IsAny<string>()))
             .ReturnsAsync(employee);
@@ -191,7 +191,7 @@ public class EmployeeServiceTest
         var hireDate = DateOnly.FromDateTime(DateTime.Now);
         var registrationNumber = "123456789";
         var jobPositionId = Guid.NewGuid();
-        var pis = MockPis.ValidPis;
+        var pis = Mocks.ValidPis;
         var companyId = Guid.NewGuid();
         var managerId = Guid.Empty;
         var workingDayId = Guid.NewGuid();
@@ -220,7 +220,7 @@ public class EmployeeServiceTest
         var hireDate = DateOnly.FromDateTime(DateTime.Now);
         var registrationNumber = reg;
         var jobPositionId = Guid.NewGuid();
-        var pis = MockPis.ValidPis;
+        var pis = Mocks.ValidPis;
         var companyId = Guid.NewGuid();
         var managerId = Guid.Empty;
         var workingDayId = Guid.NewGuid();
@@ -246,7 +246,7 @@ public class EmployeeServiceTest
         var hireDate = DateOnly.FromDateTime(DateTime.Now.AddDays(1));
         var registrationNumber = "123456789";
         var jobPositionId = Guid.NewGuid();
-        var pis = MockPis.ValidPis;
+        var pis = Mocks.ValidPis;
         var companyId = Guid.NewGuid();
         var managerId = Guid.Empty;
         var workingDayId = Guid.NewGuid();
@@ -272,7 +272,7 @@ public class EmployeeServiceTest
         var hireDate = DateOnly.FromDateTime(DateTime.Now);
         var registrationNumber = "123456789";
         var jobPositionId = Guid.Empty;
-        var pis = MockPis.ValidPis;
+        var pis = Mocks.ValidPis;
         var companyId = Guid.NewGuid();
         var managerId = Guid.Empty;
         var workingDayId = Guid.NewGuid();
@@ -298,7 +298,7 @@ public class EmployeeServiceTest
     public async Task AddEmployeeAsync_ShouldReturnsFalseWithError_WithInvalidPis(string pisNumber)
     {
         // Arrange
-        var model = MockEmployee.GetEmployeeModel();
+        var model = Mocks.GetEmployeeModel();
         model.Pis = pisNumber;
         var workingDay = new WorkingDay(
             "Working Day",
@@ -306,7 +306,8 @@ public class EmployeeServiceTest
             new TimeOnly(8, 0),
             new TimeOnly(12, 0),
             new TimeOnly(14, 0),
-            new TimeOnly(18, 0)
+            new TimeOnly(18, 0),
+            20
         );
         _jobPositionRepositoryMock
             .Setup(x => x.GetJobPositionByIdAsync(It.IsAny<Guid>()))
@@ -314,7 +315,7 @@ public class EmployeeServiceTest
         
         _companyRepositoryMock
             .Setup(x => x.GetCompanyByIdAsync(It.IsAny<Guid>()))
-            .ReturnsAsync(new Company("Company", new Cnpj(MockCnpj.ValidCnpj)));
+            .ReturnsAsync(new Company("Company", new Cnpj(Mocks.ValidCnpj)));
         
         _workingDayRepositoryMock
             .Setup(x => x.GetWorkingDayByIdAsync(It.IsAny<Guid>()))
@@ -346,7 +347,7 @@ public class EmployeeServiceTest
         var hireDate = DateOnly.FromDateTime(DateTime.Now);
         var registrationNumber = "123456789";
         var jobPositionId = Guid.NewGuid();
-        var pis = MockPis.ValidPis;
+        var pis = Mocks.ValidPis;
         var companyId = Guid.Empty;
         var managerId = Guid.Empty;
         var workingDayId = Guid.NewGuid();
@@ -372,7 +373,7 @@ public class EmployeeServiceTest
         var hireDate = DateOnly.FromDateTime(DateTime.Now);
         var registrationNumber = "123456789";
         var jobPositionId = Guid.NewGuid();
-        var pis = MockPis.ValidPis;
+        var pis = Mocks.ValidPis;
         var companyId = Guid.NewGuid();
         var managerId = Guid.Empty;
         var workingDayId = Guid.Empty;
@@ -394,7 +395,7 @@ public class EmployeeServiceTest
     public async Task AddEmployeeAsync_ShouldReturnsFalseWithError_WithUnknownJobPositionId()
     {
         // Arrange
-        var model = MockEmployee.GetEmployeeModel();
+        var model = Mocks.GetEmployeeModel();
         
         _jobPositionRepositoryMock
             .Setup(x => x.GetJobPositionByIdAsync(It.IsAny<Guid>()))
@@ -415,7 +416,7 @@ public class EmployeeServiceTest
     public async Task AddEmployeeAsync_ShouldReturnsFalseWithError_WithUnknownCompanyId()
     {
         // Arrange
-        var model = MockEmployee.GetEmployeeModel();
+        var model = Mocks.GetEmployeeModel();
         
         _jobPositionRepositoryMock
             .Setup(x => x.GetJobPositionByIdAsync(It.IsAny<Guid>()))
@@ -440,7 +441,7 @@ public class EmployeeServiceTest
     public async Task AddEmployeeAsync_ShouldReturnsFalseWithError_WithUnknownWorkingDayId()
     {
         // Arrange
-        var model = MockEmployee.GetEmployeeModel();
+        var model = Mocks.GetEmployeeModel();
         
         _jobPositionRepositoryMock
             .Setup(x => x.GetJobPositionByIdAsync(It.IsAny<Guid>()))
@@ -448,7 +449,7 @@ public class EmployeeServiceTest
         
         _companyRepositoryMock
             .Setup(x => x.GetCompanyByIdAsync(It.IsAny<Guid>()))
-            .ReturnsAsync(new Company("Company", new Cnpj(MockCnpj.ValidCnpj)));
+            .ReturnsAsync(new Company("Company", new Cnpj(Mocks.ValidCnpj)));
         
         _workingDayRepositoryMock
             .Setup(x => x.GetWorkingDayByIdAsync(It.IsAny<Guid>()))
@@ -469,23 +470,24 @@ public class EmployeeServiceTest
     public async Task AddEmployeeAsync_ShouldReturnsFalseWithError_WithDuplicatedEmployee()
     {
         // Arrange
-        var model = MockEmployee.GetEmployeeModel();
+        var model = Mocks.GetEmployeeModel();
         var workingDay = new WorkingDay(
             "Working Day",
             WorkingDayType.TEN_HOURS,
             new TimeOnly(8, 0),
             new TimeOnly(12, 0),
             new TimeOnly(14, 0),
-            new TimeOnly(18, 0)
+            new TimeOnly(18, 0),
+            20
         );
-        var employee = MockEmployee.GetEmployee();
+        var employee = Mocks.GetEmployee();
         _jobPositionRepositoryMock
             .Setup(x => x.GetJobPositionByIdAsync(It.IsAny<Guid>()))
             .ReturnsAsync(new JobPosition("Job Position", Guid.NewGuid(), new Department("Department")));
         
         _companyRepositoryMock
             .Setup(x => x.GetCompanyByIdAsync(It.IsAny<Guid>()))
-            .ReturnsAsync(new Company("Company", new Cnpj(MockCnpj.ValidCnpj)));
+            .ReturnsAsync(new Company("Company", new Cnpj(Mocks.ValidCnpj)));
         
         _workingDayRepositoryMock
             .Setup(x => x.GetWorkingDayByIdAsync(It.IsAny<Guid>()))
@@ -510,14 +512,15 @@ public class EmployeeServiceTest
     public async Task AddEmployeeAsync_ShouldReturnsFalseWithError_WithErrorOnAdding()
     {
         // Arrange
-        var model = MockEmployee.GetEmployeeModel();
+        var model = Mocks.GetEmployeeModel();
         var workingDay = new WorkingDay(
             "Working Day",
             WorkingDayType.TEN_HOURS,
             new TimeOnly(8, 0),
             new TimeOnly(12, 0),
             new TimeOnly(14, 0),
-            new TimeOnly(18, 0)
+            new TimeOnly(18, 0),
+            20
         );
         _jobPositionRepositoryMock
             .Setup(x => x.GetJobPositionByIdAsync(It.IsAny<Guid>()))
@@ -525,7 +528,7 @@ public class EmployeeServiceTest
         
         _companyRepositoryMock
             .Setup(x => x.GetCompanyByIdAsync(It.IsAny<Guid>()))
-            .ReturnsAsync(new Company("Company", new Cnpj(MockCnpj.ValidCnpj)));
+            .ReturnsAsync(new Company("Company", new Cnpj(Mocks.ValidCnpj)));
         
         _workingDayRepositoryMock
             .Setup(x => x.GetWorkingDayByIdAsync(It.IsAny<Guid>()))
@@ -554,14 +557,15 @@ public class EmployeeServiceTest
     public async Task AddEmployeeAsync_ShouldReturnsTrue()
     {
         // Arrange
-        var model = MockEmployee.GetEmployeeModel();
+        var model = Mocks.GetEmployeeModel();
         var workingDay = new WorkingDay(
             "Working Day",
             WorkingDayType.TEN_HOURS,
             new TimeOnly(8, 0),
             new TimeOnly(12, 0),
             new TimeOnly(14, 0),
-            new TimeOnly(18, 0)
+            new TimeOnly(18, 0),
+            20
         );
         _jobPositionRepositoryMock
             .Setup(x => x.GetJobPositionByIdAsync(It.IsAny<Guid>()))
@@ -569,7 +573,7 @@ public class EmployeeServiceTest
         
         _companyRepositoryMock
             .Setup(x => x.GetCompanyByIdAsync(It.IsAny<Guid>()))
-            .ReturnsAsync(new Company("Company", new Cnpj(MockCnpj.ValidCnpj)));
+            .ReturnsAsync(new Company("Company", new Cnpj(Mocks.ValidCnpj)));
         
         _workingDayRepositoryMock
             .Setup(x => x.GetWorkingDayByIdAsync(It.IsAny<Guid>()))
@@ -600,7 +604,7 @@ public class EmployeeServiceTest
     {
         // Arrange
         var id = Guid.Empty;
-        var model = MockEmployee.GetEmployeeModel();
+        var model = Mocks.GetEmployeeModel();
         
         // Act
         var result = await _employeeService.UpdateEmployeeAsync(id, model);
@@ -617,7 +621,7 @@ public class EmployeeServiceTest
     {
         // Arrange
         var id = Guid.NewGuid();
-        var model = MockEmployee.GetEmployeeModel();
+        var model = Mocks.GetEmployeeModel();
         _employeeRepositoryMock
             .Setup(x => x.GetEmployeeByIdAsync(It.IsAny<Guid>()))
             .ReturnsAsync((Employee?)null);
@@ -648,7 +652,7 @@ public class EmployeeServiceTest
         var model = new EmployeeModel(name, hireDate, registrationNumber, jobPositionId, pis, companyId, managerId, workingDayId);
         _employeeRepositoryMock
             .Setup(x => x.GetEmployeeByIdAsync(It.IsAny<Guid>()))
-            .ReturnsAsync(MockEmployee.GetEmployee());
+            .ReturnsAsync(Mocks.GetEmployee());
         // Act
         var result = await _employeeService.UpdateEmployeeAsync(id, model);
 
@@ -670,7 +674,7 @@ public class EmployeeServiceTest
     {
         // Arrange
         var id = Guid.NewGuid();
-        var model = MockEmployee.GetEmployeeModel();
+        var model = Mocks.GetEmployeeModel();
         
         _jobPositionRepositoryMock
             .Setup(x => x.GetJobPositionByIdAsync(It.IsAny<Guid>()))
@@ -678,7 +682,7 @@ public class EmployeeServiceTest
         
         _employeeRepositoryMock
             .Setup(x => x.GetEmployeeByIdAsync(It.IsAny<Guid>()))
-            .ReturnsAsync(MockEmployee.GetEmployee());
+            .ReturnsAsync(Mocks.GetEmployee());
         
         // Act
         var result = await _employeeService.UpdateEmployeeAsync(id, model);
@@ -696,7 +700,7 @@ public class EmployeeServiceTest
     {
         // Arrange
         var id = Guid.NewGuid();
-        var model = MockEmployee.GetEmployeeModel();
+        var model = Mocks.GetEmployeeModel();
         
         _jobPositionRepositoryMock
             .Setup(x => x.GetJobPositionByIdAsync(It.IsAny<Guid>()))
@@ -708,7 +712,7 @@ public class EmployeeServiceTest
         
         _employeeRepositoryMock
             .Setup(x => x.GetEmployeeByIdAsync(It.IsAny<Guid>()))
-            .ReturnsAsync(MockEmployee.GetEmployee());
+            .ReturnsAsync(Mocks.GetEmployee());
         
         // Act
         var result = await _employeeService.UpdateEmployeeAsync(id, model);
@@ -726,7 +730,7 @@ public class EmployeeServiceTest
     {
         // Arrange
         var id = Guid.NewGuid();
-        var model = MockEmployee.GetEmployeeModel();
+        var model = Mocks.GetEmployeeModel();
         
         _jobPositionRepositoryMock
             .Setup(x => x.GetJobPositionByIdAsync(It.IsAny<Guid>()))
@@ -734,7 +738,7 @@ public class EmployeeServiceTest
         
         _companyRepositoryMock
             .Setup(x => x.GetCompanyByIdAsync(It.IsAny<Guid>()))
-            .ReturnsAsync(new Company("Company", new Cnpj(MockCnpj.ValidCnpj)));
+            .ReturnsAsync(new Company("Company", new Cnpj(Mocks.ValidCnpj)));
         
         _workingDayRepositoryMock
             .Setup(x => x.GetWorkingDayByIdAsync(It.IsAny<Guid>()))
@@ -742,7 +746,7 @@ public class EmployeeServiceTest
         
         _employeeRepositoryMock
             .Setup(x => x.GetEmployeeByIdAsync(It.IsAny<Guid>()))
-            .ReturnsAsync(MockEmployee.GetEmployee());
+            .ReturnsAsync(Mocks.GetEmployee());
         
         // Act
         var result = await _employeeService.UpdateEmployeeAsync(id, model);
@@ -760,23 +764,24 @@ public class EmployeeServiceTest
     {
         // Arrange
         var id = Guid.NewGuid();
-        var model = MockEmployee.GetEmployeeModel();
+        var model = Mocks.GetEmployeeModel();
         var workingDay = new WorkingDay(
             "Working Day",
             WorkingDayType.TEN_HOURS,
             new TimeOnly(8, 0),
             new TimeOnly(12, 0),
             new TimeOnly(14, 0),
-            new TimeOnly(18, 0)
+            new TimeOnly(18, 0),
+            20
         );
-        var employee = MockEmployee.GetEmployee();
+        var employee = Mocks.GetEmployee();
         _jobPositionRepositoryMock
             .Setup(x => x.GetJobPositionByIdAsync(It.IsAny<Guid>()))
             .ReturnsAsync(new JobPosition("Job Position", Guid.NewGuid(), new Department("Department")));
         
         _companyRepositoryMock
             .Setup(x => x.GetCompanyByIdAsync(It.IsAny<Guid>()))
-            .ReturnsAsync(new Company("Company", new Cnpj(MockCnpj.ValidCnpj)));
+            .ReturnsAsync(new Company("Company", new Cnpj(Mocks.ValidCnpj)));
         
         _workingDayRepositoryMock
             .Setup(x => x.GetWorkingDayByIdAsync(It.IsAny<Guid>()))
@@ -788,7 +793,7 @@ public class EmployeeServiceTest
         
         _employeeRepositoryMock
             .Setup(x => x.GetEmployeeByIdAsync(It.IsAny<Guid>()))
-            .ReturnsAsync(MockEmployee.GetEmployee());
+            .ReturnsAsync(Mocks.GetEmployee());
         
         // Act
         var result = await _employeeService.UpdateEmployeeAsync(id, model);
@@ -806,14 +811,15 @@ public class EmployeeServiceTest
     {
         // Arrange
         var id = Guid.NewGuid();
-        var model = MockEmployee.GetEmployeeModel();
+        var model = Mocks.GetEmployeeModel();
         var workingDay = new WorkingDay(
             "Working Day",
             WorkingDayType.TEN_HOURS,
             new TimeOnly(8, 0),
             new TimeOnly(12, 0),
             new TimeOnly(14, 0),
-            new TimeOnly(18, 0)
+            new TimeOnly(18, 0),
+            20
         );
         _jobPositionRepositoryMock
             .Setup(x => x.GetJobPositionByIdAsync(It.IsAny<Guid>()))
@@ -821,7 +827,7 @@ public class EmployeeServiceTest
         
         _companyRepositoryMock
             .Setup(x => x.GetCompanyByIdAsync(It.IsAny<Guid>()))
-            .ReturnsAsync(new Company("Company", new Cnpj(MockCnpj.ValidCnpj)));
+            .ReturnsAsync(new Company("Company", new Cnpj(Mocks.ValidCnpj)));
         
         _workingDayRepositoryMock
             .Setup(x => x.GetWorkingDayByIdAsync(It.IsAny<Guid>()))
@@ -833,7 +839,7 @@ public class EmployeeServiceTest
         
         _employeeRepositoryMock
             .Setup(x => x.GetEmployeeByIdAsync(It.IsAny<Guid>()))
-            .ReturnsAsync(MockEmployee.GetEmployee());
+            .ReturnsAsync(Mocks.GetEmployee());
         
         _employeeRepositoryMock
             .Setup(x => x.UpdateEmployeeAsync(It.IsAny<Guid>(), It.IsAny<Employee>()))
@@ -855,14 +861,15 @@ public class EmployeeServiceTest
     {
         // Arrange
         var id = Guid.NewGuid();
-        var model = MockEmployee.GetEmployeeModel();
+        var model = Mocks.GetEmployeeModel();
         var workingDay = new WorkingDay(
             "Working Day",
             WorkingDayType.TEN_HOURS,
             new TimeOnly(8, 0),
             new TimeOnly(12, 0),
             new TimeOnly(14, 0),
-            new TimeOnly(18, 0)
+            new TimeOnly(18, 0),
+            20
         );
         _jobPositionRepositoryMock
             .Setup(x => x.GetJobPositionByIdAsync(It.IsAny<Guid>()))
@@ -870,7 +877,7 @@ public class EmployeeServiceTest
         
         _companyRepositoryMock
             .Setup(x => x.GetCompanyByIdAsync(It.IsAny<Guid>()))
-            .ReturnsAsync(new Company("Company", new Cnpj(MockCnpj.ValidCnpj)));
+            .ReturnsAsync(new Company("Company", new Cnpj(Mocks.ValidCnpj)));
         
         _workingDayRepositoryMock
             .Setup(x => x.GetWorkingDayByIdAsync(It.IsAny<Guid>()))
@@ -882,7 +889,7 @@ public class EmployeeServiceTest
         
         _employeeRepositoryMock
             .Setup(x => x.GetEmployeeByIdAsync(It.IsAny<Guid>()))
-            .ReturnsAsync(MockEmployee.GetEmployee());
+            .ReturnsAsync(Mocks.GetEmployee());
         
         _employeeRepositoryMock
             .Setup(x => x.UpdateEmployeeAsync(It.IsAny<Guid>(), It.IsAny<Employee>()))
@@ -941,7 +948,7 @@ public class EmployeeServiceTest
     {
         // Arrange
         var id = Guid.NewGuid();
-        var employee = MockEmployee.GetEmployee();
+        var employee = Mocks.GetEmployee();
         _employeeRepositoryMock
             .Setup(x => x.GetEmployeeByIdAsync(It.IsAny<Guid>()))
             .ReturnsAsync(employee);
@@ -965,7 +972,7 @@ public class EmployeeServiceTest
     {
         // Arrange
         var id = Guid.NewGuid();
-        var employee = MockEmployee.GetEmployee();
+        var employee = Mocks.GetEmployee();
         _employeeRepositoryMock
             .Setup(x => x.GetEmployeeByIdAsync(It.IsAny<Guid>()))
             .ReturnsAsync(employee);
