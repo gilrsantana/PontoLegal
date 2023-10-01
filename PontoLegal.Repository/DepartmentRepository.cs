@@ -35,6 +35,7 @@ namespace PontoLegal.Repository
             return await _context
                 .Departments
                 .AsNoTracking()
+                .OrderBy(x => x.Name)
                 .Skip(skip)
                 .Take(take)
                 .ToListAsync();
