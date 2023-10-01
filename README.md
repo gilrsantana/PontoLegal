@@ -12,3 +12,18 @@ Escrever uma API utilizando a tecnologia .NET para desenvolvimento de um sistema
 
 ## Diagrama
 ![](./Docs/PontoLegal.png)
+
+## Comandos Úteis
+### Migration
+- Adicionar
+```
+dotnet-ef migrations add "Nome da migration" --project <nome__projeto_de_dados> -s <nome_projeto_principal(API)> --verbose
+```
+
+- Atualizar o Banco
+- ```
+dotnet-ef database update --project <nome__projeto_de_dados> -s <nome_projeto_principal(API)> --verbose
+```
+```
+Obs: -s igual a --startup-project
+```
