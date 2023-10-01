@@ -33,25 +33,33 @@ public class WorkingDayMap : IEntityTypeConfiguration<WorkingDay>
             .HasColumnName("StartWork")
             .HasColumnType("TEXT")
             .HasMaxLength(5)
-            .HasConversion<string>();
+            .HasConversion(
+                v => v.ToString("hh\\:mm"), // Conversion to string
+                v => TimeOnly.Parse(v));
 
         builder.Property(x => x.StartBreak)
             .HasColumnName("StartBreak")
             .HasColumnType("TEXT")
             .HasMaxLength(5)
-            .HasConversion<string>();
+            .HasConversion(
+                v => v.ToString("hh\\:mm"), // Conversion to string
+                v => TimeOnly.Parse(v));
 
         builder.Property(x => x.EndBreak)
             .HasColumnName("EndBreak")
             .HasColumnType("TEXT")
             .HasMaxLength(5)
-            .HasConversion<string>();
+            .HasConversion(
+                v => v.ToString("hh\\:mm"), // Conversion to string
+                v => TimeOnly.Parse(v));
 
         builder.Property(x => x.EndWork)
             .HasColumnName("EndWork")
             .HasColumnType("TEXT")
             .HasMaxLength(5)
-            .HasConversion<string>();
+            .HasConversion(
+                v => v.ToString("hh\\:mm"), // Conversion to string
+                v => TimeOnly.Parse(v));
 
         builder.Property(x => x.MinutesTolerance)
             .HasColumnName("MinutesTolerance")

@@ -679,3 +679,5 @@ fabric.properties
 # End of https://www.toptal.com/developers/gitignore/api/visualstudio,visualstudiocode,rider,csharp
 /.idea/.idea.PontoLegal/.idea
 /.idea/.idea.PontoLegal/.idea
+/PontoLegal.Data/DataBase/LocalStorageDb.db-shm
+/PontoLegal.Data/DataBase/LocalStorageDb.db-wal
