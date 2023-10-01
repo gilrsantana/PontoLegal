@@ -32,24 +32,20 @@ public class JobPositionService : BaseService, IJobPositionService
         };
     }
     
-    public async Task<JobPositionDTO?> GetJobPositionByIdIncludeDepartmentAsync(Guid id)
-    {
-        if (!ValidateIdForSearch(id)) return null;
+    //public async Task<JobPositionDTO?> GetJobPositionByIdIncludeDepartmentAsync(Guid id)
+    //{
+    //    if (!ValidateIdForSearch(id)) return null;
 
-        var jobPosition = await _jobPositionRepository.GetJobPositionByIdIncludeDepartmentAsync(id);
-        if (jobPosition == null) return null;
+    //    var jobPosition = await _jobPositionRepository.GetJobPositionByIdIncludeDepartmentAsync(id);
+    //    if (jobPosition == null) return null;
 
-        return new JobPositionDTO
-        {
-            Id = jobPosition.Id,
-            Name = jobPosition.Name,
-            Department = new DepartmentDTO
-            {
-                Id = jobPosition.Department.Id,
-                Name = jobPosition.Department.Name
-            }
-        };
-    }
+    //    return new JobPositionDTO
+    //    {
+    //        Id = jobPosition.Id,
+    //        Name = jobPosition.Name,
+    //        DepartmentId = jobPosition.DepartmentId
+    //    };
+    //}
     
     public async Task<JobPositionDTO?> GetJobPositionByNameAsync(string name)
     {
@@ -61,29 +57,42 @@ public class JobPositionService : BaseService, IJobPositionService
         return new JobPositionDTO
         {
             Id = jobPosition.Id,
-            Name = jobPosition.Name
+            Name = jobPosition.Name,
+            DepartmentId = jobPosition.DepartmentId
         };
-
     }
 
-    public async Task<JobPositionDTO?> GetJobPositionByNameIncludeDepartmentAsync(string name)
+    public async Task<ICollection<JobPositionDTO>> GetJobPositionByDepartmentIdAsync(Guid departmentId)
     {
-        if (!ValidateNameForSearch(name)) return null;
+        var result = await _jobPositionRepository.GetJobPositionByDepartmentIdAsync(departmentId);
+        if (result == null) return new List<JobPositionDTO>();
 
-        var jobPosition = await _jobPositionRepository.GetJobPositionByNameIncludeDepartmentAsync(name);
-        if (jobPosition == null) return null;
-
-        return new JobPositionDTO
+        return result.Select(jobPosition => new JobPositionDTO
         {
             Id = jobPosition.Id,
             Name = jobPosition.Name,
-            Department = new DepartmentDTO
-            {
-                Id = jobPosition.Department.Id,
-                Name = jobPosition.Department.Name
-            }
-        };
+            DepartmentId = jobPosition.DepartmentId
+        }).ToList();
     }
+
+    //public async Task<JobPositionDTO?> GetJobPositionByNameIncludeDepartmentAsync(string name)
+    //{
+    //    if (!ValidateNameForSearch(name)) return null;
+
+    //    var jobPosition = await _jobPositionRepository.GetJobPositionByNameIncludeDepartmentAsync(name);
+    //    if (jobPosition == null) return null;
+
+    //    return new JobPositionDTO
+    //    {
+    //        Id = jobPosition.Id,
+    //        Name = jobPosition.Name,
+    //        DepartmentId = new DepartmentDTO
+    //        {
+    //            Id = jobPosition.Department.Id,
+    //            Name = jobPosition.Department.Name
+    //        }
+    //    };
+    //}
     
     public async Task<ICollection<JobPositionDTO>> GetAllJobPositionsAsync(int skip = 0, int take = 25)
     {
@@ -99,7 +108,8 @@ public class JobPositionService : BaseService, IJobPositionService
         return result.Select(jobPosition => new JobPositionDTO
         {
             Id = jobPosition.Id,
-            Name = jobPosition.Name
+            Name = jobPosition.Name,
+            DepartmentId = jobPosition.DepartmentId
         }).ToList();
     }
     
@@ -111,18 +121,16 @@ public class JobPositionService : BaseService, IJobPositionService
             return false;
         }
 
-        var jobPositionByName = await _jobPositionRepository.GetJobPositionByNameIncludeDepartmentAsync(model.Name);
+        var jobPositionByName = await _jobPositionRepository.GetJobPositionByNameAsync(model.Name);
         if (jobPositionByName != null && 
-            jobPositionByName.Department.Name == model.Department.Name && 
+            jobPositionByName.DepartmentId == model.DepartmentId && 
             jobPositionByName.Name == model.Name)
         {
             AddNotification("JobPosition.Name", Error.JobPosition.NAME_ALREADY_EXISTS);
             return false;
         }
 
-        var department = new Department(model.Name);
-
-        var jobPosition = new JobPosition(model.Name, department.Id, department);
+        var jobPosition = new JobPosition(model.Name, model.DepartmentId);
 
         var result = await _jobPositionRepository.AddJobPositionAsync(jobPosition);
 
@@ -142,25 +150,23 @@ public class JobPositionService : BaseService, IJobPositionService
 
         if (!ValidateIdForSearch(id)) return false;
 
-        var jobPosition = await GetJobPositionByIdAsync(id);
+        var jobPosition = await _jobPositionRepository.GetJobPositionByIdAsync(id);
         if (jobPosition == null)
         {
             AddNotification("JobPosition.Id", Error.JobPosition.NOT_FOUNDED);
             return false;
         }
-        var existentJobPosition = await _jobPositionRepository.GetJobPositionByNameIncludeDepartmentAsync(model.Name);
+        var existentJobPosition = await _jobPositionRepository.GetJobPositionByNameAsync(model.Name);
         if (existentJobPosition != null && 
-            existentJobPosition.Department.Name == model.Department.Name && 
+            existentJobPosition.DepartmentId == model.DepartmentId && 
             existentJobPosition.Name == model.Name)
         {
             AddNotification("JobPosition.Name", Error.JobPosition.NAME_ALREADY_EXISTS);
             return false;
         }
-        
-        var department = new Department(model.Name);
-        var newJobPosition = new JobPosition(model.Name, department.Id, department);
-        
-        var result = await _jobPositionRepository.UpdateJobPositionAsync(id, newJobPosition);
+
+        jobPosition.Update(model.Name, model.DepartmentId);
+        var result = await _jobPositionRepository.UpdateJobPositionAsync(jobPosition);
         if (result) return true;
         AddNotification("JobPosition", Error.JobPosition.ERROR_UPDATING);
         

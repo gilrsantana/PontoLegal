@@ -19,4 +19,10 @@ public class JobPosition : BaseEntity
         DepartmentId = departmentId;
         Department = department;
     }
+
+    public void Update(string name, Guid departmentId)
+    {
+        Name = name;
+        DepartmentId = departmentId;
+    }
 }

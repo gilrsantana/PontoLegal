@@ -92,7 +92,7 @@ namespace PontoLegal.API.Controllers
                 
                 var result = await _departmentService.AddDepartmentAsync(model);
                 if (result)
-                    return Ok(new ResultViewModelApi<bool>(result, new List<MessageModel> { new("Success") }));
+                    return StatusCode(201,new ResultViewModelApi<bool>(result, new List<MessageModel> { new("Success") }));
                 
 
                 return BadRequest(new ResultViewModelApi<string>(Error.Department.ERROR_ADDING, MessageType.ERROR));
