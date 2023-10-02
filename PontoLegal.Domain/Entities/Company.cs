@@ -15,4 +15,9 @@ public class Company : BaseEntity
         Name = name;
         Cnpj = cnpj;
     }
+    public void Update(string name, Cnpj cnpj)
+    {
+        Name = name;
+        Cnpj = cnpj;
+    }
 }

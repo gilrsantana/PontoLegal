@@ -127,8 +127,8 @@ public class CompanyService : BaseService, ICompanyService
             return false;
         }
         
-        var dtoById = await GetCompanyByIdAsync(id);
-        if (dtoById == null)
+        var company = await _companyRepository.GetCompanyByIdAsync(id);
+        if (company == null)
         {
             AddNotification("CompanyService.Id", Error.Company.NOT_FOUNDED);
             return false;
@@ -155,8 +155,8 @@ public class CompanyService : BaseService, ICompanyService
         
         var entityCnpj = new Cnpj(model.Cnpj);
 
-        var company = new Company(model.Name, entityCnpj);
-        var result = await _companyRepository.UpdateCompanyAsync(id, company);
+        company.Update(model.Name, entityCnpj);
+        var result = await _companyRepository.UpdateCompanyAsync(company);
 
         if (result) return true;
         

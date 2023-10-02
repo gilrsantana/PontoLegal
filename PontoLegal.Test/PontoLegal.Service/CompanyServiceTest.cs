@@ -608,7 +608,7 @@ public class CompanyServiceTest
             .Setup(x => x.GetCompanyByNameAsync(model.Name))
             .ReturnsAsync((Company?)null);
         _companyRepositoryMock
-            .Setup(x => x.UpdateCompanyAsync(id, company))
+            .Setup(x => x.UpdateCompanyAsync(company))
             .ReturnsAsync(false);
         
         // Act
@@ -641,7 +641,7 @@ public class CompanyServiceTest
             .Setup(x => x.GetCompanyByNameAsync(model.Name))
             .ReturnsAsync((Company?)null);
         _companyRepositoryMock
-            .Setup(x => x.UpdateCompanyAsync(It.IsAny<Guid>(), It.IsAny<Company>()))
+            .Setup(x => x.UpdateCompanyAsync(It.IsAny<Company>()))
             .ReturnsAsync(true);
         
         // Act
@@ -805,9 +805,3 @@ public class CompanyServiceTest
 
     #endregion
 }
-
-
-
-
-
-
