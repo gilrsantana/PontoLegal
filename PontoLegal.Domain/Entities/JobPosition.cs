@@ -13,13 +13,6 @@ public class JobPosition : BaseEntity
         DepartmentId = departmentId;
     }
 
-    public JobPosition(string name, Guid departmentId, Department department)
-    {
-        Name = name;
-        DepartmentId = departmentId;
-        Department = department;
-    }
-
     public void Update(string name, Guid departmentId)
     {
         Name = name;

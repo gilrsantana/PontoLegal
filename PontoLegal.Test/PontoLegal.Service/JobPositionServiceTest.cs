@@ -53,7 +53,7 @@ public class JobPositionServiceTest
         // Arrange
         var id = Guid.NewGuid();
         var department = new Department("Development");
-        var jobPosition = new JobPosition("Developer", department.Id, department);
+        var jobPosition = new JobPosition("Developer", department.Id);
         _jobPositionRepositoryMock
             .Setup(x => x.GetJobPositionByIdAsync(id))
             .ReturnsAsync(jobPosition);
@@ -114,7 +114,7 @@ public class JobPositionServiceTest
         // Arrange
         var name = "Developer";
         var department = new Department("Development");
-        var jobPosition = new JobPosition(name, department.Id, department);
+        var jobPosition = new JobPosition(name, department.Id);
         _jobPositionRepositoryMock
             .Setup(x => x.GetJobPositionByNameAsync(name))
             .ReturnsAsync(jobPosition);
@@ -160,9 +160,9 @@ public class JobPositionServiceTest
     {
         // Arrange
         var department = new Department("Development");
-        var jobPosition = new JobPosition("Developer", department.Id, department);
-        var jobPosition2 = new JobPosition("Developer", department.Id, department);
-        var jobPosition3 = new JobPosition("Developer", department.Id, department);
+        var jobPosition = new JobPosition("Developer", department.Id);
+        var jobPosition2 = new JobPosition("Developer", department.Id);
+        var jobPosition3 = new JobPosition("Developer", department.Id);
         var jobPositions = new List<JobPosition> { jobPosition, jobPosition2, jobPosition3 };
         _jobPositionRepositoryMock
             .Setup(x => x.GetAllJobPositionsAsync(skip, take))
@@ -236,7 +236,7 @@ public class JobPositionServiceTest
         // Arrange
         var model = new JobPositionModel(name, Guid.NewGuid());
         var department = new Department(departmentName);
-        var jobPosition = new JobPosition(name, department.Id, department);
+        var jobPosition = new JobPosition(name, department.Id);
         _jobPositionRepositoryMock
             .Setup(x => x.AddJobPositionAsync(jobPosition))
             .ReturnsAsync(false);
@@ -282,7 +282,7 @@ public class JobPositionServiceTest
         // Arrange
         var model = new JobPositionModel("Developer", Guid.NewGuid());
         var department = new Department("Development");
-        var jobPosition = new JobPosition("Developer", department.Id, department);
+        var jobPosition = new JobPosition("Developer", department.Id);
         _jobPositionRepositoryMock
             .Setup(x => x.AddJobPositionAsync(jobPosition))
             .ReturnsAsync(false);
@@ -419,7 +419,7 @@ public class JobPositionServiceTest
         var id = Guid.NewGuid();
         var model = new JobPositionModel("Developer", Guid.NewGuid());
         var department = new Department("Development");
-        var jobPosition = new JobPosition("Developer", department.Id, department);
+        var jobPosition = new JobPosition("Developer", department.Id);
         _jobPositionRepositoryMock
             .Setup(x => x.GetJobPositionByIdAsync(id))
             .ReturnsAsync(jobPosition);
@@ -449,7 +449,7 @@ public class JobPositionServiceTest
         var id = Guid.NewGuid();
         var model = new JobPositionModel("Developer", Guid.NewGuid());
         var department = new Department("Development");
-        var jobPosition = new JobPosition("Developer", department.Id, department);
+        var jobPosition = new JobPosition("Developer", department.Id);
         _jobPositionRepositoryMock
             .Setup(x => x.GetJobPositionByIdAsync(id))
             .ReturnsAsync(jobPosition);
@@ -514,7 +514,7 @@ public class JobPositionServiceTest
         // Arrange
         var id = Guid.NewGuid();
         var department = new Department("Development");
-        var jobPosition = new JobPosition("Developer", department.Id, department);
+        var jobPosition = new JobPosition("Developer", department.Id);
         _jobPositionRepositoryMock
             .Setup(x => x.GetJobPositionByIdAsync(id))
             .ReturnsAsync(jobPosition);
@@ -539,7 +539,7 @@ public class JobPositionServiceTest
         // Arrange
         var id = Guid.NewGuid();
         var department = new Department("Development");
-        var jobPosition = new JobPosition("Developer", department.Id, department);
+        var jobPosition = new JobPosition("Developer", department.Id);
         _jobPositionRepositoryMock
             .Setup(x => x.GetJobPositionByIdAsync(id))
             .ReturnsAsync(jobPosition);

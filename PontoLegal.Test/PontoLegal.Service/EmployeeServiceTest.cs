@@ -311,7 +311,7 @@ public class EmployeeServiceTest
         );
         _jobPositionRepositoryMock
             .Setup(x => x.GetJobPositionByIdAsync(It.IsAny<Guid>()))
-            .ReturnsAsync(new JobPosition("Job Position", Guid.NewGuid(), new Department("Department")));
+            .ReturnsAsync(new JobPosition("Job Position", Guid.NewGuid()));
         
         _companyRepositoryMock
             .Setup(x => x.GetCompanyByIdAsync(It.IsAny<Guid>()))
@@ -420,7 +420,7 @@ public class EmployeeServiceTest
         
         _jobPositionRepositoryMock
             .Setup(x => x.GetJobPositionByIdAsync(It.IsAny<Guid>()))
-            .ReturnsAsync(new JobPosition("Job Position", Guid.NewGuid(), new Department("Department")));
+            .ReturnsAsync(new JobPosition("Job Position", Guid.NewGuid()));
         
         _companyRepositoryMock
             .Setup(x => x.GetCompanyByIdAsync(It.IsAny<Guid>()))
@@ -445,7 +445,7 @@ public class EmployeeServiceTest
         
         _jobPositionRepositoryMock
             .Setup(x => x.GetJobPositionByIdAsync(It.IsAny<Guid>()))
-            .ReturnsAsync(new JobPosition("Job Position", Guid.NewGuid(), new Department("Department")));
+            .ReturnsAsync(new JobPosition("Job Position", Guid.NewGuid()));
         
         _companyRepositoryMock
             .Setup(x => x.GetCompanyByIdAsync(It.IsAny<Guid>()))
@@ -483,7 +483,7 @@ public class EmployeeServiceTest
         var employee = Mocks.GetEmployee();
         _jobPositionRepositoryMock
             .Setup(x => x.GetJobPositionByIdAsync(It.IsAny<Guid>()))
-            .ReturnsAsync(new JobPosition("Job Position", Guid.NewGuid(), new Department("Department")));
+            .ReturnsAsync(new JobPosition("Job Position", Guid.NewGuid()));
         
         _companyRepositoryMock
             .Setup(x => x.GetCompanyByIdAsync(It.IsAny<Guid>()))
@@ -524,7 +524,7 @@ public class EmployeeServiceTest
         );
         _jobPositionRepositoryMock
             .Setup(x => x.GetJobPositionByIdAsync(It.IsAny<Guid>()))
-            .ReturnsAsync(new JobPosition("Job Position", Guid.NewGuid(), new Department("Department")));
+            .ReturnsAsync(new JobPosition("Job Position", Guid.NewGuid()));
         
         _companyRepositoryMock
             .Setup(x => x.GetCompanyByIdAsync(It.IsAny<Guid>()))
@@ -569,7 +569,7 @@ public class EmployeeServiceTest
         );
         _jobPositionRepositoryMock
             .Setup(x => x.GetJobPositionByIdAsync(It.IsAny<Guid>()))
-            .ReturnsAsync(new JobPosition("Job Position", Guid.NewGuid(), new Department("Department")));
+            .ReturnsAsync(new JobPosition("Job Position", Guid.NewGuid()));
         
         _companyRepositoryMock
             .Setup(x => x.GetCompanyByIdAsync(It.IsAny<Guid>()))
@@ -704,7 +704,7 @@ public class EmployeeServiceTest
         
         _jobPositionRepositoryMock
             .Setup(x => x.GetJobPositionByIdAsync(It.IsAny<Guid>()))
-            .ReturnsAsync(new JobPosition("Job Position", Guid.NewGuid(), new Department("Department")));
+            .ReturnsAsync(new JobPosition("Job Position", Guid.NewGuid()));
         
         _companyRepositoryMock
             .Setup(x => x.GetCompanyByIdAsync(It.IsAny<Guid>()))
@@ -734,7 +734,7 @@ public class EmployeeServiceTest
         
         _jobPositionRepositoryMock
             .Setup(x => x.GetJobPositionByIdAsync(It.IsAny<Guid>()))
-            .ReturnsAsync(new JobPosition("Job Position", Guid.NewGuid(), new Department("Department")));
+            .ReturnsAsync(new JobPosition("Job Position", Guid.NewGuid()));
         
         _companyRepositoryMock
             .Setup(x => x.GetCompanyByIdAsync(It.IsAny<Guid>()))
@@ -777,7 +777,7 @@ public class EmployeeServiceTest
         var employee = Mocks.GetEmployee();
         _jobPositionRepositoryMock
             .Setup(x => x.GetJobPositionByIdAsync(It.IsAny<Guid>()))
-            .ReturnsAsync(new JobPosition("Job Position", Guid.NewGuid(), new Department("Department")));
+            .ReturnsAsync(new JobPosition("Job Position", Guid.NewGuid()));
         
         _companyRepositoryMock
             .Setup(x => x.GetCompanyByIdAsync(It.IsAny<Guid>()))
@@ -823,7 +823,7 @@ public class EmployeeServiceTest
         );
         _jobPositionRepositoryMock
             .Setup(x => x.GetJobPositionByIdAsync(It.IsAny<Guid>()))
-            .ReturnsAsync(new JobPosition("Job Position", Guid.NewGuid(), new Department("Department")));
+            .ReturnsAsync(new JobPosition("Job Position", Guid.NewGuid()));
         
         _companyRepositoryMock
             .Setup(x => x.GetCompanyByIdAsync(It.IsAny<Guid>()))
@@ -873,7 +873,7 @@ public class EmployeeServiceTest
         );
         _jobPositionRepositoryMock
             .Setup(x => x.GetJobPositionByIdAsync(It.IsAny<Guid>()))
-            .ReturnsAsync(new JobPosition("Job Position", Guid.NewGuid(), new Department("Department")));
+            .ReturnsAsync(new JobPosition("Job Position", Guid.NewGuid()));
         
         _companyRepositoryMock
             .Setup(x => x.GetCompanyByIdAsync(It.IsAny<Guid>()))
