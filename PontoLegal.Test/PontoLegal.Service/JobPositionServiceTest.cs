@@ -222,10 +222,9 @@ public class JobPositionServiceTest
         Assert.False(result);
         Assert.False(model.IsValid);
         Assert.False(_jobPositionService.IsValid);
-        Assert.Equal(2, _jobPositionService.Notifications.Count);
-        Assert.Equal(2, model.Notifications.Count);
+        Assert.Single(_jobPositionService.Notifications);
+        Assert.Single( model.Notifications);
         Assert.Equal(Error.JobPosition.INVALID_NAME, model.Notifications.First().Message);
-        Assert.Equal(Error.Department.INVALID_NAME, model.Notifications.Last().Message);
     }
 
     [Theory]
@@ -252,38 +251,13 @@ public class JobPositionServiceTest
         Assert.Equal(Error.JobPosition.INVALID_NAME, model.Notifications.First().Message);
     }
 
-    [Theory]
-    [InlineData("Development", "")]
-    [InlineData("Development", "D")]
-    [InlineData("Development", "Department with more than 30 chars in the name")]
-    public async Task AddJobPositionAsync_ShouldReturnsFalseWithError_WithInvalidDepartmentName(string name, string departmentName)
-    {
-        // Arrange
-        var model = new JobPositionModel(name, Guid.NewGuid());
-        var department = new Department(departmentName);
-        var jobPosition = new JobPosition(name, department.Id);
-        _jobPositionRepositoryMock
-            .Setup(x => x.AddJobPositionAsync(jobPosition))
-            .ReturnsAsync(false);
-
-        // Act
-        var result = await _jobPositionService.AddJobPositionAsync(model);
-
-        // Assert
-        Assert.False(result);
-        Assert.False(model.IsValid);
-        Assert.Single(model.Notifications);
-        Assert.Equal(Error.Department.INVALID_NAME, model.Notifications.First().Message);
-    }
-
     [Fact]
     public async Task AddJobPositionAsync_ShouldReturnsFalseWithError_WithJobPositionAlreadyExists()
     {
         // Arrange
-        var departmentModel = new DepartmentModel("Development");
-        var model = new JobPositionModel("Developer", Guid.NewGuid());
-        var department = new Department("Development");
-        var jobPosition = new JobPosition("Developer", department.Id, department);
+        var departmentIdd = Guid.NewGuid();
+        var model = new JobPositionModel("Developer", departmentIdd);
+        var jobPosition = new JobPosition(model.Name, model.DepartmentId);
         _jobPositionRepositoryMock
             .Setup(x => x.AddJobPositionAsync(jobPosition))
             .ReturnsAsync(false);
@@ -306,7 +280,6 @@ public class JobPositionServiceTest
     public async Task AddJobPositionAsync_ShouldReturnsFalseWithError_WithRepositoryError()
     {
         // Arrange
-        var departmentModel = new DepartmentModel("Development");
         var model = new JobPositionModel("Developer", Guid.NewGuid());
         var department = new Department("Development");
         var jobPosition = new JobPosition("Developer", department.Id, department);
@@ -333,7 +306,6 @@ public class JobPositionServiceTest
     public async Task AddJobPositionAsync_ShouldReturnsTrue()
     {
         // Arrange
-        var departmentModel = new DepartmentModel("Development");
         var model = new JobPositionModel("Developer", Guid.NewGuid());
         _jobPositionRepositoryMock
             .Setup(x => x.AddJobPositionAsync(It.IsAny<JobPosition>()))
@@ -369,10 +341,9 @@ public class JobPositionServiceTest
         Assert.False(result);
         Assert.False(model.IsValid);
         Assert.False(_jobPositionService.IsValid);
-        Assert.Equal(2, _jobPositionService.Notifications.Count);
-        Assert.Equal(2, model.Notifications.Count);
+        Assert.Single(_jobPositionService.Notifications);
+        Assert.Single(model.Notifications);
         Assert.Equal(Error.JobPosition.INVALID_NAME, model.Notifications.First().Message);
-        Assert.Equal(Error.Department.INVALID_NAME, model.Notifications.Last().Message);
     }
     
     [Fact]
@@ -420,9 +391,8 @@ public class JobPositionServiceTest
     {
         // Arrange
         var id = Guid.NewGuid();
-        var model = new JobPositionModel("Developer",Guid.NewGuid());
-        var department = new Department("Development");
-        var jobPosition = new JobPosition("Developer", department.Id, department);
+        var model = new JobPositionModel("Developer",id);
+        var jobPosition = new JobPosition(model.Name,model.DepartmentId);
         _jobPositionRepositoryMock
             .Setup(x => x.GetJobPositionByIdAsync(id))
             .ReturnsAsync(jobPosition);
