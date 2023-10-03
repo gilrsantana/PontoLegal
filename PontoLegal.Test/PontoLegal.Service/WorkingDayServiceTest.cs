@@ -706,7 +706,7 @@ public class WorkingDayServiceTest
             .Setup(x => x.GetWorkingDayByNameAsync(It.IsAny<string>()))
             .ReturnsAsync((WorkingDay?)null);
         _workingDayRepositoryMock
-            .Setup(x => x.UpdateWorkingDayAsync(It.IsAny<Guid>(), It.IsAny<WorkingDay>()))
+            .Setup(x => x.UpdateWorkingDayAsync(It.IsAny<WorkingDay>()))
             .ReturnsAsync(false);
         
         // Act
@@ -747,7 +747,7 @@ public class WorkingDayServiceTest
             .Setup(x => x.GetWorkingDayByNameAsync(It.IsAny<string>()))
             .ReturnsAsync((WorkingDay?)null);
         _workingDayRepositoryMock
-            .Setup(x => x.UpdateWorkingDayAsync(It.IsAny<Guid>(), It.IsAny<WorkingDay>()))
+            .Setup(x => x.UpdateWorkingDayAsync(It.IsAny<WorkingDay>()))
             .ReturnsAsync(true);
         
         // Act
