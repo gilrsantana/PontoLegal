@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Runtime.CompilerServices;
 using PontoLegal.Domain.Entities;
 using PontoLegal.Repository.Interfaces;
@@ -54,7 +53,8 @@ public class WorkingDayService : BaseService, IWorkingDayService
             StartWork = workingDay.StartWork,
             StartBreak = workingDay.StartBreak,
             EndBreak = workingDay.EndBreak,
-            EndWork = workingDay.EndWork
+            EndWork = workingDay.EndWork,
+            MinutesTolerance = workingDay.MinutesTolerance
         };
     }
 
@@ -77,7 +77,8 @@ public class WorkingDayService : BaseService, IWorkingDayService
                 StartWork = workingDay.StartWork,
                 StartBreak = workingDay.StartBreak,
                 EndBreak = workingDay.EndBreak,
-                EndWork = workingDay.EndWork
+                EndWork = workingDay.EndWork,
+                MinutesTolerance = workingDay.MinutesTolerance
             }).ToList();
         }
         return new List<WorkingDayDTO>();
@@ -142,17 +143,12 @@ public class WorkingDayService : BaseService, IWorkingDayService
             AddNotification("WorkingDay.Name", Error.WorkingDay.NAME_ALREADY_EXISTS);
             return false;
         }
-        
-        var workingDay = new WorkingDay(
-            model.Name, 
-            model.Type, 
-            model.StartWork, 
-            model.StartBreak, 
-            model.EndBreak, 
-            model.EndWork,
-            model.MinutesTolerance);
-        
-        var result = await _workingDayRepository.UpdateWorkingDayAsync(id, workingDay);
+
+        var workingDay = await _workingDayRepository.GetWorkingDayByIdAsync(id);
+
+        workingDay!.Update(model.Name, model.Type, model.StartWork, model.StartBreak, model.EndBreak, model.EndWork, model.MinutesTolerance);
+
+        var result = await _workingDayRepository.UpdateWorkingDayAsync(workingDay);
         
         if (!result)
         {

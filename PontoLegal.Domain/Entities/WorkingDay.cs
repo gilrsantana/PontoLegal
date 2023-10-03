@@ -30,4 +30,22 @@ public class WorkingDay : BaseEntity
         EndWork = endWork;
         MinutesTolerance = minutesTolerance;
     }
+
+    public void Update(
+        string name,
+        WorkingDayType type,
+        TimeOnly startWork,
+        TimeOnly startBreak,
+        TimeOnly endBreak,
+        TimeOnly endWork,
+        short minutesTolerance)
+    {
+        Name = name;
+        Type = type;
+        StartWork = startWork;
+        StartBreak = startBreak;
+        EndBreak = endBreak;
+        EndWork = endWork;
+        MinutesTolerance = minutesTolerance;
+    }
 }

@@ -23,6 +23,9 @@ builder.Services.AddScoped<IJobPositionRepository, JobPositionRepository>();
 builder.Services.AddScoped<ICompanyService, CompanyService>();
 builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
 
+builder.Services.AddScoped<IWorkingDayService, WorkingDayService>();
+builder.Services.AddScoped<IWorkingDayRepository, WorkingDayRepository>();
+
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
