@@ -89,7 +89,7 @@ public class WorkingDayController : ControllerBase
     [HttpPost("Add")]
     [ProducesResponseType(typeof(ResultViewModelApi<bool>), (int)HttpStatusCode.Created)]
     [ProducesResponseType(typeof(ResultViewModelApi<>), (int)HttpStatusCode.BadRequest)]
-    public async Task<IActionResult> AddCompany(WorkingDayModel model)
+    public async Task<IActionResult> AddWorkingDay(WorkingDayModel model)
     {
         try
         {
@@ -114,7 +114,7 @@ public class WorkingDayController : ControllerBase
     [HttpPut("Update/{id:guid}")]
     [ProducesResponseType(typeof(ResultViewModelApi<bool>), (int)HttpStatusCode.OK)]
     [ProducesResponseType(typeof(ResultViewModelApi<>), (int)HttpStatusCode.BadRequest)]
-    public async Task<IActionResult> UpdateCompany(Guid id, WorkingDayModel model)
+    public async Task<IActionResult> UpdateWorkingDay(Guid id, WorkingDayModel model)
     {
         try
         {
@@ -140,7 +140,7 @@ public class WorkingDayController : ControllerBase
     [HttpDelete("Delete/{id:guid}")]
     [ProducesResponseType(typeof(ResultViewModelApi<bool>), (int)HttpStatusCode.OK)]
     [ProducesResponseType(typeof(ResultViewModelApi<>), (int)HttpStatusCode.BadRequest)]
-    public async Task<IActionResult> DeleteCompany(Guid id)
+    public async Task<IActionResult> DeleteWorkingDay(Guid id)
     {
         try
         {
