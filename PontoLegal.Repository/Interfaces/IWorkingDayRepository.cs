@@ -1,5 +1,4 @@
 using PontoLegal.Domain.Entities;
-using PontoLegal.Shared.Messages;
 
 namespace PontoLegal.Repository.Interfaces;
 

@@ -1,6 +1,5 @@
 ﻿using System.Net;
 using Common.Model;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PontoLegal.API.Notifications;
 using PontoLegal.Service.DTOs;
@@ -22,6 +21,9 @@ public class JobPositionController : ControllerBase
     }
 
     [HttpGet("GetById/{id:guid}")]
+    [ProducesResponseType(typeof(ResultViewModelApi<JobPositionDTO>), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(ResultViewModelApi<>), (int)HttpStatusCode.NotFound)]
+    [ProducesResponseType(typeof(ResultViewModelApi<>), (int)HttpStatusCode.BadRequest)]
     public async Task<IActionResult> GetById(Guid id)
     {
         try
@@ -43,6 +45,9 @@ public class JobPositionController : ControllerBase
     }
 
     [HttpGet("GetByName/{name}")]
+    [ProducesResponseType(typeof(ResultViewModelApi<JobPositionDTO>), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(ResultViewModelApi<>), (int)HttpStatusCode.NotFound)]
+    [ProducesResponseType(typeof(ResultViewModelApi<>), (int)HttpStatusCode.BadRequest)]
     public async Task<IActionResult> GetByName(string name)
     {
         try
@@ -52,6 +57,7 @@ public class JobPositionController : ControllerBase
                     MessageType.ERROR));
 
             var jobPosition = await _jobPositionService.GetJobPositionByNameAsync(name);
+            
             if (jobPosition == null)
                 return NotFound(new ResultViewModelApi<string>(Error.JobPosition.NOT_FOUNDED,
                     MessageType.WARNING));
@@ -65,15 +71,17 @@ public class JobPositionController : ControllerBase
     }
 
     [HttpGet("GetByDepartment/{departmentId:guid}")]
+    [ProducesResponseType(typeof(ResultViewModelApi<IEnumerable<JobPositionDTO>>), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(ResultViewModelApi<>), (int)HttpStatusCode.BadRequest)]
     public async Task<IActionResult> GetByDepartment(Guid departmentId)
     {
         try
         {
-            if (departmentId == Guid.Empty)
-                return BadRequest(new ResultViewModelApi<string>(Error.JobPosition.DEPARTMENT_ID_REQUIRED,
-                    MessageType.ERROR));
-
             var jobPositions = await _jobPositionService.GetJobPositionByDepartmentIdAsync(departmentId);
+
+            if (_jobPositionService.GetNotifications().Any())
+                return BadRequest(new ResultViewModelApi<string>(_jobPositionService.GetNotifications(),
+                    MessageType.ERROR));
 
             return Ok(new ResultViewModelApi<IEnumerable<JobPositionDTO>>(jobPositions));
         }
@@ -84,11 +92,17 @@ public class JobPositionController : ControllerBase
     }
 
     [HttpGet("GetAll/{skip:int}/{take:int}")]
+    [ProducesResponseType(typeof(ResultViewModelApi<IEnumerable<JobPositionDTO>>), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(ResultViewModelApi<>), (int)HttpStatusCode.BadRequest)]
     public async Task<IActionResult> GetAll(int skip=0, int take=25)
     {
         try
         {
             var jobPositions = await _jobPositionService.GetAllJobPositionsAsync(skip, take);
+
+            if (_jobPositionService.GetNotifications().Any())
+                return BadRequest(new ResultViewModelApi<string>(_jobPositionService.GetNotifications(),
+                    MessageType.ERROR));
 
             return Ok(new ResultViewModelApi<IEnumerable<JobPositionDTO>>(jobPositions));
         }
@@ -98,19 +112,20 @@ public class JobPositionController : ControllerBase
         }
     }
 
-    [HttpPost]
+    [HttpPost("Add")]
+    [ProducesResponseType(typeof(ResultViewModelApi<bool>), (int)HttpStatusCode.Created)]
+    [ProducesResponseType(typeof(ResultViewModelApi<>), (int)HttpStatusCode.BadRequest)]
     public async Task<IActionResult> AddJobPosition([FromBody] JobPositionModel model)
     {
         try
         {
-            if (!model.IsValid)
-                return BadRequest(new ResultViewModelApi<string>(model.Notifications.Select(n => n.Message).ToList(), MessageType.ERROR));
-
             var result = await _jobPositionService.AddJobPositionAsync(model);
+
             if (result)
                 return StatusCode(201, new ResultViewModelApi<bool>(result, new List<MessageModel> { new("Success") }));
 
-            return BadRequest(new ResultViewModelApi<string>(Error.JobPosition.ERROR_ADDING, MessageType.ERROR));
+            return BadRequest(new ResultViewModelApi<string>(_jobPositionService.GetNotifications(),
+                MessageType.ERROR));
         }
         catch (Exception e)
         {
@@ -119,22 +134,19 @@ public class JobPositionController : ControllerBase
     }
 
     [HttpPut("Update/{id:guid}")]
+    [ProducesResponseType(typeof(ResultViewModelApi<bool>), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(ResultViewModelApi<>), (int)HttpStatusCode.BadRequest)]
     public async Task<IActionResult> UpdateJobPosition(Guid id, [FromBody] JobPositionModel model)
     {
         try
         {
-            if (id == Guid.Empty)
-                return BadRequest(new ResultViewModelApi<string>(Error.JobPosition.ID_IS_REQUIRED, MessageType.ERROR));
-
-            if (!model.IsValid)
-                return BadRequest(new ResultViewModelApi<string>(model.Notifications.Select(n => n.Message).ToList(),
-                    MessageType.ERROR));
-
             var result = await _jobPositionService.UpdateJobPositionAsync(id, model);
+
             if (result)
                 return Ok(new ResultViewModelApi<bool>(result, new List<MessageModel> { new("Success") }));
 
-            return BadRequest(new ResultViewModelApi<string>(Error.JobPosition.ERROR_UPDATING, MessageType.ERROR));
+            return BadRequest(new ResultViewModelApi<string>(_jobPositionService.GetNotifications(),
+                MessageType.ERROR));
         }
         catch (Exception e)
         {
@@ -143,18 +155,19 @@ public class JobPositionController : ControllerBase
     }
 
     [HttpDelete("Delete/{id:guid}")]
+    [ProducesResponseType(typeof(ResultViewModelApi<bool>), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(ResultViewModelApi<>), (int)HttpStatusCode.BadRequest)]
     public async Task<IActionResult> DeleteJobPosition(Guid id)
     {
         try
         {
-            if (id == Guid.Empty)
-                return BadRequest(new ResultViewModelApi<string>(Error.JobPosition.ID_IS_REQUIRED, MessageType.ERROR));
-
             var result = await _jobPositionService.RemoveJobPositionByIdAsync(id);
+
             if (result)
                 return Ok(new ResultViewModelApi<bool>(result, new List<MessageModel> { new("Success") }));
 
-            return BadRequest(new ResultViewModelApi<string>(Error.JobPosition.ERROR_REMOVING, MessageType.ERROR));
+            return BadRequest(new ResultViewModelApi<string>(_jobPositionService.GetNotifications(),
+                MessageType.ERROR));
         }
         catch (Exception e)
         {

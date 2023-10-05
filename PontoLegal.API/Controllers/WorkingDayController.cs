@@ -21,7 +21,7 @@ public class WorkingDayController : ControllerBase
     }
 
     [HttpGet("GetById{id:guid}")]
-    [ProducesResponseType(typeof(ResultViewModelApi<IEnumerable<WorkingDayDTO>>), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(ResultViewModelApi<WorkingDayDTO>), (int)HttpStatusCode.OK)]
     [ProducesResponseType(typeof(ResultViewModelApi<>), (int)HttpStatusCode.NotFound)]
     [ProducesResponseType(typeof(ResultViewModelApi<>), (int)HttpStatusCode.BadRequest)]
     public async Task<IActionResult> GetById(Guid id)
@@ -99,12 +99,12 @@ public class WorkingDayController : ControllerBase
         try
         {
             var result = await _workingDayService.AddWorkingDayAsync(model);
+                
+            if (result)
+                return StatusCode(201, new ResultViewModelApi<bool>(result, new List<MessageModel> { new("Success") }));
 
-            if (!result)
-                return BadRequest(new ResultViewModelApi<string>(_workingDayService.GetNotifications(),
-                    MessageType.ERROR));
-
-            return StatusCode(201, new ResultViewModelApi<bool>(result));
+            return BadRequest(new ResultViewModelApi<string>(_workingDayService.GetNotifications(),
+                MessageType.ERROR));
         }
         catch (Exception ex)
         {
@@ -121,13 +121,11 @@ public class WorkingDayController : ControllerBase
         {
             var result = await _workingDayService.UpdateWorkingDayAsync(id, model);
 
-            if (!result)
-            {
-                return BadRequest(new ResultViewModelApi<string>(_workingDayService.GetNotifications(),
-                    MessageType.ERROR));
-            }
+            if (result)
+                return Ok(new ResultViewModelApi<bool>(result, new List<MessageModel> { new("Success") }));
 
-            return Ok(new ResultViewModelApi<bool>(result));
+            return BadRequest(new ResultViewModelApi<string>(_workingDayService.GetNotifications(),
+                MessageType.ERROR));
         }
         catch (Exception ex)
         {
@@ -144,11 +142,11 @@ public class WorkingDayController : ControllerBase
         {
             var result = await _workingDayService.RemoveWorkingDayByIdAsync(id);
 
-            if (!result)
-                return BadRequest(new ResultViewModelApi<string>(_workingDayService.GetNotifications(),
-                    MessageType.ERROR));
+            if (result)
+                return Ok(new ResultViewModelApi<bool>(result, new List<MessageModel> { new("Success") }));
 
-            return Ok(new ResultViewModelApi<bool>(result));
+            return BadRequest(new ResultViewModelApi<string>(_workingDayService.GetNotifications(),
+                    MessageType.ERROR));
         }
         catch (Exception ex)
         {

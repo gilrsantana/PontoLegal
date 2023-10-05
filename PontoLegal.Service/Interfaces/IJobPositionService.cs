@@ -3,7 +3,7 @@ using PontoLegal.Service.Models;
 
 namespace PontoLegal.Service.Interfaces;
 
-public interface IJobPositionService
+public interface IJobPositionService : IBaseService
 {
     Task<JobPositionDTO?> GetJobPositionByIdAsync(Guid id);
     //Task<JobPositionDTO?> GetJobPositionByIdIncludeDepartmentAsync(Guid id);

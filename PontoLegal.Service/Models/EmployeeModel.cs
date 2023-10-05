@@ -1,5 +1,4 @@
 using Flunt.Validations;
-using PontoLegal.Domain.ValueObjects;
 using PontoLegal.Shared.Messages;
 
 namespace PontoLegal.Service.Models;
