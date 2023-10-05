@@ -3,7 +3,7 @@ using PontoLegal.Service.Models;
 
 namespace PontoLegal.Service.Interfaces;
 
-public interface IWorkingDayService
+public interface IWorkingDayService : IBaseService
 {
     Task<WorkingDayDTO?> GetWorkingDayByIdAsync(Guid id);
     Task<WorkingDayDTO?> GetWorkingDayByNameAsync(string name);
