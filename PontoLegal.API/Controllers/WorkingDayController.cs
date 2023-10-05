@@ -9,7 +9,7 @@ using System.Net;
 
 namespace PontoLegal.API.Controllers;
 
-[Route("PontoLegal/api/[controller]")]
+[Route("PontoLegal/v1/[controller]")]
 [ApiController]
 public class WorkingDayController : ControllerBase
 {
