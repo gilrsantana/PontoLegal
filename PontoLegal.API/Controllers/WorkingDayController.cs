@@ -28,10 +28,11 @@ public class WorkingDayController : ControllerBase
     {
         try
         {
-            if (id == Guid.Empty)
-                return BadRequest(new ResultViewModelApi<string>(Error.WorkingDay.ID_IS_REQUIRED, MessageType.ERROR));
-
             var workingDay = await _workingDayService.GetWorkingDayByIdAsync(id);
+
+            if (_workingDayService.GetNotifications().Any())
+                return BadRequest(new ResultViewModelApi<string>(_workingDayService.GetNotifications(),
+                    MessageType.ERROR));
 
             if (workingDay == null)
                 return NotFound(new ResultViewModelApi<string>(Error.WorkingDay.NOT_FOUNDED, MessageType.WARNING));
@@ -52,11 +53,11 @@ public class WorkingDayController : ControllerBase
     {
         try
         {
-            if (string.IsNullOrEmpty(name))
-                return BadRequest(new ResultViewModelApi<string>(Error.WorkingDay.NAME_IS_REQUIRED,
-                    MessageType.ERROR));
-
             var workingDay = await _workingDayService.GetWorkingDayByNameAsync(name);
+
+            if (_workingDayService.GetNotifications().Any())
+                return BadRequest(new ResultViewModelApi<string>(_workingDayService.GetNotifications(),
+                    MessageType.ERROR));
 
             if (workingDay == null)
                 return NotFound(new ResultViewModelApi<string>(Error.WorkingDay.NOT_FOUNDED, MessageType.WARNING));
@@ -78,6 +79,10 @@ public class WorkingDayController : ControllerBase
         {
             var workingDays = await _workingDayService.GetAllWorkingDaysAsync(skip, take);
 
+            if (_workingDayService.GetNotifications().Any())
+                return BadRequest(new ResultViewModelApi<string>(_workingDayService.GetNotifications(),
+                    MessageType.ERROR));
+
             return Ok(new ResultViewModelApi<IEnumerable<WorkingDayDTO>>(workingDays));
         }
         catch (Exception ex)
@@ -93,14 +98,10 @@ public class WorkingDayController : ControllerBase
     {
         try
         {
-            if (!model.IsValid)
-                return BadRequest(new ResultViewModelApi<string>(model.Notifications.Select(x => x.Message).ToList(),
-                    MessageType.ERROR));
-
             var result = await _workingDayService.AddWorkingDayAsync(model);
 
             if (!result)
-                return BadRequest(new ResultViewModelApi<string>(Error.WorkingDay.ERROR_ADDING,
+                return BadRequest(new ResultViewModelApi<string>(_workingDayService.GetNotifications(),
                     MessageType.ERROR));
 
             return StatusCode(201, new ResultViewModelApi<bool>(result));
@@ -118,16 +119,13 @@ public class WorkingDayController : ControllerBase
     {
         try
         {
-            if (!model.IsValid)
-                return BadRequest(new ResultViewModelApi<string>(
-                    model.Notifications.Select(x => x.Message).ToList(),
-                    MessageType.ERROR));
-
             var result = await _workingDayService.UpdateWorkingDayAsync(id, model);
 
             if (!result)
-                return BadRequest(new ResultViewModelApi<string>(Error.WorkingDay.ERROR_UPDATING,
+            {
+                return BadRequest(new ResultViewModelApi<string>(_workingDayService.GetNotifications(),
                     MessageType.ERROR));
+            }
 
             return Ok(new ResultViewModelApi<bool>(result));
         }
@@ -144,14 +142,10 @@ public class WorkingDayController : ControllerBase
     {
         try
         {
-            if (id == Guid.Empty)
-                return BadRequest(new ResultViewModelApi<string>(Error.WorkingDay.ID_IS_REQUIRED,
-                    MessageType.ERROR));
-
             var result = await _workingDayService.RemoveWorkingDayByIdAsync(id);
 
             if (!result)
-                return BadRequest(new ResultViewModelApi<string>(Error.WorkingDay.ERROR_REMOVING,
+                return BadRequest(new ResultViewModelApi<string>(_workingDayService.GetNotifications(),
                     MessageType.ERROR));
 
             return Ok(new ResultViewModelApi<bool>(result));
