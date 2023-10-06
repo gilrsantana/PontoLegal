@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using PontoLegal.Domain.Entities;
+using PontoLegal.Domain.ValueObjects;
 
 namespace PontoLegal.Data.Mapping;
 
@@ -24,14 +25,12 @@ public class CompanyMap : IEntityTypeConfiguration<Company>
             .HasMaxLength(100)
             .IsRequired();
 
-        builder.OwnsOne(x => x.Cnpj, cnpj =>
-        {
-            cnpj.Property(x => x.Number)
-                .HasColumnName("Cnpj")
-                .HasColumnType("TEXT")
-                .HasMaxLength(14)
-                .IsRequired();
-        });
+        builder.Property(x => x.Cnpj)
+            .HasColumnName("Cnpj")
+            .HasColumnType("TEXT")
+            .HasMaxLength(14)
+            .HasConversion(v => v.Number,
+                v => new Cnpj(v));
 
         builder.Property(x => x.CreatedAt)
             .HasColumnName("CreatedAt")

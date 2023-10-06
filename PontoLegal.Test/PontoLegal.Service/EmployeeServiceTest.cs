@@ -315,7 +315,7 @@ public class EmployeeServiceTest
         
         _companyRepositoryMock
             .Setup(x => x.GetCompanyByIdAsync(It.IsAny<Guid>()))
-            .ReturnsAsync(new Company("Company", new Cnpj(Mocks.ValidCnpj)));
+            .ReturnsAsync(new Company("Company", Mocks.ValidCnpj));
         
         _workingDayRepositoryMock
             .Setup(x => x.GetWorkingDayByIdAsync(It.IsAny<Guid>()))
@@ -449,7 +449,7 @@ public class EmployeeServiceTest
         
         _companyRepositoryMock
             .Setup(x => x.GetCompanyByIdAsync(It.IsAny<Guid>()))
-            .ReturnsAsync(new Company("Company", new Cnpj(Mocks.ValidCnpj)));
+            .ReturnsAsync(new Company("Company", Mocks.ValidCnpj));
         
         _workingDayRepositoryMock
             .Setup(x => x.GetWorkingDayByIdAsync(It.IsAny<Guid>()))
@@ -487,7 +487,7 @@ public class EmployeeServiceTest
         
         _companyRepositoryMock
             .Setup(x => x.GetCompanyByIdAsync(It.IsAny<Guid>()))
-            .ReturnsAsync(new Company("Company", new Cnpj(Mocks.ValidCnpj)));
+            .ReturnsAsync(new Company("Company", Mocks.ValidCnpj));
         
         _workingDayRepositoryMock
             .Setup(x => x.GetWorkingDayByIdAsync(It.IsAny<Guid>()))
@@ -528,7 +528,7 @@ public class EmployeeServiceTest
         
         _companyRepositoryMock
             .Setup(x => x.GetCompanyByIdAsync(It.IsAny<Guid>()))
-            .ReturnsAsync(new Company("Company", new Cnpj(Mocks.ValidCnpj)));
+            .ReturnsAsync(new Company("Company", Mocks.ValidCnpj));
         
         _workingDayRepositoryMock
             .Setup(x => x.GetWorkingDayByIdAsync(It.IsAny<Guid>()))
@@ -573,7 +573,7 @@ public class EmployeeServiceTest
         
         _companyRepositoryMock
             .Setup(x => x.GetCompanyByIdAsync(It.IsAny<Guid>()))
-            .ReturnsAsync(new Company("Company", new Cnpj(Mocks.ValidCnpj)));
+            .ReturnsAsync(new Company("Company", Mocks.ValidCnpj));
         
         _workingDayRepositoryMock
             .Setup(x => x.GetWorkingDayByIdAsync(It.IsAny<Guid>()))
@@ -738,7 +738,7 @@ public class EmployeeServiceTest
         
         _companyRepositoryMock
             .Setup(x => x.GetCompanyByIdAsync(It.IsAny<Guid>()))
-            .ReturnsAsync(new Company("Company", new Cnpj(Mocks.ValidCnpj)));
+            .ReturnsAsync(new Company("Company", Mocks.ValidCnpj));
         
         _workingDayRepositoryMock
             .Setup(x => x.GetWorkingDayByIdAsync(It.IsAny<Guid>()))
@@ -781,7 +781,7 @@ public class EmployeeServiceTest
         
         _companyRepositoryMock
             .Setup(x => x.GetCompanyByIdAsync(It.IsAny<Guid>()))
-            .ReturnsAsync(new Company("Company", new Cnpj(Mocks.ValidCnpj)));
+            .ReturnsAsync(new Company("Company", Mocks.ValidCnpj));
         
         _workingDayRepositoryMock
             .Setup(x => x.GetWorkingDayByIdAsync(It.IsAny<Guid>()))
@@ -827,7 +827,7 @@ public class EmployeeServiceTest
         
         _companyRepositoryMock
             .Setup(x => x.GetCompanyByIdAsync(It.IsAny<Guid>()))
-            .ReturnsAsync(new Company("Company", new Cnpj(Mocks.ValidCnpj)));
+            .ReturnsAsync(new Company("Company", Mocks.ValidCnpj));
         
         _workingDayRepositoryMock
             .Setup(x => x.GetWorkingDayByIdAsync(It.IsAny<Guid>()))
@@ -877,7 +877,7 @@ public class EmployeeServiceTest
         
         _companyRepositoryMock
             .Setup(x => x.GetCompanyByIdAsync(It.IsAny<Guid>()))
-            .ReturnsAsync(new Company("Company", new Cnpj(Mocks.ValidCnpj)));
+            .ReturnsAsync(new Company("Company", Mocks.ValidCnpj));
         
         _workingDayRepositoryMock
             .Setup(x => x.GetWorkingDayByIdAsync(It.IsAny<Guid>()))

@@ -105,9 +105,8 @@ public class CompanyService : BaseService, ICompanyService
             return false;
         }
         
-        var entityCnpj = new Cnpj(model.Cnpj);
         
-        var company = new Company(model.Name, entityCnpj);
+        var company = new Company(model.Name, model.Cnpj);
         var result = await _companyRepository.AddCompanyAsync(company);
 
         if (result)

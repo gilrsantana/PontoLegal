@@ -10,10 +10,10 @@ public class Company : BaseEntity
 
     public Company() { }
 
-    public Company(string name, Cnpj cnpj)
+    public Company(string name, string cnpj)
     {
         Name = name;
-        Cnpj = cnpj;
+        Cnpj = new Cnpj(cnpj);
     }
     public void Update(string name, Cnpj cnpj)
     {
