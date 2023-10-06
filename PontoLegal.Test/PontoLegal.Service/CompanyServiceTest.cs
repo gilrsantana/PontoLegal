@@ -53,7 +53,7 @@ public class CompanyServiceTest
     {
         // Arrange
         var id = Guid.NewGuid();
-        var company = new Company("Company", new Cnpj(Mocks.ValidCnpj));
+        var company = new Company("Company", Mocks.ValidCnpj);
         _companyRepositoryMock
             .Setup(x => x.GetCompanyByIdAsync(id))
             .ReturnsAsync(company);
@@ -114,8 +114,7 @@ public class CompanyServiceTest
     public async Task GetCompanyByCnpjAsync_ShouldReturnsDto()
     {
         // Arrange
-        var cnpj = new Cnpj(Mocks.ValidCnpj);
-        var company = new Company("Company", cnpj);
+        var company = new Company("Company", Mocks.ValidCnpj);
         _companyRepositoryMock
             .Setup(x => x.GetCompanyByCnpjAsync(It.IsAny<Cnpj>()))
             .ReturnsAsync(company);
@@ -156,7 +155,7 @@ public class CompanyServiceTest
     {
         // Arrange
         var name = "My Company";
-        var company = new Company(name, new Cnpj(Mocks.ValidCnpj));
+        var company = new Company(name, Mocks.ValidCnpj);
         _companyRepositoryMock
             .Setup(x => x.GetCompanyByNameAsync(name))
             .ReturnsAsync(company);
@@ -248,9 +247,9 @@ public class CompanyServiceTest
         // Arrange
         var companies = new List<Company>
         {
-            new("Company 1", new Cnpj(Mocks.ValidCnpj)),
-            new("Company 2", new Cnpj(Mocks.ValidCnpj)),
-            new("Company 3", new Cnpj(Mocks.ValidCnpj)),
+            new("Company 1", Mocks.ValidCnpj),
+            new("Company 2", Mocks.ValidCnpj),
+            new("Company 3", Mocks.ValidCnpj),
         };
         _companyRepositoryMock
             .Setup(repo => repo.GetAllCompaniesAsync(skip, take))
@@ -344,7 +343,7 @@ public class CompanyServiceTest
         // Arrange
         var model = new CompanyModel("Company", Mocks.ValidCnpj);
         var cnpj = new Cnpj(Mocks.ValidCnpj);
-        var company = new Company(model.Name, cnpj);
+        var company = new Company(model.Name, Mocks.ValidCnpj);
         _companyRepositoryMock
             .Setup(x => x.GetCompanyByCnpjAsync(cnpj))
             .ReturnsAsync(company);
@@ -369,8 +368,7 @@ public class CompanyServiceTest
     {
         // Arrange
         var model = new CompanyModel("Company", Mocks.ValidCnpj);
-        var cnpj = new Cnpj(Mocks.ValidCnpj);
-        var company = new Company(model.Name, cnpj);
+        var company = new Company(model.Name, Mocks.ValidCnpj);
         _companyRepositoryMock
             .Setup(x => x.GetCompanyByCnpjAsync(It.IsAny<Cnpj>()))
             .ReturnsAsync(company);
@@ -396,7 +394,7 @@ public class CompanyServiceTest
         // Arrange
         var model = new CompanyModel("Company", Mocks.ValidCnpj);
         var cnpj = new Cnpj(Mocks.ValidCnpj);
-        var company = new Company(model.Name, cnpj);
+        var company = new Company(model.Name, Mocks.ValidCnpj);
         _companyRepositoryMock
             .Setup(x => x.GetCompanyByCnpjAsync(cnpj))
             .ReturnsAsync((Company?)null);
@@ -515,8 +513,7 @@ public class CompanyServiceTest
         var id = Guid.NewGuid();
         var cnpjNumber = "1234567890";
         var model = new CompanyModel("Company", cnpjNumber);
-        var cnpj = new Cnpj(Mocks.ValidCnpj);
-        var company = new Company(model.Name, cnpj);
+        var company = new Company(model.Name, Mocks.ValidCnpj);
         _companyRepositoryMock
             .Setup(x => x.GetCompanyByIdAsync(id))
             .ReturnsAsync(company);
@@ -539,8 +536,7 @@ public class CompanyServiceTest
         // Arrange
         var id = Guid.NewGuid();
         var model = new CompanyModel("Company", Mocks.ValidCnpj);
-        var cnpj = new Cnpj(model.Cnpj);
-        var company = new Company(model.Name, cnpj);
+        var company = new Company(model.Name, Mocks.ValidCnpj);
         _companyRepositoryMock
             .Setup(x => x.GetCompanyByIdAsync(id))
             .ReturnsAsync(company);
@@ -567,7 +563,7 @@ public class CompanyServiceTest
         var id = Guid.NewGuid();
         var model = new CompanyModel("Company", Mocks.ValidCnpj);
         var cnpj = new Cnpj(model.Cnpj);
-        var company = new Company(model.Name, cnpj);
+        var company = new Company(model.Name, Mocks.ValidCnpj);
         _companyRepositoryMock
             .Setup(x => x.GetCompanyByIdAsync(id))
             .ReturnsAsync(company);
@@ -597,7 +593,7 @@ public class CompanyServiceTest
         var id = Guid.NewGuid();
         var model = new CompanyModel("Company", Mocks.ValidCnpj);
         var cnpj = new Cnpj(model.Cnpj);
-        var company = new Company(model.Name, cnpj);
+        var company = new Company(model.Name, Mocks.ValidCnpj);
         _companyRepositoryMock
             .Setup(x => x.GetCompanyByIdAsync(id))
             .ReturnsAsync(company);
@@ -630,7 +626,7 @@ public class CompanyServiceTest
         var id = Guid.NewGuid();
         var model = new CompanyModel("Company", Mocks.ValidCnpj);
         var cnpj = new Cnpj(model.Cnpj);
-        var company = new Company(model.Name, cnpj);
+        var company = new Company(model.Name, Mocks.ValidCnpj);
         _companyRepositoryMock
             .Setup(x => x.GetCompanyByIdAsync(id))
             .ReturnsAsync(company);
@@ -696,7 +692,7 @@ public class CompanyServiceTest
     {
         // Arrange
         var id = Guid.NewGuid();
-        var company = new Company("Company", new Cnpj(Mocks.ValidCnpj));
+        var company = new Company("Company", Mocks.ValidCnpj);
         _companyRepositoryMock
             .Setup(x => x.GetCompanyByIdAsync(id))
             .ReturnsAsync(company);
@@ -718,7 +714,7 @@ public class CompanyServiceTest
     {
         // Arrange
         var id = Guid.NewGuid();
-        var company = new Company("Company", new Cnpj(Mocks.ValidCnpj));
+        var company = new Company("Company", Mocks.ValidCnpj);
         _companyRepositoryMock
             .Setup(x => x.GetCompanyByIdAsync(id))
             .ReturnsAsync(company);
