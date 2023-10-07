@@ -9,6 +9,6 @@ public class EmployeeDTO
     public Guid JobPositionId { get; set; }
     public string PisNumber { get; set; } = "";
     public Guid CompanyId { get; set; }
-    public Guid ManagerId { get; set; }
+    public Guid? ManagerId { get; set; }
     public Guid WorkingDayId { get; set; }
 }

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PontoLegal.Data;
 using PontoLegal.Domain.Enums;
@@ -11,9 +12,11 @@ using PontoLegal.Domain.Enums;
 namespace PontoLegal.Data.Migrations
 {
     [DbContext(typeof(PontoLegalContext))]
-    partial class PontoLegalContextModelSnapshot : ModelSnapshot
+    [Migration("20231007015009_Refactor ClockTimeStatus Column")]
+    partial class RefactorClockTimeStatusColumn
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.11");

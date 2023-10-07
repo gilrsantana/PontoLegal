@@ -56,6 +56,7 @@ public class EmployeeMap : IEntityTypeConfiguration<Employee>
             .IsRequired();
 
         builder.Property(x => x.ManagerId)
+            .IsRequired(false)
             .HasColumnName("ManagerId")
             .HasColumnType("TEXT")
             .HasMaxLength(36)

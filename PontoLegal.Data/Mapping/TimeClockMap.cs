@@ -26,11 +26,13 @@ public class TimeClockMap : IEntityTypeConfiguration<TimeClock>
         builder.Property(x => x.RegisterType)
             .HasColumnName("RegisterType")
             .HasColumnType("INTEGER")
+            .HasConversion<int>()
             .IsRequired();
 
         builder.Property(x => x.ClockTimeStatus)
             .HasColumnName("ClockTimeStatus")
             .HasColumnType("INTEGER")
+            .HasConversion<int>()
             .IsRequired();
 
         builder.Property(x => x.CreatedAt)
