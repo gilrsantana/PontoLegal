@@ -6,6 +6,8 @@ using PontoLegal.Service.DTOs;
 using PontoLegal.Service.Models;
 using PontoLegal.Service.Interfaces;
 using PontoLegal.Shared.Messages;
+using TimeClock = PontoLegal.Domain.Entities.TimeClock;
+using Flunt.Notifications;
 
 [assembly: InternalsVisibleTo("PontoLegal.Tests")]
 namespace PontoLegal.Service;
@@ -15,11 +17,17 @@ public class TimeClockService : BaseService, ITimeClockService
     private readonly ITimeClockRepository _timeClockRepository;
     private readonly IEmployeeService _employeeService;
     private readonly IWorkingDayService _workingDayService;
-    public TimeClockService(ITimeClockRepository timeClockRepository, IEmployeeService employeeService, IWorkingDayService workingDayService)
+    private readonly ITimeClockNotificationService _timeClockNotificationService;
+    public TimeClockService(
+        ITimeClockRepository timeClockRepository, 
+        IEmployeeService employeeService, 
+        IWorkingDayService workingDayService, 
+        ITimeClockNotificationService timeClockNotificationService)
     {
         _timeClockRepository = timeClockRepository;
         _employeeService = employeeService;
         _workingDayService = workingDayService;
+        _timeClockNotificationService = timeClockNotificationService;
     }
 
     public async Task<ICollection<TimeClockDTO>> GetTimeClocksByEmployeeIdAndDateAsync(Guid id, DateTime date)
@@ -66,11 +74,8 @@ public class TimeClockService : BaseService, ITimeClockService
         }
 
         var timeClock = new TimeClock(model.EmployeeId, model.RegisterType);
-        if (!await SetClockTimeStatusOnAdd(timeClock, model.EmployeeId))
-        {
-            AddNotification("TimeClockService", Error.TimeClock.ERROR_SET_STATUS);
-            return false;
-        }
+
+        timeClock.TimeClockAddedEventHandler += TimeClock_Added;
 
         var result = await _timeClockRepository.AddTimeClockAsync(timeClock);
 
@@ -83,13 +88,16 @@ public class TimeClockService : BaseService, ITimeClockService
         return true;
     }
 
-    internal async Task<bool> SetClockTimeStatusOnAdd(TimeClock timeClock, Guid modelEmployeeId)
+    public async Task TimeClock_Added(object sender, EventArgs e)
     {
-        var employee = await _employeeService.GetEmployeeByIdAsync(modelEmployeeId);
-        if (employee == null) return false;
+        var timeClock = sender as TimeClock;
+        if (timeClock == null) return;
+
+        var employee = await _employeeService.GetEmployeeByIdAsync(timeClock.EmployeeId);
+        if (employee == null) return;
 
         var workingDay = await _workingDayService.GetWorkingDayByIdAsync(employee.WorkingDayId);
-        if (workingDay == null) return false;
+        if (workingDay == null) return;
 
         switch (timeClock.RegisterType)
         {
@@ -98,6 +106,8 @@ public class TimeClockService : BaseService, ITimeClockService
                     timeClock.RegisterTime.TimeOfDay < workingDay.StartWork.AddMinutes(-workingDay.MinutesTolerance).ToTimeSpan())
                 {
                     timeClock.SetClockTimeStatus(ClockTimeStatus.PENDING);
+                    var notification = new TimeClockNotification(timeClock.Id, NotificationStatus.PENDING);
+                    var result = await _timeClockNotificationService.AddNotificationAsync(notification);
                 }
                 break;
             case RegisterType.END_WORKING_DAY:
@@ -105,6 +115,8 @@ public class TimeClockService : BaseService, ITimeClockService
                     timeClock.RegisterTime.TimeOfDay < workingDay.EndWork.AddMinutes(-workingDay.MinutesTolerance).ToTimeSpan())
                 {
                     timeClock.SetClockTimeStatus(ClockTimeStatus.PENDING);
+                    var notification = new TimeClockNotification(timeClock.Id, NotificationStatus.PENDING);
+                    var result = await _timeClockNotificationService.AddNotificationAsync(notification);
                 }
                 break;
             case RegisterType.START_BREAK:
@@ -112,6 +124,8 @@ public class TimeClockService : BaseService, ITimeClockService
                     timeClock.RegisterTime.TimeOfDay < workingDay.StartBreak.AddMinutes(-workingDay.MinutesTolerance).ToTimeSpan())
                 {
                     timeClock.SetClockTimeStatus(ClockTimeStatus.PENDING);
+                    var notification = new TimeClockNotification(timeClock.Id, NotificationStatus.PENDING);
+                    var result = await _timeClockNotificationService.AddNotificationAsync(notification);
                 }
                 break;
             case RegisterType.END_BREAK:
@@ -119,13 +133,15 @@ public class TimeClockService : BaseService, ITimeClockService
                     timeClock.RegisterTime.TimeOfDay < workingDay.EndBreak.AddMinutes(-workingDay.MinutesTolerance).ToTimeSpan())
                 {
                     timeClock.SetClockTimeStatus(ClockTimeStatus.PENDING);
+                    var notification = new TimeClockNotification(timeClock.Id, NotificationStatus.PENDING);
+                    var result = await _timeClockNotificationService.AddNotificationAsync(notification);
                 }
                 break;
+            default:
+                break;
         }
-
-        return true;
     }
-
+    
     public async Task<bool> UpdateTimeClockStatus(Guid timeClockId, ClockTimeStatus status)
     {
         if (timeClockId == Guid.Empty)

@@ -4,6 +4,7 @@ using PontoLegal.Repository;
 using PontoLegal.Repository.Interfaces;
 using PontoLegal.Service;
 using PontoLegal.Service.Interfaces;
+using PontoLegal.Service.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,6 +32,9 @@ builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 
 builder.Services.AddScoped<ITimeClockService, TimeClockService>();
 builder.Services.AddScoped<ITimeClockRepository, TimeClockRepository>();
+
+builder.Services.AddScoped<ITimeClockNotificationService, TimeClockNotificationService>();
+builder.Services.AddScoped<ITimeClockNotificationRepository, TimeClockNotificationRepository>();
 
 builder.Services.AddControllers();
 

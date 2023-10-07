@@ -12,6 +12,7 @@ public class PontoLegalContext : DbContext
     public DbSet<JobPosition> JobPositions { get; set; }
     public DbSet<TimeClock> TimeClocks { get; set; }
     public DbSet<WorkingDay> WorkingDays { get; set; }
+    public DbSet<TimeClockNotification> TimeClockNotifications { get; set; }
 
     public PontoLegalContext(DbContextOptions<PontoLegalContext> options) : base(options)
     {
@@ -25,5 +26,6 @@ public class PontoLegalContext : DbContext
         modelBuilder.ApplyConfiguration(new JobPositionMap());
         modelBuilder.ApplyConfiguration(new TimeClockMap());
         modelBuilder.ApplyConfiguration(new WorkingDayMap());
+        modelBuilder.ApplyConfiguration(new TimeClockNotificationMap());
     }
 }
