@@ -842,7 +842,7 @@ public class EmployeeServiceTest
             .ReturnsAsync(Mocks.GetEmployee());
         
         _employeeRepositoryMock
-            .Setup(x => x.UpdateEmployeeAsync(It.IsAny<Guid>(), It.IsAny<Employee>()))
+            .Setup(x => x.UpdateEmployeeAsync(It.IsAny<Employee>()))
             .ReturnsAsync(false);
         
         // Act
@@ -892,7 +892,7 @@ public class EmployeeServiceTest
             .ReturnsAsync(Mocks.GetEmployee());
         
         _employeeRepositoryMock
-            .Setup(x => x.UpdateEmployeeAsync(It.IsAny<Guid>(), It.IsAny<Employee>()))
+            .Setup(x => x.UpdateEmployeeAsync(It.IsAny<Employee>()))
             .ReturnsAsync(true);
         
         // Act
