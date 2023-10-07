@@ -22,11 +22,10 @@ internal static class Mocks
         var hireDate = DateOnly.FromDateTime(DateTime.Now);
         var registrationNumber = "123456789";
         var jobPositionId = Guid.NewGuid();
-        var pis = new Pis(ValidPis);
         var companyId = Guid.NewGuid();
         var managerId = Guid.Empty;
         var workingDayId = Guid.NewGuid();
-        var employee = new Employee(name, hireDate, registrationNumber, jobPositionId, pis, companyId, managerId, workingDayId);
+        var employee = new Employee(name, hireDate, registrationNumber, jobPositionId, ValidPis, companyId, managerId, workingDayId);
         return employee;
     }
     internal static string ValidCnpj => "23584296000130";
