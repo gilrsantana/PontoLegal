@@ -3,7 +3,7 @@ using PontoLegal.Service.Models;
 
 namespace PontoLegal.Service.Interfaces;
 
-public interface IDepartmentService
+public interface IDepartmentService : IBaseService
 {
     Task<DepartmentDTO?> GetDepartmentByIdAsync(Guid departmentId);
     Task<DepartmentDTO?> GetDepartmentByNameAsync(string departmentName);

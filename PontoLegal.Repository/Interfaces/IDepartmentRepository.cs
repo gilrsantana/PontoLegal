@@ -8,6 +8,6 @@ public interface IDepartmentRepository
     Task<Department?> GetDepartmentByNameAsync(string departmentName);
     Task<ICollection<Department>?> GetAllDepartmentsAsync(int skip=0, int take=25);
     Task<bool> AddDepartmentAsync(Department department);
-    Task<bool> UpdateDepartmentAsync(Guid id, Department department);
+    Task<bool> UpdateDepartmentAsync(Department department);
     Task<bool> RemoveDepartmentByIdAsync(Guid id);
 }

@@ -3,7 +3,7 @@ using PontoLegal.Service.Models;
 
 namespace PontoLegal.Service.Interfaces;
 
-public interface IEmployeeService
+public interface IEmployeeService : IBaseService
 {
     Task<EmployeeDTO?> GetEmployeeByIdAsync(Guid id);
     Task<EmployeeDTO?> GetEmployeeByPisAsync(string pisNumber);

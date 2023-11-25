@@ -334,7 +334,7 @@ public class DepartmentServiceTest
         var model = new DepartmentModel(name);
         var id = Guid.NewGuid();
         _departmentRepositoryMock
-            .Setup(repo => repo.UpdateDepartmentAsync(id, department))
+            .Setup(repo => repo.UpdateDepartmentAsync(department))
             .ReturnsAsync(true);
 
         // Act
@@ -363,7 +363,7 @@ public class DepartmentServiceTest
             .Setup(repo => repo.GetDepartmentByIdAsync(id))
             .ReturnsAsync(department1);
         _departmentRepositoryMock
-            .Setup(repo => repo.UpdateDepartmentAsync(id, department1))
+            .Setup(repo => repo.UpdateDepartmentAsync(department1))
             .ReturnsAsync(true);
 
         // Act
@@ -385,7 +385,7 @@ public class DepartmentServiceTest
         var department = new Department("Products Development");
         var model = new DepartmentModel("Products Development");
         var id = Guid.NewGuid();
-        _departmentRepositoryMock.Setup(repo => repo.UpdateDepartmentAsync(department.Id, department))
+        _departmentRepositoryMock.Setup(repo => repo.UpdateDepartmentAsync(department))
             .ReturnsAsync(true);
         _departmentRepositoryMock.Setup(repo => repo.GetDepartmentByNameAsync(model.Name))
             .ReturnsAsync((Department?)null);
@@ -418,7 +418,7 @@ public class DepartmentServiceTest
             .Setup(repo => repo.GetDepartmentByIdAsync(id))
             .ReturnsAsync(department);
         _departmentRepositoryMock
-            .Setup(repo => repo.UpdateDepartmentAsync(id, department))
+            .Setup(repo => repo.UpdateDepartmentAsync(department))
             .ReturnsAsync(false);
 
         // Act
@@ -448,7 +448,7 @@ public class DepartmentServiceTest
             .Setup(repo => repo.GetDepartmentByIdAsync(id))
             .ReturnsAsync(department);
         _departmentRepositoryMock
-            .Setup(repo => repo.UpdateDepartmentAsync(It.IsAny<Guid>(), It.IsAny<Department>()))
+            .Setup(repo => repo.UpdateDepartmentAsync(It.IsAny<Department>()))
             .ReturnsAsync(true);
 
         // Act

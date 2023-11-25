@@ -12,13 +12,15 @@ public class WorkingDayModel : BaseModel
     public TimeOnly StartBreak { get; }
     public TimeOnly EndBreak { get; }
     public TimeOnly EndWork { get; }
+    public short MinutesTolerance { get; }
     public WorkingDayModel(
         string name, 
         WorkingDayType type, 
         TimeOnly startWork, 
         TimeOnly startBreak, 
         TimeOnly endBreak, 
-        TimeOnly endWork)
+        TimeOnly endWork,
+        short minutesTolerance)
     {
         Name = name;
         Type = type;
@@ -26,6 +28,7 @@ public class WorkingDayModel : BaseModel
         StartBreak = startBreak;
         EndBreak = endBreak;
         EndWork = endWork;
+        MinutesTolerance = minutesTolerance;
         
         AddNotifications(new Contract<WorkingDayModel>()
             .Requires()

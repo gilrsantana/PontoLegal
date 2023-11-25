@@ -9,15 +9,13 @@ public class TimeClockModel : BaseModel
     public Guid EmployeeId { get; private set; }
     public RegisterType RegisterType { get; private set; }
 
-    public TimeClockModel(DateTime registerTime, Guid employeeId, RegisterType registerType)
+    public TimeClockModel( Guid employeeId, RegisterType registerType)
     {
-        RegisterTime = registerTime;
+        RegisterTime = DateTime.Now;
         EmployeeId = employeeId;
         RegisterType = registerType;
         AddNotifications(new Contract<TimeClockModel>()
             .Requires()
-            .IsLowerOrEqualsThan(RegisterTime, DateTime.Now, "TimeClockModel.RegisterTime",
-                "RegisterTime must be lower or equals than now")
             .IsTrue(Guid.Empty != EmployeeId, "TimeClock.EmployeeId", "EmployeeId is required"));
     }
 }

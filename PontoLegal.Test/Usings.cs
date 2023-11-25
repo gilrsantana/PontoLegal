@@ -9,3 +9,4 @@ global using PontoLegal.Service.Models;
 global using PontoLegal.Service.DTOs;
 global using PontoLegal.Test.Mock;
 global using PontoLegal.Domain.Enums;
+global using Mocks = PontoLegal.Test.Mock.Mocks;

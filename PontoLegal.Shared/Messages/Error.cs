@@ -19,15 +19,16 @@ public static class Error
 
     public static class JobPosition
     {
-        public const string ERROR_ADDING        = "Error adding Department";
-        public const string ERROR_UPDATING      = "Error updating Job Position";
-        public const string ERROR_REMOVING      = "Error removing Job Position";
-        public const string ID_IS_REQUIRED      = "Id for Job Position is required";
-        public const string INVALID_NAME        = "Job Position name can't be null and must be between 3 and 30 chars";
-        public const string INVALID_PAGINATION  = "Invalid skip and/or take value";
-        public const string NAME_ALREADY_EXISTS = "Already exists a Job Position at this Department";
-        public const string NAME_IS_REQUIRED    = "Name of Job Position is required";
-        public const string NOT_FOUNDED         = "Job Position not founded";
+        public const string DEPARTMENT_ID_REQUIRED = "Department id is required";
+        public const string ERROR_ADDING           = "Error adding Department";
+        public const string ERROR_UPDATING         = "Error updating Job Position";
+        public const string ERROR_REMOVING         = "Error removing Job Position";
+        public const string ID_IS_REQUIRED         = "Id for Job Position is required";
+        public const string INVALID_NAME           = "Job Position name can't be null and must be between 3 and 30 chars";
+        public const string INVALID_PAGINATION     = "Invalid skip and/or take value";
+        public const string NAME_ALREADY_EXISTS    = "Already exists a Job Position at this Department";
+        public const string NAME_IS_REQUIRED       = "Name of Job Position is required";
+        public const string NOT_FOUNDED            = "Job Position not founded";
     }
 
     public static class Company
@@ -74,6 +75,7 @@ public static class Error
 
     public static class Employee
     {
+        public const string NOT_FOUNDED                 = "Employee not founded";
         public const string ERROR_UPDATING              = "Error updating Employee";
         public const string ERROR_REMOVING              = "Error removing Employee";
         public const string INVALID_ID                  = "Invalid Id";
@@ -95,8 +97,13 @@ public static class Error
 
     public static class TimeClock
     {
-        public const string START_WORKING_EXISTS  = "Already exists a Start Working Day for this Employee";
-        public const string INVALID_REGISTER_TIME = "RegisterTime must be lower or equals than now";
-        public const string INVALID_EMPLOYEE_ID   = "EmployeeId is required";
+        public const string ERROR_SET_STATUS        = "Error on set status";
+        public const string UPDATE_TIME_CLOCK_ERROR = "Error on updating Time Clock";
+        public const string TIME_CLOCK_NOT_FOUND    = "Time Clock not founded";
+        public const string INVALID_TIME_CLOCK_ID   = "Invalid Time Clock Id";
+        public const string ADD_TIME_CLOCK_ERROR    = "Error adding Time Clock";
+        public const string START_WORKING_EXISTS    = "Already exists a Start Working Day for this Employee";
+        public const string INVALID_REGISTER_TIME   = "RegisterTime must be lower or equals than now";
+        public const string INVALID_EMPLOYEE_ID     = "EmployeeId is required";
     }
 }

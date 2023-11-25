@@ -10,6 +10,8 @@ public class WorkingDay : BaseEntity
     public TimeOnly StartBreak { get; private set; }
     public TimeOnly EndBreak { get; private set; }
     public TimeOnly EndWork { get; private set; }
+    public short MinutesTolerance { get; private set; }
+    public ICollection<Employee> Employees { get; private set; }
 
     public WorkingDay(
         string name, 
@@ -17,7 +19,8 @@ public class WorkingDay : BaseEntity
         TimeOnly startWork, 
         TimeOnly startBreak, 
         TimeOnly endBreak, 
-        TimeOnly endWork)
+        TimeOnly endWork, 
+        short minutesTolerance)
     {
         Name = name;
         Type = type;
@@ -25,5 +28,24 @@ public class WorkingDay : BaseEntity
         StartBreak = startBreak;
         EndBreak = endBreak;
         EndWork = endWork;
+        MinutesTolerance = minutesTolerance;
+    }
+
+    public void Update(
+        string name,
+        WorkingDayType type,
+        TimeOnly startWork,
+        TimeOnly startBreak,
+        TimeOnly endBreak,
+        TimeOnly endWork,
+        short minutesTolerance)
+    {
+        Name = name;
+        Type = type;
+        StartWork = startWork;
+        StartBreak = startBreak;
+        EndBreak = endBreak;
+        EndWork = endWork;
+        MinutesTolerance = minutesTolerance;
     }
 }

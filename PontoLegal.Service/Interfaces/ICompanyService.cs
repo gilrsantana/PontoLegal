@@ -1,10 +1,9 @@
-using PontoLegal.Domain.ValueObjects;
 using PontoLegal.Service.DTOs;
 using PontoLegal.Service.Models;
 
 namespace PontoLegal.Service.Interfaces;
 
-public interface ICompanyService
+public interface ICompanyService : IBaseService
 {
     Task<CompanyDTO?> GetCompanyByIdAsync(Guid id);
     Task<CompanyDTO?> GetCompanyByNameAsync(string modelName);

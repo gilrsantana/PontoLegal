@@ -1,7 +1,3 @@
-
-
-using NuGet.Frameworks;
-
 namespace PontoLegal.Test.PontoLegal.Service;
 
 public class WorkingDayServiceTest
@@ -61,7 +57,8 @@ public class WorkingDayServiceTest
             new TimeOnly(7, 0), 
             new TimeOnly(11, 0), 
             new TimeOnly(12, 0), 
-            new TimeOnly(16, 0));
+            new TimeOnly(16, 0),
+            20);
         _workingDayRepositoryMock
             .Setup(x => x.GetWorkingDayByNameAsync(It.IsAny<string>()))
             .ReturnsAsync(workingDay);
@@ -130,7 +127,8 @@ public class WorkingDayServiceTest
             new TimeOnly(7, 0), 
             new TimeOnly(11, 0), 
             new TimeOnly(12, 0), 
-            new TimeOnly(16, 0));
+            new TimeOnly(16, 0),
+            20);
         _workingDayRepositoryMock
             .Setup(x => x.GetWorkingDayByIdAsync(It.IsAny<Guid>()))
             .ReturnsAsync(workingDay);
@@ -190,9 +188,29 @@ public class WorkingDayServiceTest
         Assert.Empty(result);
         Assert.Empty(_workingDayService.Notifications);
     }
-    
+
     [Fact]
-    public async Task GetAllWorkingDaysAsync_ShouldReturnsWorkingDayDTOList()
+    public async Task GetAllWorkingDaysAsync_ShouldReturnsEmptyList_WithNullRepositoryList()
+    {
+        // Arrange
+        var workingDays = new List<WorkingDay>();
+        _workingDayRepositoryMock
+            .Setup(x => x.GetAllWorkingDaysAsync<WorkingDay>(It.IsAny<int>(), It.IsAny<int>()))
+            .ReturnsAsync((ICollection<WorkingDay>?)null);
+        // Act
+        var result = await _workingDayService.GetAllWorkingDaysAsync();
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.IsType<List<WorkingDayDTO>>(result);
+        Assert.Empty(result);
+        Assert.Empty(_workingDayService.Notifications);
+    }
+
+    [Theory]
+    [InlineData(0, 1)]
+    [InlineData(0, 25)]
+    public async Task GetAllWorkingDaysAsync_ShouldReturnsWorkingDayDTOList(int skip, int take)
     {
         // Arrange
         var workingDays = new List<WorkingDay>
@@ -203,20 +221,22 @@ public class WorkingDayServiceTest
                 new TimeOnly(7, 0), 
                 new TimeOnly(11, 0), 
                 new TimeOnly(12, 0), 
-                new TimeOnly(16, 0)),
+                new TimeOnly(16, 0),
+                20),
             new WorkingDay(
                 "Name of Working Day 2", 
                 WorkingDayType.NINE_HOURS, 
                 new TimeOnly(7, 0), 
                 new TimeOnly(11, 0), 
                 new TimeOnly(12, 0), 
-                new TimeOnly(16, 0))
+                new TimeOnly(16, 0),
+                20)
         };
         _workingDayRepositoryMock
             .Setup(x => x.GetAllWorkingDaysAsync<WorkingDay>(It.IsAny<int>(), It.IsAny<int>()))
             .ReturnsAsync(workingDays);
         // Act
-        var result = await _workingDayService.GetAllWorkingDaysAsync();
+        var result = await _workingDayService.GetAllWorkingDaysAsync(skip, take);
         
         // Assert
         Assert.NotNull(result);
@@ -254,7 +274,7 @@ public class WorkingDayServiceTest
         var startBreak = new TimeOnly(11, 0);
         var endBreak = new TimeOnly(12, 0);
         var endWork = new TimeOnly(16, 0);
-        var model = new WorkingDayModel(name, WorkingDayType.NINE_HOURS, startWork, startBreak, endBreak, endWork);
+        var model = new WorkingDayModel(name, WorkingDayType.NINE_HOURS, startWork, startBreak, endBreak, endWork, 20);
         
         // Act
         var result = await _workingDayService.AddWorkingDayAsync(model);
@@ -277,7 +297,7 @@ public class WorkingDayServiceTest
         var startBreak = new TimeOnly(6, 0);
         var endBreak = new TimeOnly(12, 0);
         var endWork = new TimeOnly(16, 0);
-        var model = new WorkingDayModel(name, WorkingDayType.NINE_HOURS, startWork, startBreak, endBreak, endWork);
+        var model = new WorkingDayModel(name, WorkingDayType.NINE_HOURS, startWork, startBreak, endBreak, endWork, 20);
         
         // Act
         var result = await _workingDayService.AddWorkingDayAsync(model);
@@ -300,7 +320,7 @@ public class WorkingDayServiceTest
         var startBreak = new TimeOnly(11, 0);
         var endBreak = new TimeOnly(10, 0);
         var endWork = new TimeOnly(16, 0);
-        var model = new WorkingDayModel(name, WorkingDayType.NINE_HOURS, startWork, startBreak, endBreak, endWork);
+        var model = new WorkingDayModel(name, WorkingDayType.NINE_HOURS, startWork, startBreak, endBreak, endWork, 20);
         
         // Act
         var result = await _workingDayService.AddWorkingDayAsync(model);
@@ -323,7 +343,7 @@ public class WorkingDayServiceTest
         var startBreak = new TimeOnly(11, 0);
         var endBreak = new TimeOnly(17, 0);
         var endWork = new TimeOnly(16, 0);
-        var model = new WorkingDayModel(name, WorkingDayType.NINE_HOURS, startWork, startBreak, endBreak, endWork);
+        var model = new WorkingDayModel(name, WorkingDayType.NINE_HOURS, startWork, startBreak, endBreak, endWork, 20);
         
         // Act
         var result = await _workingDayService.AddWorkingDayAsync(model);
@@ -346,7 +366,7 @@ public class WorkingDayServiceTest
         var startBreak = new TimeOnly(11, 0);
         var endBreak = new TimeOnly(12, 0);
         var endWork = new TimeOnly(16, 0);
-        var model = new WorkingDayModel(name, WorkingDayType.EIGHT_HOURS, startWork, startBreak, endBreak, endWork);
+        var model = new WorkingDayModel(name, WorkingDayType.EIGHT_HOURS, startWork, startBreak, endBreak, endWork, 20);
         
         // Act
         var result = await _workingDayService.AddWorkingDayAsync(model);
@@ -369,7 +389,7 @@ public class WorkingDayServiceTest
         var startBreak = new TimeOnly(11, 0);
         var endBreak = new TimeOnly(12, 0);
         var endWork = new TimeOnly(16, 0);
-        var model = new WorkingDayModel(name, WorkingDayType.NINE_HOURS, startWork, startBreak, endBreak, endWork);
+        var model = new WorkingDayModel(name, WorkingDayType.NINE_HOURS, startWork, startBreak, endBreak, endWork, 20);
         
         var workingDay = new WorkingDay(
             "Name of Working Day", 
@@ -377,7 +397,8 @@ public class WorkingDayServiceTest
             new TimeOnly(7, 0), 
             new TimeOnly(11, 0), 
             new TimeOnly(12, 0), 
-            new TimeOnly(16, 0));
+            new TimeOnly(16, 0),
+            20);
         _workingDayRepositoryMock
             .Setup(x => x.GetWorkingDayByNameAsync(It.IsAny<string>()))
             .ReturnsAsync(workingDay);
@@ -402,7 +423,7 @@ public class WorkingDayServiceTest
         var startBreak = new TimeOnly(11, 0);
         var endBreak = new TimeOnly(12, 0);
         var endWork = new TimeOnly(16, 0);
-        var model = new WorkingDayModel(name, WorkingDayType.NINE_HOURS, startWork, startBreak, endBreak, endWork);
+        var model = new WorkingDayModel(name, WorkingDayType.NINE_HOURS, startWork, startBreak, endBreak, endWork, 20);
         
         _workingDayRepositoryMock
             .Setup(x => x.GetWorkingDayByNameAsync(It.IsAny<string>()))
@@ -431,7 +452,7 @@ public class WorkingDayServiceTest
         var startBreak = new TimeOnly(11, 0);
         var endBreak = new TimeOnly(12, 0);
         var endWork = new TimeOnly(16, 0);
-        var model = new WorkingDayModel(name, WorkingDayType.NINE_HOURS, startWork, startBreak, endBreak, endWork);
+        var model = new WorkingDayModel(name, WorkingDayType.NINE_HOURS, startWork, startBreak, endBreak, endWork, 20);
         
         _workingDayRepositoryMock
             .Setup(x => x.GetWorkingDayByNameAsync(It.IsAny<string>()))
@@ -461,7 +482,7 @@ public class WorkingDayServiceTest
         var startBreak = new TimeOnly(11, 0);
         var endBreak = new TimeOnly(12, 0);
         var endWork = new TimeOnly(16, 0);
-        var model = new WorkingDayModel(name, WorkingDayType.NINE_HOURS, startWork, startBreak, endBreak, endWork);
+        var model = new WorkingDayModel(name, WorkingDayType.NINE_HOURS, startWork, startBreak, endBreak, endWork, 20);
         
         // Act
         var result = await _workingDayService.UpdateWorkingDayAsync(id, model);
@@ -483,7 +504,7 @@ public class WorkingDayServiceTest
         var startBreak = new TimeOnly(11, 0);
         var endBreak = new TimeOnly(12, 0);
         var endWork = new TimeOnly(16, 0);
-        var model = new WorkingDayModel(name, WorkingDayType.NINE_HOURS, startWork, startBreak, endBreak, endWork);
+        var model = new WorkingDayModel(name, WorkingDayType.NINE_HOURS, startWork, startBreak, endBreak, endWork, 20);
         
         // Act
         var result = await _workingDayService.UpdateWorkingDayAsync(id, model);
@@ -507,7 +528,7 @@ public class WorkingDayServiceTest
         var startBreak = new TimeOnly(6, 0);
         var endBreak = new TimeOnly(12, 0);
         var endWork = new TimeOnly(16, 0);
-        var model = new WorkingDayModel(name, WorkingDayType.NINE_HOURS, startWork, startBreak, endBreak, endWork);
+        var model = new WorkingDayModel(name, WorkingDayType.NINE_HOURS, startWork, startBreak, endBreak, endWork, 20);
 
         // Act
         var result = await _workingDayService.UpdateWorkingDayAsync(id, model);
@@ -531,7 +552,7 @@ public class WorkingDayServiceTest
         var startBreak = new TimeOnly(11, 0);
         var endBreak = new TimeOnly(10, 0);
         var endWork = new TimeOnly(16, 0);
-        var model = new WorkingDayModel(name, WorkingDayType.NINE_HOURS, startWork, startBreak, endBreak, endWork);
+        var model = new WorkingDayModel(name, WorkingDayType.NINE_HOURS, startWork, startBreak, endBreak, endWork, 20);
 
         // Act
         var result = await _workingDayService.UpdateWorkingDayAsync(id, model);
@@ -555,7 +576,7 @@ public class WorkingDayServiceTest
         var startBreak = new TimeOnly(11, 0);
         var endBreak = new TimeOnly(17, 0);
         var endWork = new TimeOnly(16, 0);
-        var model = new WorkingDayModel(name, WorkingDayType.NINE_HOURS, startWork, startBreak, endBreak, endWork);
+        var model = new WorkingDayModel(name, WorkingDayType.NINE_HOURS, startWork, startBreak, endBreak, endWork, 20);
 
         // Act
         var result = await _workingDayService.UpdateWorkingDayAsync(id, model);
@@ -579,7 +600,7 @@ public class WorkingDayServiceTest
         var startBreak = new TimeOnly(11, 0);
         var endBreak = new TimeOnly(12, 0);
         var endWork = new TimeOnly(16, 0);
-        var model = new WorkingDayModel(name, WorkingDayType.EIGHT_HOURS, startWork, startBreak, endBreak, endWork);
+        var model = new WorkingDayModel(name, WorkingDayType.EIGHT_HOURS, startWork, startBreak, endBreak, endWork, 20);
 
         // Act
         var result = await _workingDayService.UpdateWorkingDayAsync(id, model);
@@ -603,7 +624,7 @@ public class WorkingDayServiceTest
         var startBreak = new TimeOnly(11, 0);
         var endBreak = new TimeOnly(12, 0);
         var endWork = new TimeOnly(16, 0);
-        var model = new WorkingDayModel(name, WorkingDayType.NINE_HOURS, startWork, startBreak, endBreak, endWork);
+        var model = new WorkingDayModel(name, WorkingDayType.NINE_HOURS, startWork, startBreak, endBreak, endWork, 20);
 
         _workingDayRepositoryMock
             .Setup(x => x.GetWorkingDayByIdAsync(It.IsAny<Guid>()))
@@ -630,7 +651,7 @@ public class WorkingDayServiceTest
         var startBreak = new TimeOnly(11, 0);
         var endBreak = new TimeOnly(12, 0);
         var endWork = new TimeOnly(16, 0);
-        var model = new WorkingDayModel(name, WorkingDayType.NINE_HOURS, startWork, startBreak, endBreak, endWork);
+        var model = new WorkingDayModel(name, WorkingDayType.NINE_HOURS, startWork, startBreak, endBreak, endWork, 20);
 
         var workingDay = new WorkingDay(
             "Name of Working Day", 
@@ -638,7 +659,8 @@ public class WorkingDayServiceTest
             new TimeOnly(7, 0), 
             new TimeOnly(11, 0), 
             new TimeOnly(12, 0), 
-            new TimeOnly(16, 0));
+            new TimeOnly(16, 0),
+            20);
         _workingDayRepositoryMock
             .Setup(x => x.GetWorkingDayByIdAsync(It.IsAny<Guid>()))
             .ReturnsAsync(workingDay);
@@ -667,7 +689,7 @@ public class WorkingDayServiceTest
         var startBreak = new TimeOnly(11, 0);
         var endBreak = new TimeOnly(12, 0);
         var endWork = new TimeOnly(16, 0);
-        var model = new WorkingDayModel(name, WorkingDayType.NINE_HOURS, startWork, startBreak, endBreak, endWork);
+        var model = new WorkingDayModel(name, WorkingDayType.NINE_HOURS, startWork, startBreak, endBreak, endWork, 20);
 
         var workingDay = new WorkingDay(
             "New Working Day", 
@@ -675,7 +697,8 @@ public class WorkingDayServiceTest
             new TimeOnly(7, 0), 
             new TimeOnly(11, 0), 
             new TimeOnly(12, 0), 
-            new TimeOnly(16, 0));
+            new TimeOnly(16, 0)
+            , 20);
         _workingDayRepositoryMock
             .Setup(x => x.GetWorkingDayByIdAsync(It.IsAny<Guid>()))
             .ReturnsAsync(workingDay);
@@ -683,7 +706,7 @@ public class WorkingDayServiceTest
             .Setup(x => x.GetWorkingDayByNameAsync(It.IsAny<string>()))
             .ReturnsAsync((WorkingDay?)null);
         _workingDayRepositoryMock
-            .Setup(x => x.UpdateWorkingDayAsync(It.IsAny<Guid>(), It.IsAny<WorkingDay>()))
+            .Setup(x => x.UpdateWorkingDayAsync(It.IsAny<WorkingDay>()))
             .ReturnsAsync(false);
         
         // Act
@@ -707,7 +730,7 @@ public class WorkingDayServiceTest
         var startBreak = new TimeOnly(11, 0);
         var endBreak = new TimeOnly(12, 0);
         var endWork = new TimeOnly(16, 0);
-        var model = new WorkingDayModel(name, WorkingDayType.NINE_HOURS, startWork, startBreak, endBreak, endWork);
+        var model = new WorkingDayModel(name, WorkingDayType.NINE_HOURS, startWork, startBreak, endBreak, endWork, 20);
 
         var workingDay = new WorkingDay(
             "New Working Day", 
@@ -715,7 +738,8 @@ public class WorkingDayServiceTest
             new TimeOnly(7, 0), 
             new TimeOnly(11, 0), 
             new TimeOnly(12, 0), 
-            new TimeOnly(16, 0));
+            new TimeOnly(16, 0),
+            20);
         _workingDayRepositoryMock
             .Setup(x => x.GetWorkingDayByIdAsync(It.IsAny<Guid>()))
             .ReturnsAsync(workingDay);
@@ -723,7 +747,7 @@ public class WorkingDayServiceTest
             .Setup(x => x.GetWorkingDayByNameAsync(It.IsAny<string>()))
             .ReturnsAsync((WorkingDay?)null);
         _workingDayRepositoryMock
-            .Setup(x => x.UpdateWorkingDayAsync(It.IsAny<Guid>(), It.IsAny<WorkingDay>()))
+            .Setup(x => x.UpdateWorkingDayAsync(It.IsAny<WorkingDay>()))
             .ReturnsAsync(true);
         
         // Act
@@ -785,7 +809,8 @@ public class WorkingDayServiceTest
             new TimeOnly(7, 0), 
             new TimeOnly(11, 0), 
             new TimeOnly(12, 0), 
-            new TimeOnly(16, 0));
+            new TimeOnly(16, 0),
+            20);
         _workingDayRepositoryMock
             .Setup(x => x.GetWorkingDayByIdAsync(It.IsAny<Guid>()))
             .ReturnsAsync(workingDay);
@@ -815,7 +840,8 @@ public class WorkingDayServiceTest
             new TimeOnly(7, 0), 
             new TimeOnly(11, 0), 
             new TimeOnly(12, 0), 
-            new TimeOnly(16, 0));
+            new TimeOnly(16, 0),
+            20);
         _workingDayRepositoryMock
             .Setup(x => x.GetWorkingDayByIdAsync(It.IsAny<Guid>()))
             .ReturnsAsync(workingDay);
@@ -830,6 +856,74 @@ public class WorkingDayServiceTest
         Assert.True(result);
         Assert.Empty(_workingDayService.Notifications);
     }
-    
+
+    #endregion
+
+    #region Internal Methods
+
+    [Fact]
+    public async Task ValidateIdForSearch_ShouldReturnsFalseWithError_WithInvalidId()
+    {
+        // Arrange
+        var id = Guid.Empty;
+
+        // Act
+        var result = _workingDayService.ValidateIdForSearch(id);
+
+        // Assert
+        Assert.False(result);
+        Assert.False(_workingDayService.IsValid);
+        Assert.Single(_workingDayService.Notifications);
+        Assert.Equal(Error.WorkingDay.ID_IS_REQUIRED, _workingDayService.Notifications.First().Message);
+        Assert.Equal("WorkingDay.Id", _workingDayService.Notifications.First().Key);
+    }
+
+    [Fact]
+    public async Task ValidateIdForSearch_ShouldReturnsTrue()
+    {
+        // Arrange
+        var id = Guid.NewGuid();
+
+        // Act
+        var result = _workingDayService.ValidateIdForSearch(id);
+
+        // Assert
+        Assert.True(result);
+        Assert.True(_workingDayService.IsValid);
+        Assert.Empty(_workingDayService.Notifications);
+    }
+
+    [Fact]
+    public async Task ValidateNameForSearch_ShouldReturnsFalseWithError_WithInvalidName()
+    {
+        // Arrange
+        var name = "";
+
+        // Act
+        var result = _workingDayService.ValidateNameForSearch(name);
+
+        // Assert
+        Assert.False(result);
+        Assert.False(_workingDayService.IsValid);
+        Assert.Single(_workingDayService.Notifications);
+        Assert.Equal(Error.WorkingDay.NAME_IS_REQUIRED, _workingDayService.Notifications.First().Message);
+        Assert.Equal("WorkingDay.Name", _workingDayService.Notifications.First().Key);
+    }
+
+    [Fact]
+    public async Task ValidateNameForSearch_ShouldReturnsTrue()
+    {
+        // Arrange
+        var name = "Job";
+
+        // Act
+        var result = _workingDayService.ValidateNameForSearch(name);
+
+        // Assert
+        Assert.True(result);
+        Assert.True(_workingDayService.IsValid);
+        Assert.Empty(_workingDayService.Notifications);
+    }
+
     #endregion
 }

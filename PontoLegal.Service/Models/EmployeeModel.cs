@@ -1,5 +1,4 @@
 using Flunt.Validations;
-using PontoLegal.Domain.ValueObjects;
 using PontoLegal.Shared.Messages;
 
 namespace PontoLegal.Service.Models;
@@ -12,7 +11,7 @@ public class EmployeeModel : BaseModel
     public Guid JobPositionId { get; set; }
     public string Pis { get; set; }
     public Guid CompanyId { get; set; }
-    public Guid ManagerId { get; set; }
+    public Guid? ManagerId { get; set; }
     public Guid WorkingDayId { get; set; }
 
     public EmployeeModel(
@@ -22,7 +21,7 @@ public class EmployeeModel : BaseModel
         Guid jobPositionId,
         string pis,
         Guid companyId,
-        Guid managerId,
+        Guid? managerId,
         Guid workingDayId)
     {
         Name = name;

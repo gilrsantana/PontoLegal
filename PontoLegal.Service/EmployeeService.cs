@@ -127,7 +127,7 @@ public class EmployeeService : BaseService, IEmployeeService
             model.HireDate, 
             model.RegistrationNumber, 
             model.JobPositionId, 
-            new Pis(model.Pis), 
+            model.Pis, 
             model.CompanyId, 
             model.ManagerId, 
             model.WorkingDayId);
@@ -188,17 +188,16 @@ public class EmployeeService : BaseService, IEmployeeService
             return false;
         }
 
-        var employeeToUpdate = new Employee(
-            model.Name,
+        employee.Update(model.Name,
             model.HireDate,
             model.RegistrationNumber,
             model.JobPositionId,
-            new Pis(model.Pis),
+            model.Pis,
             model.CompanyId,
             model.ManagerId,
             model.WorkingDayId);
         
-        var result = await _employeeRepository.UpdateEmployeeAsync(id, employeeToUpdate);
+        var result = await _employeeRepository.UpdateEmployeeAsync(employee);
         if(result) return true;
         
         AddNotification("EmployeeService", Error.Employee.ERROR_UPDATING);

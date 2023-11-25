@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using PontoLegal.Domain.Entities;
 using PontoLegal.Domain.ValueObjects;
 using PontoLegal.Repository.Interfaces;
@@ -6,6 +7,7 @@ using PontoLegal.Service.Models;
 using PontoLegal.Service.Interfaces;
 using PontoLegal.Shared.Messages;
 
+[assembly: InternalsVisibleTo("PontoLegal.Test")]
 namespace PontoLegal.Service;
 
 public class CompanyService : BaseService, ICompanyService
@@ -103,9 +105,8 @@ public class CompanyService : BaseService, ICompanyService
             return false;
         }
         
-        var entityCnpj = new Cnpj(model.Cnpj);
         
-        var company = new Company(model.Name, entityCnpj);
+        var company = new Company(model.Name, model.Cnpj);
         var result = await _companyRepository.AddCompanyAsync(company);
 
         if (result)
@@ -125,14 +126,19 @@ public class CompanyService : BaseService, ICompanyService
             return false;
         }
         
-        var dtoById = await GetCompanyByIdAsync(id);
-        if (dtoById == null)
+        var company = await _companyRepository.GetCompanyByIdAsync(id);
+        if (company == null)
         {
             AddNotification("CompanyService.Id", Error.Company.NOT_FOUNDED);
             return false;
         }
         
         var dtoByCnpj = await GetCompanyByCnpjAsync(model.Cnpj);
+        if (Notifications.Any())
+        {
+            return false;
+        }
+
         if (dtoByCnpj != null && dtoByCnpj.Id != id)
         {
             AddNotification("CompanyService.Cnpj", Error.Company.ALREADY_EXISTS);
@@ -147,16 +153,9 @@ public class CompanyService : BaseService, ICompanyService
         }
         
         var entityCnpj = new Cnpj(model.Cnpj);
-        if (!entityCnpj.IsValid)
-        {
-            foreach (var error in entityCnpj.GetErrors())
-            {
-                AddNotification("CompanyService.Cnpj", error);
-            }
-            return false;
-        }
-        var company = new Company(model.Name, entityCnpj);
-        var result = await _companyRepository.UpdateCompanyAsync(id, company);
+
+        company.Update(model.Name, entityCnpj);
+        var result = await _companyRepository.UpdateCompanyAsync(company);
 
         if (result) return true;
         
@@ -177,14 +176,14 @@ public class CompanyService : BaseService, ICompanyService
         return result;
     }
     
-    private bool ValidateNameForSearch(string name)
+    internal bool ValidateNameForSearch(string name)
     {
         if (!string.IsNullOrWhiteSpace(name)) return true;
         AddNotification("Company.Name", Error.Company.NAME_IS_REQUIRED);
         return false;
     }
 
-    private bool ValidateIdForSearch(Guid id)
+    internal bool ValidateIdForSearch(Guid id)
     {
         if (id != Guid.Empty) return true;
         AddNotification("Company.Id", Error.Company.ID_IS_REQUIRED);
