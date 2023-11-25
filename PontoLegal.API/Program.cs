@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 using PontoLegal.Data;
 using PontoLegal.Repository;
@@ -36,7 +37,10 @@ builder.Services.AddScoped<ITimeClockRepository, TimeClockRepository>();
 builder.Services.AddScoped<ITimeClockNotificationService, TimeClockNotificationService>();
 builder.Services.AddScoped<ITimeClockNotificationRepository, TimeClockNotificationRepository>();
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+});
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
